@@ -1,36 +1,38 @@
 "use client";
 
+import Link from "next/link";
+
 export default function Footer() {
   const linkColumns = [
     {
       heading: "Explore",
       links: [
-        { label: "Blog", href: "#" },
-        { label: "Videos", href: "#" },
-        { label: "Topics", href: "#" },
+        { label: "Blog", href: "/blog" },
+        { label: "Videos", href: "https://youtube.com/@histobit", target: "_blank" },
+        { label: "Topics", href: "/blog" },
       ],
     },
     {
       heading: "Products",
       links: [
-        { label: "Newsletter", href: "#newsletter" },
-        { label: "Shop", href: "#" },
-        { label: "Ebook (Coming Soon)", href: "#" },
+        { label: "Newsletter", href: "/newsletter" },
+        { label: "Shop", href: "/shop" },
+        { label: "Ebook (Coming Soon)", href: "/shop" },
       ],
     },
     {
       heading: "Company",
       links: [
-        { label: "About", href: "#" },
-        { label: "Press", href: "#" },
-        { label: "Contact", href: "#" },
+        { label: "About", href: "/about" },
+        { label: "Press", href: "mailto:info@histobit.com" },
+        { label: "Contact", href: "mailto:info@histobit.com" },
       ],
     },
     {
       heading: "Legal",
       links: [
-        { label: "Privacy Policy", href: "#" },
-        { label: "Terms of Service", href: "#" },
+        { label: "Privacy Policy", href: "/privacy" },
+        { label: "Terms of Service", href: "/terms" },
       ],
     },
   ];
@@ -135,9 +137,10 @@ export default function Footer() {
               </p>
               <div className="flex flex-col">
                 {col.links.map((link) => (
-                  <a
+                  <Link
                     key={link.label}
                     href={link.href}
+                    {...((link as any).target ? { target: (link as any).target } : {})}
                     className="transition-colors duration-150"
                     style={{
                       fontFamily: "var(--font-body)",
@@ -150,7 +153,7 @@ export default function Footer() {
                     onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(250, 245, 238, 0.6)")}
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -169,7 +172,7 @@ export default function Footer() {
               color: "rgba(250, 245, 238, 0.35)",
             }}
           >
-            © 2025 Histobit. All rights reserved.
+            © 2026 Histobit. All rights reserved.
           </p>
           <p
             style={{

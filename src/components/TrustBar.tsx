@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -41,15 +41,15 @@ export default function TrustBar() {
     <section id="trust-bar" style={{ background: "#3a302a", padding: "60px 48px" }}>
       <div ref={trustRef} style={{ maxWidth: 1200, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 40 }}>
         {items.map((item, i) => (
-          <>
-            <div key={item.label} style={{ textAlign: "center", flex: "1 1 auto" }}>
+          <Fragment key={item.label}>
+            <div style={{ textAlign: "center", flex: "1 1 auto" }}>
               <div style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(24px, 3vw, 36px)", color: "#faf5ee", lineHeight: 1 }}>{item.num}</div>
               <div style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "rgba(250,245,238,0.45)", marginTop: 4, letterSpacing: "0.04em", textTransform: "uppercase" }}>{item.label}</div>
             </div>
             {i < items.length - 1 && (
-              <div key={`divider-${i}`} style={{ width: 1, height: 40, background: "rgba(250,245,238,0.1)", alignSelf: "center" }} />
+              <div style={{ width: 1, height: 40, background: "rgba(250,245,238,0.1)", alignSelf: "center" }} />
             )}
-          </>
+          </Fragment>
         ))}
       </div>
     </section>
