@@ -20,7 +20,7 @@ export default function Navigation() {
     { label: "Blog", href: "/blog" },
     { label: "Newsletter", href: "/newsletter" },
     { label: "Shop", href: "/shop" },
-    { label: "About", href: "#" },
+    { label: "About", href: "/about" },
   ];
 
   return (

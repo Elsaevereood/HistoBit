@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
-import { EB_Garamond, Manrope } from "next/font/google";
+import { EB_Garamond, Manrope, Dancing_Script } from "next/font/google";
 import "./globals.css";
+
+const dancingScript = Dancing_Script({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-script",
+});
 
 const ebGaramond = EB_Garamond({
   subsets: ["latin"],
@@ -42,7 +48,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${ebGaramond.variable} ${manrope.variable}`}>
+    <html lang="en" className={`${ebGaramond.variable} ${manrope.variable} ${dancingScript.variable}`}>
       <body>{children}</body>
     </html>
   );
