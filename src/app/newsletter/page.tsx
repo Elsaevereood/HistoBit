@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -29,6 +29,38 @@ export default function NewsletterPage() {
   const socialRef = useRef<HTMLDivElement>(null);
   
   const finalCtaRef = useRef<HTMLDivElement>(null);
+
+  const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      setError("Email is required");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, firstName })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to subscribe");
+      }
+      setSuccess(true);
+    } catch (err: any) {
+      setError(err.message || "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     // HERO ANIMATIONS
@@ -282,71 +314,88 @@ export default function NewsletterPage() {
                   Join 40,000 readers. Cancel anytime.
                 </p>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div>
-                    <label style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '12px', fontWeight: 500, color: '#3a302a', marginBottom: '6px', display: 'block' }}>
-                      First Name
-                    </label>
-                    <input type="text" placeholder="Your first name" style={{
+                {success ? (
+                  <div style={{ padding: '40px 0', textAlign: 'center' }}>
+                    <p style={{ fontFamily: '"EB Garamond", serif', fontStyle: 'italic', fontSize: '24px', color: '#3a302a' }}>
+                      You're in. First dispatch arrives next week.
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubscribe}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      <div>
+                        <label style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '12px', fontWeight: 500, color: '#3a302a', marginBottom: '6px', display: 'block' }}>
+                          First Name
+                        </label>
+                        <input type="text" placeholder="Your first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={{
+                          width: '100%',
+                          padding: '13px 16px',
+                          borderRadius: '8px',
+                          border: '1px solid #d8d0c8',
+                          backgroundColor: 'white',
+                          fontFamily: 'var(--font-body), Manrope, sans-serif',
+                          fontSize: '14px',
+                          color: '#3a302a',
+                          outline: 'none',
+                          transition: 'border-color 200ms'
+                        }} onFocus={(e) => e.target.style.borderColor = '#c2652a'} onBlur={(e) => e.target.style.borderColor = '#d8d0c8'} />
+                      </div>
+                      
+                      <div>
+                        <label style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '12px', fontWeight: 500, color: '#3a302a', marginBottom: '6px', display: 'block' }}>
+                          Email Address
+                        </label>
+                        <input type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} style={{
+                          width: '100%',
+                          padding: '13px 16px',
+                          borderRadius: '8px',
+                          border: '1px solid #d8d0c8',
+                          backgroundColor: 'white',
+                          fontFamily: 'var(--font-body), Manrope, sans-serif',
+                          fontSize: '14px',
+                          color: '#3a302a',
+                          outline: 'none',
+                          transition: 'border-color 200ms'
+                        }} onFocus={(e) => e.target.style.borderColor = '#c2652a'} onBlur={(e) => e.target.style.borderColor = '#d8d0c8'} />
+                      </div>
+                    </div>
+                    
+                    <button type="submit" disabled={loading} style={{
                       width: '100%',
-                      padding: '13px 16px',
-                      borderRadius: '8px',
-                      border: '1px solid #d8d0c8',
-                      backgroundColor: 'white',
+                      marginTop: '8px',
+                      backgroundColor: '#c2652a',
+                      color: '#faf5ee',
                       fontFamily: 'var(--font-body), Manrope, sans-serif',
                       fontSize: '14px',
-                      color: '#3a302a',
-                      outline: 'none',
-                      transition: 'border-color 200ms'
-                    }} onFocus={(e) => e.target.style.borderColor = '#c2652a'} onBlur={(e) => e.target.style.borderColor = '#d8d0c8'} />
-                  </div>
-                  
-                  <div>
-                    <label style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '12px', fontWeight: 500, color: '#3a302a', marginBottom: '6px', display: 'block' }}>
-                      Email Address
-                    </label>
-                    <input type="email" placeholder="your@email.com" style={{
-                      width: '100%',
-                      padding: '13px 16px',
+                      fontWeight: 500,
+                      padding: '15px 24px',
                       borderRadius: '8px',
-                      border: '1px solid #d8d0c8',
-                      backgroundColor: 'white',
+                      border: 'none',
+                      cursor: loading ? 'not-allowed' : 'pointer',
+                      transition: 'background-color 200ms',
+                      opacity: loading ? 0.7 : 1
+                    }} onMouseOver={(e) => !loading && (e.currentTarget.style.backgroundColor = '#a8521f')} onMouseOut={(e) => !loading && (e.currentTarget.style.backgroundColor = '#c2652a')}>
+                      {loading ? 'Joining...' : "Join the Dispatch — It's Free"}
+                    </button>
+
+                    {error && (
+                      <div style={{ color: 'red', fontSize: '12px', marginTop: '8px', textAlign: 'center', fontFamily: 'var(--font-body), Manrope, sans-serif' }}>
+                        {error}
+                      </div>
+                    )}
+                    
+                    <p style={{
                       fontFamily: 'var(--font-body), Manrope, sans-serif',
-                      fontSize: '14px',
-                      color: '#3a302a',
-                      outline: 'none',
-                      transition: 'border-color 200ms'
-                    }} onFocus={(e) => e.target.style.borderColor = '#c2652a'} onBlur={(e) => e.target.style.borderColor = '#d8d0c8'} />
-                  </div>
-                </div>
-                
-                <button style={{
-                  width: '100%',
-                  marginTop: '8px',
-                  backgroundColor: '#c2652a',
-                  color: '#faf5ee',
-                  fontFamily: 'var(--font-body), Manrope, sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  padding: '15px 24px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'background-color 200ms'
-                }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#a8521f'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#c2652a'}>
-                  Join the Dispatch — It's Free
-                </button>
-                
-                <p style={{
-                  fontFamily: 'var(--font-body), Manrope, sans-serif',
-                  fontSize: '11px',
-                  color: '#8a7a6e',
-                  textAlign: 'center',
-                  marginTop: '12px',
-                  lineHeight: 1.6
-                }}>
-                  By subscribing you agree to receive weekly emails from Histobit.<br />Unsubscribe at any time.
-                </p>
+                      fontSize: '11px',
+                      color: '#8a7a6e',
+                      textAlign: 'center',
+                      marginTop: '12px',
+                      lineHeight: 1.6
+                    }}>
+                      By subscribing you agree to receive weekly emails from Histobit.<br />Unsubscribe at any time.
+                    </p>
+                  </form>
+                )}
               </div>
             </div>
           </div>
@@ -502,7 +551,7 @@ export default function NewsletterPage() {
                   textAlign: 'center',
                   marginTop: '16px'
                 }}>
-                  Planned pricing: ₹299/month or ₹2,499/year
+                  Planned pricing: $5/month or $50/year
                 </p>
               </div>
             </div>

@@ -1,21 +1,22 @@
-"use client"
+import { getAllPosts } from "@/lib/mdx";
 
 import dynamic from "next/dynamic"
-const SmoothScroll = dynamic(() => import("@/components/SmoothScroll"), { ssr: false })
-const CustomCursor = dynamic(() => import("@/components/CustomCursor"), { ssr: false })
-const Navigation = dynamic(() => import("@/components/Navigation"), { ssr: false })
-const HeroSection = dynamic(() => import("@/components/HeroSection"), { ssr: false })
-const FeaturedStory = dynamic(() => import("@/components/FeaturedStory"), { ssr: false })
-const LatestArchive = dynamic(() => import("@/components/LatestArchive"), { ssr: false })
-const TopicExplorer = dynamic(() => import("@/components/TopicExplorer"), { ssr: false })
-const WhatIsHistobit = dynamic(() => import("@/components/WhatIsHistobit"), { ssr: false })
-const TrustBar = dynamic(() => import("@/components/TrustBar"), { ssr: false })
-const MerchPreview = dynamic(() => import("@/components/MerchPreview"), { ssr: false })
-const ReaderVoices = dynamic(() => import("@/components/ReaderVoices"), { ssr: false })
-const Newsletter = dynamic(() => import("@/components/Newsletter"), { ssr: false })
-const Footer = dynamic(() => import("@/components/Footer"), { ssr: false })
+const SmoothScroll = dynamic(() => import("@/components/SmoothScroll"))
+const CustomCursor = dynamic(() => import("@/components/CustomCursor"))
+const Navigation = dynamic(() => import("@/components/Navigation"))
+const HeroSection = dynamic(() => import("@/components/HeroSection"))
+const FeaturedStory = dynamic(() => import("@/components/FeaturedStory"))
+import LatestArchive from "@/components/LatestArchive"
+const TopicExplorer = dynamic(() => import("@/components/TopicExplorer"))
+const WhatIsHistobit = dynamic(() => import("@/components/WhatIsHistobit"))
+const TrustBar = dynamic(() => import("@/components/TrustBar"))
+const MerchPreview = dynamic(() => import("@/components/MerchPreview"))
+const ReaderVoices = dynamic(() => import("@/components/ReaderVoices"))
+const Newsletter = dynamic(() => import("@/components/Newsletter"))
+const Footer = dynamic(() => import("@/components/Footer"))
 
-export default function Home() {
+export default async function Home() {
+  const posts = getAllPosts().slice(0, 3);
   return (
     <SmoothScroll>
       <CustomCursor />
@@ -23,7 +24,7 @@ export default function Home() {
       <main>
         <HeroSection />
         <FeaturedStory />
-        <LatestArchive />
+        <LatestArchive posts={posts} />
         <TopicExplorer />
         <WhatIsHistobit />
         <TrustBar />

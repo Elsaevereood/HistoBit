@@ -9,13 +9,13 @@ import Link from "next/link";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const posts = [
-  { slug: "battle-of-cannae", tag: "TACTICS", title: "The Battle of Cannae: How Hannibal Destroyed a Roman Army", excerpt: "In 216 BC, Hannibal executed the most devastating double envelopment in military history. Rome lost 70,000 men in a single afternoon.", image: "/images/featured_battle_cannae.png", readTime: "9 min read" },
-  { slug: "napoleon-russia-logistics", tag: "LOGISTICS", title: "Napoleon Didn't Lose Russia Because of Winter", excerpt: "The Grande Armée was dead before the first snowflake fell. Here's what actually broke the greatest army in the world.", image: "/images/archive_napoleon.png", readTime: "11 min read" },
-  { slug: "alexander-supply-lines", tag: "COMMANDERS", title: "Alexander Was Undefeated in 15 Years of War. Here's Why.", excerpt: "It wasn't courage. It wasn't genius. It was something far more boring — and far more important than both.", image: "/images/archive_alexander.png", readTime: "10 min read" },
-];
+import type { PostMeta } from "@/lib/mdx";
 
-export default function LatestArchive() {
+interface LatestArchiveProps {
+  posts: PostMeta[];
+}
+
+export default function LatestArchive({ posts }: LatestArchiveProps) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const innerCardsRef = useRef<(HTMLDivElement | null)[]>([]);

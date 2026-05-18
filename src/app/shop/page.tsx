@@ -282,17 +282,19 @@ export default function ShopPage() {
 
   const merchData = [
     {
+      slug: "the-campaign-tee",
       tag: "APPAREL",
       name: "The Campaign Tee",
       detail: "100% washed cotton · Olive · Unisex",
-      price: "₹1,499",
+      price: "$35",
       image: "/images/merch_tee.png",
     },
     {
+      slug: "the-historian-hoodie",
       tag: "APPAREL",
       name: "The Historian Hoodie",
       detail: "Heavyweight fleece · Sand · Unisex",
-      price: "₹2,999",
+      price: "$65",
       image: "/images/merch_hoodie.png",
     },
   ]
@@ -408,7 +410,8 @@ export default function ShopPage() {
               justifyContent: "center",
               flexWrap: "wrap"
             }}>
-              <button 
+              <Link 
+                href="/shop/the-logistic-nightmare"
                 style={{
                   background: "#c2652a",
                   color: "#faf5ee",
@@ -420,7 +423,9 @@ export default function ShopPage() {
                   border: "none",
                   cursor: "pointer",
                   letterSpacing: "0.01em",
-                  transition: "background 200ms, transform 200ms"
+                  transition: "background 200ms, transform 200ms",
+                  textDecoration: "none",
+                  display: "inline-block"
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "#a8521f"
@@ -431,8 +436,8 @@ export default function ShopPage() {
                   e.currentTarget.style.transform = "scale(1)"
                 }}
               >
-                Get the Ebook — ₹499
-              </button>
+                Get the Ebook — $15
+              </Link>
               
               <button 
                 onClick={scrollToMerch}
@@ -698,7 +703,7 @@ export default function ShopPage() {
                   fontWeight: 400,
                   lineHeight: 1
                 }}>
-                  ₹499
+                  $15
                 </div>
                 <div style={{
                   fontFamily: "var(--font-body)",
@@ -706,7 +711,7 @@ export default function ShopPage() {
                   color: "#8a7a6e",
                   textDecoration: "line-through"
                 }}>
-                  ₹799
+                  $25
                 </div>
                 <div style={{
                   fontFamily: "var(--font-body)",
@@ -731,8 +736,11 @@ export default function ShopPage() {
                 One-time payment. Yours forever. Instant PDF delivery.
               </div>
               
-              <button 
+              <Link 
+                href="/shop/the-logistic-nightmare"
                 style={{
+                  display: "block",
+                  textAlign: "center",
                   width: "100%",
                   padding: "18px 32px",
                   borderRadius: 8,
@@ -744,7 +752,9 @@ export default function ShopPage() {
                   border: "none",
                   cursor: "pointer",
                   letterSpacing: "0.01em",
-                  transition: "background 200ms, transform 200ms"
+                  transition: "background 200ms, transform 200ms",
+                  textDecoration: "none",
+                  boxSizing: "border-box"
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "#a8521f"
@@ -756,7 +766,7 @@ export default function ShopPage() {
                 }}
               >
                 Buy Now — Instant PDF Delivery
-              </button>
+              </Link>
               
               <div style={{
                 marginTop: 20,
@@ -1145,7 +1155,7 @@ export default function ShopPage() {
                         {item.price}
                       </div>
                       
-                      <Link href="#" target="_blank" style={{
+                      <Link href={`/shop/${item.slug}`} style={{
                         fontFamily: "var(--font-body)",
                         fontSize: 13,
                         fontWeight: 500,
@@ -1155,7 +1165,7 @@ export default function ShopPage() {
                       onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"}
                       onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}
                       >
-                        Shop on Qikink →
+                        View Product Details →
                       </Link>
                     </div>
                   </div>
@@ -1198,7 +1208,7 @@ export default function ShopPage() {
             userSelect: "none",
             pointerEvents: "none"
           }}>
-            ₹499
+            $15
           </div>
           
           <div ref={ctaContentRef} style={{ position: "relative", zIndex: 10 }}>
@@ -1232,7 +1242,7 @@ export default function ShopPage() {
               color: "rgba(250, 245, 238, 0.6)",
               marginBottom: 48
             }}>
-              Instant PDF delivery. ₹499. Yours forever.
+              Instant PDF delivery. $15. Yours forever.
             </div>
             
             <button style={{
@@ -1256,7 +1266,7 @@ export default function ShopPage() {
               e.currentTarget.style.background = "#c2652a"
               e.currentTarget.style.transform = "scale(1)"
             }}>
-              Get the Ebook — ₹499
+              Get the Ebook — $15
             </button>
             
             <div style={{

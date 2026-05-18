@@ -74,25 +74,41 @@ export default function Navigation() {
                 {link.label}
               </Link>
             ))}
-            <button
-              id="nav-subscribe-btn"
-              className="transition-colors duration-200"
-              style={{
-                background: "#c2652a",
-                color: "#faf5ee",
-                fontFamily: "var(--font-body)",
-                fontSize: 13,
-                fontWeight: 500,
-                borderRadius: 8,
-                padding: "10px 20px",
-                border: "none",
-                cursor: "pointer",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#a8521f")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "#c2652a")}
-            >
-              Subscribe
-            </button>
+            <div className="flex items-center gap-6 ml-6 pl-6 border-l border-[#d8d0c8]/60">
+              <Link
+                href="/login"
+                className="no-underline transition-colors duration-150 relative group flex items-center"
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "#3a302a",
+                }}
+              >
+                Sign in
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#c2652a] transition-all duration-300 group-hover:w-full"></span>
+              </Link>
+              <Link
+                href="/signup"
+                id="nav-signup-btn"
+                className="transition-all duration-300 no-underline inline-flex items-center justify-center hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md"
+                style={{
+                  background: "#c2652a",
+                  color: "#faf5ee",
+                  fontFamily: "var(--font-body)",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  borderRadius: 30,
+                  padding: "10px 24px",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#a8521f")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "#c2652a")}
+              >
+                Sign up
+              </Link>
+            </div>
           </div>
 
           {/* Hamburger */}
@@ -151,23 +167,38 @@ export default function Navigation() {
             {link.label}
           </Link>
         ))}
-        <button
-          onClick={() => setMobileOpen(false)}
-          style={{
-            background: "#c2652a",
-            color: "#faf5ee",
-            fontFamily: "var(--font-body)",
-            fontSize: 16,
-            fontWeight: 500,
-            borderRadius: 8,
-            padding: "14px 32px",
-            border: "none",
-            cursor: "pointer",
-            marginTop: 20,
-          }}
-        >
-          Subscribe Free
-        </button>
+        <div className="flex flex-col items-center gap-5 mt-8 w-full max-w-[200px]">
+          <Link
+            href="/login"
+            onClick={() => setMobileOpen(false)}
+            style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 18,
+              fontWeight: 500,
+              color: "#3a302a",
+              textDecoration: "none",
+            }}
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/signup"
+            onClick={() => setMobileOpen(false)}
+            className="w-full text-center transition-all duration-300 shadow-sm"
+            style={{
+              background: "#c2652a",
+              color: "#faf5ee",
+              fontFamily: "var(--font-body)",
+              fontSize: 18,
+              fontWeight: 500,
+              borderRadius: 30,
+              padding: "14px 0",
+              textDecoration: "none",
+            }}
+          >
+            Sign up
+          </Link>
+        </div>
       </div>
     </>
   );

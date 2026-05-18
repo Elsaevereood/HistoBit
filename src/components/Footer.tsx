@@ -1,8 +1,34 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      if (res.ok) {
+        setSuccess(true);
+        setEmail("");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const linkColumns = [
     {
       heading: "Explore",
@@ -75,44 +101,62 @@ export default function Footer() {
           </div>
 
           {/* Mini newsletter */}
-          <form
-            className="flex"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <input
-              type="email"
-              placeholder="Your email"
-              style={{
-                height: 36,
-                background: "#faf5ee",
-                border: "none",
-                borderRadius: "6px 0 0 6px",
-                padding: "0 12px",
-                fontFamily: "var(--font-body)",
-                fontSize: 12,
-                color: "#3a302a",
-                outline: "none",
-                width: 180,
-              }}
-            />
-            <button
-              type="submit"
-              style={{
-                height: 36,
-                background: "#c2652a",
-                color: "#faf5ee",
-                fontFamily: "var(--font-body)",
-                fontSize: 12,
-                fontWeight: 500,
-                padding: "0 16px",
-                borderRadius: "0 6px 6px 0",
-                border: "none",
-                cursor: "pointer",
-              }}
+          {success ? (
+            <div style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 13,
+              color: "#faf5ee",
+              background: "rgba(194, 101, 42, 0.2)",
+              padding: "8px 16px",
+              borderRadius: "6px",
+              border: "1px solid rgba(194, 101, 42, 0.4)"
+            }}>
+              Thanks for subscribing!
+            </div>
+          ) : (
+            <form
+              className="flex"
+              onSubmit={handleSubscribe}
             >
-              Subscribe
-            </button>
-          </form>
+              <input
+                type="email"
+                placeholder="Your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={{
+                  height: 36,
+                  background: "#faf5ee",
+                  border: "none",
+                  borderRadius: "6px 0 0 6px",
+                  padding: "0 12px",
+                  fontFamily: "var(--font-body)",
+                  fontSize: 12,
+                  color: "#3a302a",
+                  outline: "none",
+                  width: 180,
+                }}
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                style={{
+                  height: 36,
+                  background: "#c2652a",
+                  color: "#faf5ee",
+                  fontFamily: "var(--font-body)",
+                  fontSize: 12,
+                  fontWeight: 500,
+                  padding: "0 16px",
+                  borderRadius: "0 6px 6px 0",
+                  border: "none",
+                  cursor: loading ? "not-allowed" : "pointer",
+                  opacity: loading ? 0.7 : 1
+                }}
+              >
+                {loading ? "..." : "Subscribe"}
+              </button>
+            </form>
+          )}
         </div>
 
         {/* Link columns */}

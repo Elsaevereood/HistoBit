@@ -24,7 +24,11 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Histobit — Military History for Serious People",
+  metadataBase: new URL("https://histobit.com"),
+  title: {
+    default: "Histobit — Military History for Serious People",
+    template: "%s | Histobit",
+  },
   description:
     "Deep research. No mythology. Every week — military history told the way it deserves. Battles, logistics, command failures, and the turning points that textbooks summarize in one paragraph.",
   keywords: [
@@ -33,12 +37,44 @@ export const metadata: Metadata = {
     "ancient warfare",
     "battle analysis",
     "historical research",
+    "military strategy",
+    "history newsletter",
+    "Kings and Generals",
+    "Epic History TV",
   ],
+  authors: [{ name: "Histobit" }],
+  creator: "Histobit",
   openGraph: {
     title: "Histobit — Military History for Serious People",
     description:
       "Deep research. No mythology. Every week — for people who actually want to understand war.",
+    url: "https://histobit.com",
+    siteName: "Histobit",
     type: "website",
+    locale: "en_US",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Histobit — Military History for Serious People",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Histobit — Military History for Serious People",
+    description: "Deep research. No mythology. Every week.",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+    },
   },
 };
 

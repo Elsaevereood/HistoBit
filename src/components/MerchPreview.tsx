@@ -8,13 +8,13 @@ const products = [
   {
     name: "The Campaign Tee",
     material: "100% washed cotton · Olive",
-    price: "₹1,499",
+    price: "$35",
     image: "/images/merch_tee.png",
   },
   {
     name: "The Historian Hoodie",
     material: "Heavyweight fleece · Sand",
-    price: "₹2,999",
+    price: "$65",
     image: "/images/merch_hoodie.png",
   },
 ];
