@@ -18,8 +18,8 @@ export default function Navigation() {
 
   const navLinks = [
     { label: "Blog", href: "/blog" },
-    { label: "Newsletter", href: "#newsletter" },
-    { label: "Shop", href: "#" },
+    { label: "Newsletter", href: "/newsletter" },
+    { label: "Shop", href: "/shop" },
     { label: "About", href: "#" },
   ];
 
