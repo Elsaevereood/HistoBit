@@ -1,202 +1,93 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { setupCardHover } from "@/lib/animations";
+import { setupHeadingAnimation, setupScrollReveal } from "@/lib/animations";
+import Image from "next/image";
+import Link from "next/link";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const topics = [
-  { name: "Battles", desc: "Where empires were decided in a single afternoon", image: "/images/topic_battles.png" },
-  { name: "Commanders", desc: "The minds that determined the fate of millions", image: "/images/topic_commanders.png" },
-  { name: "Logistics", desc: "The unglamorous science behind every victory", image: "/images/topic_logistics.png" },
-  { name: "Ancient Warfare", desc: "From the first bronze spear to the fall of Rome", image: "/images/topic_ancient.png" },
-  { name: "Naval History", desc: "When the sea decided who ruled the world", image: "/images/topic_naval.png" },
-  { name: "World War", desc: "The century that burned the old map and drew a new one", image: "/images/topic_worldwar.png" },
+  { label: "Ancient Warfare", tag: "BC 500 — AD 500", image: "/images/topic_ancient.png" },
+  { label: "Battles", tag: "Strategy & Tactics", image: "/images/topic_battles.png" },
+  { label: "Commanders", tag: "Genius & Failure", image: "/images/topic_commanders.png" },
+  { label: "Logistics", tag: "The Hidden War", image: "/images/topic_logistics.png" },
+  { label: "Naval Warfare", tag: "Sea Power", image: "/images/topic_naval.png" },
+  { label: "World Wars", tag: "Modern Conflict", image: "/images/topic_worldwar.png" },
 ];
 
 export default function TopicExplorer() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!sectionRef.current || !trackRef.current) return;
-
-    const track = trackRef.current;
-    const section = sectionRef.current;
-
-    // Calculate total scroll distance
-    const totalWidth = track.scrollWidth;
-    const viewportWidth = window.innerWidth;
-
-    const scrollTween = gsap.to(track, {
-      x: -(totalWidth - viewportWidth),
-      ease: "none",
-      scrollTrigger: {
-        trigger: section,
-        start: "top top",
-        end: () => `+=${totalWidth * 2.5}`,
-        pin: true,
-        scrub: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          if (progressRef.current) {
-            progressRef.current.style.width = `${self.progress * 100}%`;
-          }
-        },
-      },
+    const ctx = gsap.context(() => {
+      if (headingRef.current) setupHeadingAnimation(headingRef.current);
+      cardsRef.current.forEach((el, i) => {
+        if (el) {
+          gsap.set(el, { y: 32, opacity: 0 });
+          ScrollTrigger.create({
+            trigger: el,
+            start: "top 85%",
+            once: true,
+            onEnter: () => gsap.to(el, { y: 0, opacity: 1, duration: 0.6, ease: "power2.out", delay: i * 0.08 }),
+          });
+        }
+      });
     });
-
-    // Card hover
-    cardsRef.current.forEach((card) => {
-      if (card) setupCardHover(card);
-    });
-
-    return () => {
-      scrollTween.kill();
-    };
+    return () => ctx.revert();
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      id="topic-explorer"
-      className="relative"
-      style={{ overflow: "hidden" }}
-    >
-      <div style={{ padding: "60px 48px 32px" }}>
-        <p
-          style={{
-            fontFamily: "var(--font-body)",
-            fontSize: 11,
-            textTransform: "uppercase",
-            letterSpacing: "0.14em",
-            color: "#c2652a",
-            fontWeight: 500,
-            marginBottom: 12,
-          }}
-        >
-          EXPLORE THE ARCHIVE
-        </p>
-        <p
-          style={{
-            fontFamily: "var(--font-body)",
-            fontSize: 16,
-            color: "#8a7a6e",
-            marginBottom: 48,
-          }}
-        >
-          Six thousand years of warfare. Pick your era.
-        </p>
-      </div>
+    <section id="topic-explorer" style={{ background: "#1a1008", padding: "120px 48px", position: "relative", overflow: "hidden" }}>
+      <div className="grain-overlay" />
+      <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 10 }}>
+        <div style={{ marginBottom: 56 }}>
+          <div style={{ fontFamily: "var(--font-body)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.14em", color: "#c2652a", fontWeight: 500, marginBottom: 16 }}>EXPLORE BY TOPIC</div>
+          <h2 ref={headingRef} style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(36px, 5vw, 64px)", color: "#faf5ee", lineHeight: 1.05, marginBottom: 8 }}>Every War. Every Era.</h2>
+          <div style={{ fontFamily: "var(--font-script)", fontSize: "clamp(40px, 5.5vw, 72px)", color: "#c2652a", lineHeight: 1.2 }}>Every Commander.</div>
+        </div>
 
-      {/* Horizontal track */}
-      <div
-        ref={trackRef}
-        className="flex"
-        style={{ gap: 24, padding: "0 48px", willChange: "transform" }}
-      >
-        {topics.map((topic, i) => (
-          <div
-            key={i}
-            ref={(el) => { cardsRef.current[i] = el; }}
-            className="interactive-card"
-            style={{
-              width: "clamp(300px, 30vw, 460px)",
-              height: 500,
-              borderRadius: 16,
-              overflow: "hidden",
-              flexShrink: 0,
-              position: "relative",
-              cursor: "pointer",
-              transformStyle: "preserve-3d",
-            }}
-          >
-            <div className="card-glow" />
-            <div className="card-sheen" />
-
-            {/* Background image */}
-            <Image
-              src={topic.image}
-              alt={topic.name}
-              fill
-              className="card-hover-img object-cover"
-              style={{ filter: "grayscale(100%)", transition: "transform 400ms ease" }}
-            />
-
-            {/* Gradient overlay */}
+        <div className="topics-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 2 }}>
+          {topics.map((topic, i) => (
             <div
-              className="absolute inset-0"
+              key={topic.label}
+              ref={(el) => { cardsRef.current[i] = el; }}
+              onMouseEnter={() => setHoveredIdx(i)}
+              onMouseLeave={() => setHoveredIdx(null)}
               style={{
-                background: "linear-gradient(to top, rgba(42, 28, 18, 0.85) 0%, rgba(42, 28, 18, 0.2) 60%, transparent 100%)",
-                zIndex: 1,
+                position: "relative",
+                overflow: "hidden",
+                cursor: "pointer",
+                height: 280,
+                transform: hoveredIdx === i ? "scale(1.02)" : "scale(1)",
+                transition: "transform 300ms ease",
+                borderLeft: hoveredIdx === i ? "3px solid #c2652a" : "3px solid transparent",
               }}
-            />
-
-            {/* Content */}
-            <div
-              className="absolute bottom-0 left-0 right-0"
-              style={{ padding: 32, zIndex: 2 }}
             >
-              <h3
+              <Image
+                src={topic.image}
+                alt={topic.label}
+                fill
                 style={{
-                  fontFamily: "var(--font-heading)",
-                  fontStyle: "italic",
-                  fontSize: "clamp(28px, 3vw, 38px)",
-                  color: "#faf5ee",
-                  lineHeight: 1.1,
-                  marginBottom: 10,
+                  objectFit: "cover",
+                  filter: hoveredIdx === i ? "grayscale(20%) brightness(0.75)" : "grayscale(80%) brightness(0.6)",
+                  transition: "filter 500ms ease",
                 }}
-              >
-                {topic.name}
-              </h3>
-              <p
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: 14,
-                  color: "rgba(255,255,255,0.65)",
-                  lineHeight: 1.5,
-                  marginBottom: 20,
-                }}
-              >
-                {topic.desc}
-              </p>
-              <a
-                href="#"
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  color: "rgba(255,255,255,0.85)",
-                  textDecoration: "none",
-                }}
-              >
-                Explore →
-              </a>
+              />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,6,2,0.85) 0%, rgba(10,6,2,0.2) 60%, transparent 100%)" }} />
+              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 24, zIndex: 2 }}>
+                <div style={{ fontFamily: "var(--font-body)", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.12em", color: "rgba(250,245,238,0.5)", marginBottom: 6 }}>{topic.tag}</div>
+                <div style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontWeight: 400, fontSize: 22, color: "#faf5ee", lineHeight: 1.1 }}>{topic.label}</div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-
-      {/* Progress bar */}
-      <div
-        className="absolute bottom-0 left-0 right-0"
-        style={{ height: 2, background: "#d8d0c8" }}
-      >
-        <div
-          ref={progressRef}
-          style={{
-            height: "100%",
-            width: "0%",
-            background: "#c2652a",
-            transition: "none",
-          }}
-        />
-      </div>
+      <style jsx>{`@media(max-width:1024px){.topics-grid{grid-template-columns:repeat(2,1fr)!important}}@media(max-width:640px){.topics-grid{grid-template-columns:1fr!important}.topics-grid>div{height:220px!important}}`}</style>
     </section>
   );
 }

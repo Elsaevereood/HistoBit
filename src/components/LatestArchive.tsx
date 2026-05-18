@@ -1,290 +1,72 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { setupImageReveal, setupHeadingAnimation, setupScrollReveal } from "@/lib/animations";
+import { setupImageReveal, setupHeadingAnimation, setupCardHover, setupScrollReveal } from "@/lib/animations";
+import Image from "next/image";
+import Link from "next/link";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const cards = [
-  {
-    category: "LOGISTICS",
-    headline: "Napoleon Didn't Lose Russia Because of Winter",
-    excerpt: "The Grande Armée was dead before the first snowflake fell. Here's what actually broke the greatest army in the world.",
-    image: "/images/archive_napoleon.png",
-    link: "#",
-    linkText: "Read More",
-  },
-  {
-    category: "COMMANDERS",
-    headline: "Alexander Was Undefeated in 15 Years of War. Here's What He Never Got Wrong",
-    excerpt: "It wasn't courage. It wasn't genius. It was something far more boring — and far more important.",
-    image: "/images/archive_alexander.png",
-    link: "#",
-    linkText: "Read More",
-  },
-  {
-    category: "COMING SOON",
-    headline: "More Dispatches Arriving Soon",
-    excerpt: "New research. New battles. New stories. Subscribe to the newsletter and be first when the archive opens.",
-    image: "/images/archive_parchment.png",
-    link: "#newsletter",
-    linkText: "Get Notified →",
-  },
+const posts = [
+  { slug: "battle-of-cannae", tag: "TACTICS", title: "The Battle of Cannae: How Hannibal Destroyed a Roman Army", excerpt: "In 216 BC, Hannibal executed the most devastating double envelopment in military history. Rome lost 70,000 men in a single afternoon.", image: "/images/featured_battle_cannae.png", readTime: "9 min read" },
+  { slug: "napoleon-russia-logistics", tag: "LOGISTICS", title: "Napoleon Didn't Lose Russia Because of Winter", excerpt: "The Grande Armée was dead before the first snowflake fell. Here's what actually broke the greatest army in the world.", image: "/images/archive_napoleon.png", readTime: "11 min read" },
+  { slug: "alexander-supply-lines", tag: "COMMANDERS", title: "Alexander Was Undefeated in 15 Years of War. Here's Why.", excerpt: "It wasn't courage. It wasn't genius. It was something far more boring — and far more important than both.", image: "/images/archive_alexander.png", readTime: "10 min read" },
 ];
 
 export default function LatestArchive() {
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const wrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const glowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const innerCardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const imgWrapsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    if (headingRef.current) {
-      setupHeadingAnimation(headingRef.current);
-    }
-
-    cardRefs.current.forEach((card, i) => {
-      if (!card) return;
-
-      // Staggered scroll entry on the wrapper
-      const wrapper = wrapperRefs.current[i];
-      if (wrapper) setupScrollReveal(wrapper, { delay: i * 0.1 });
-
-      // Image reveal
-      const imgWrapper = card.querySelector(".img-reveal-wrapper");
-      if (imgWrapper) setupImageReveal(imgWrapper as HTMLElement);
-
-      // Five-layer hover — inline, targeting correct refs
-      const image = card.querySelector(".card-hover-img") as HTMLElement;
-      const glow = glowRefs.current[i];
-      const sheen = card.querySelector(".card-sheen") as HTMLElement;
-
-      const handleMouseMove = (e: MouseEvent) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const cx = rect.width / 2;
-        const cy = rect.height / 2;
-        const rotateY = ((x - cx) / cx) * 8;
-        const rotateX = ((cy - y) / cy) * 5;
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.04)`;
-        if (sheen) {
-          sheen.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,235,200,0.15), transparent 60%)`;
-          sheen.style.opacity = "1";
-        }
-      };
-
-      const handleMouseEnter = () => {
-        card.style.transition = "transform 300ms ease-out";
-        card.style.transform = "perspective(1000px) scale(1.04)";
-        if (image) { image.style.transition = "filter 600ms ease"; image.style.filter = "grayscale(0%)"; }
-        if (glow) { glow.style.opacity = "1"; glow.style.transform = "scale(1.0)"; }
-        setTimeout(() => { card.style.transition = "none"; }, 300);
-      };
-
-      const handleMouseLeave = () => {
-        card.style.transition = "transform 450ms ease";
-        card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1.0)";
-        if (image) { image.style.transition = "filter 450ms ease"; image.style.filter = "grayscale(100%)"; }
-        if (glow) { glow.style.opacity = "0"; glow.style.transform = "scale(0.85)"; }
-        if (sheen) { sheen.style.opacity = "0"; }
-      };
-
-      card.addEventListener("mousemove", handleMouseMove);
-      card.addEventListener("mouseenter", handleMouseEnter);
-      card.addEventListener("mouseleave", handleMouseLeave);
+    const ctx = gsap.context(() => {
+      if (headingRef.current) setupHeadingAnimation(headingRef.current);
+      cardsRef.current.forEach((el, i) => { if (el) setupScrollReveal(el, { delay: i * 0.1 }); });
+      innerCardsRef.current.forEach((el) => { if (el) setupCardHover(el); });
+      imgWrapsRef.current.forEach((el) => { if (el) setupImageReveal(el); });
     });
+    return () => ctx.revert();
   }, []);
 
   return (
-    <section
-      id="latest-archive"
-      style={{
-        padding: "120px 0",
-        width: "100%",
-        maxWidth: 1280,
-        margin: "0 auto",
-        paddingLeft: 48,
-        paddingRight: 48,
-        boxSizing: "border-box",
-      }}
-    >
-      <h2
-        ref={headingRef}
-        style={{
-          fontFamily: "'EB Garamond', serif",
-          fontStyle: "italic",
-          fontWeight: 400,
-          fontSize: "clamp(36px, 4vw, 52px)",
-          color: "#3a302a",
-          marginBottom: 8,
-        }}
-      >
-        Latest from the Archive
-      </h2>
-      <p
-        style={{
-          fontFamily: "var(--font-body)",
-          fontSize: 15,
-          color: "#8a7a6e",
-          marginBottom: 56,
-        }}
-      >
-        New dispatches every week. No filler. No fluff.
-      </p>
+    <section id="latest-archive" style={{ background: "#faf5ee", padding: "120px 48px" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 56, flexWrap: "wrap", gap: 20 }}>
+          <div>
+            <div style={{ fontFamily: "var(--font-body)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.14em", color: "#c2652a", fontWeight: 500, marginBottom: 12 }}>THE ARCHIVE</div>
+            <h2 ref={headingRef} style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(32px, 4vw, 48px)", color: "#3a302a", lineHeight: 1.1 }}>Latest Dispatches</h2>
+          </div>
+          <Link href="/blog" className="cta-link" style={{ fontFamily: "var(--font-body)", fontSize: 13, fontWeight: 500, color: "#c2652a", textDecoration: "none" }}>View All Dispatches →</Link>
+        </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gridAutoRows: "1fr",
-          gap: 32,
-          width: "100%",
-          alignItems: "stretch",
-        }}
-      >
-        {cards.map((card, i) => (
-          /* Outer wrapper: relative, for glow positioning */
-          <div
-            key={i}
-            ref={(el) => { wrapperRefs.current[i] = el; }}
-            style={{ position: "relative", display: "flex", flexDirection: "column" }}
-          >
-            {/* Glow: outside the overflow:hidden card, never clipped */}
-            <div
-              ref={(el) => { glowRefs.current[i] = el; }}
-              style={{
-                position: "absolute",
-                inset: -24,
-                background: "rgba(194, 101, 42, 0.22)",
-                filter: "blur(56px)",
-                borderRadius: 40,
-                zIndex: 0,
-                opacity: 0,
-                transform: "scale(0.85)",
-                transition: "opacity 400ms ease, transform 400ms ease",
-                pointerEvents: "none",
-              }}
-            />
-
-            {/* The actual card */}
-            <div
-              ref={(el) => { cardRefs.current[i] = el; }}
-              style={{
-                background: "#faf5ee",
-                border: "1px solid rgba(216, 208, 200, 0.6)",
-                borderRadius: 12,
-                overflow: "hidden",
-                position: "relative",
-                cursor: "pointer",
-                transformStyle: "preserve-3d",
-                zIndex: 1,
-                willChange: "transform",
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              {/* Sheen overlay */}
-              <div
-                className="card-sheen"
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  pointerEvents: "none",
-                  zIndex: 3,
-                  borderRadius: "inherit",
-                  opacity: 0,
-                  transition: "opacity 300ms ease",
-                }}
-              />
-
-              {/* Image */}
-              <div
-                className="img-reveal-wrapper"
-                style={{ aspectRatio: "16/9", overflow: "hidden", width: "100%", position: "relative" }}
-              >
-                <div className="img-reveal-overlay" />
-                <Image
-                  src={card.image}
-                  alt={card.headline}
-                  width={700}
-                  height={394}
-                  className="card-hover-img"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    display: "block",
-                    filter: "grayscale(100%)",
-                    transition: "filter 600ms ease",
-                  }}
-                />
-              </div>
-
-              {/* Content */}
-              <div style={{ padding: "28px 32px 32px" }}>
-                <p
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 11,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.1em",
-                    color: "#c2652a",
-                    fontWeight: 500,
-                    marginBottom: 12,
-                  }}
-                >
-                  {card.category}
-                </p>
-                <h3
-                  style={{
-                    fontFamily: "'EB Garamond', serif",
-                    fontStyle: "italic",
-                    fontWeight: 400,
-                    fontSize: 24,
-                    lineHeight: 1.25,
-                    color: "#3a302a",
-                    marginBottom: 14,
-                  }}
-                >
-                  {card.headline}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 14,
-                    lineHeight: 1.7,
-                    color: "#8a7a6e",
-                    marginBottom: 24,
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                  }}
-                >
-                  {card.excerpt}
-                </p>
-                <a
-                  href={card.link}
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 13,
-                    fontWeight: 500,
-                    color: "#c2652a",
-                    textDecoration: "none",
-                  }}
-                >
-                  {card.linkText}
-                </a>
+        <div className="archive-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
+          {posts.map((post, i) => (
+            <div key={post.slug} ref={(el) => { cardsRef.current[i] = el; }} style={{ position: "relative" }}>
+              <div className="card-glow" style={{ position: "absolute", inset: -20, background: "rgba(194,101,42,0.18)", filter: "blur(48px)", borderRadius: 36, zIndex: 0, opacity: 0, transform: "scale(0.85)", transition: "opacity 400ms, transform 400ms", pointerEvents: "none" }} />
+              <div ref={(el) => { innerCardsRef.current[i] = el; }} style={{ background: "#faf5ee", border: "1px solid rgba(216,208,200,0.6)", borderRadius: 12, overflow: "hidden", zIndex: 1, position: "relative", cursor: "pointer", willChange: "transform", display: "flex", flexDirection: "column" }}>
+                <div className="card-sheen" />
+                <div ref={(el) => { imgWrapsRef.current[i] = el; }} className="img-reveal-wrapper" style={{ aspectRatio: "16/9", overflow: "hidden" }}>
+                  <div className="img-reveal-overlay" />
+                  <Image src={post.image} alt={post.title} width={700} height={394} className="card-hover-img" style={{ objectFit: "cover", width: "100%", height: "100%", filter: "grayscale(100%)" }} />
+                </div>
+                <div style={{ padding: "24px 28px 28px" }}>
+                  <div style={{ fontFamily: "var(--font-body)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em", color: "#c2652a", fontWeight: 500, marginBottom: 10 }}>{post.tag}</div>
+                  <h3 style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontWeight: 400, fontSize: 22, color: "#3a302a", lineHeight: 1.25, marginBottom: 12 }}>{post.title}</h3>
+                  <p className="line-clamp-2" style={{ fontFamily: "var(--font-body)", fontSize: 13, lineHeight: 1.7, color: "#8a7a6e", marginBottom: 20 }}>{post.excerpt}</p>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "#8a7a6e" }}>{post.readTime}</span>
+                    <Link href={`/blog/${post.slug}`} className="cta-link" style={{ fontFamily: "var(--font-body)", fontSize: 13, fontWeight: 500, color: "#c2652a", textDecoration: "none" }}>Read More →</Link>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
+      <style jsx>{`@media(max-width:1024px){.archive-grid{grid-template-columns:repeat(2,1fr)!important}}@media(max-width:640px){.archive-grid{grid-template-columns:1fr!important}}`}</style>
     </section>
   );
 }
