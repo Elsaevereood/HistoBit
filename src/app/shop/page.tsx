@@ -1,614 +1,740 @@
 "use client"
 
-import { useEffect, useRef } from "react"
 import dynamic from "next/dynamic"
-import Image from "next/image"
-import Link from "next/link"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { splitTextIntoWords } from "@/lib/animations"
-
 const Navigation = dynamic(() => import("@/components/Navigation"), { ssr: false })
 const Footer = dynamic(() => import("@/components/Footer"), { ssr: false })
 const CustomCursor = dynamic(() => import("@/components/CustomCursor"), { ssr: false })
 
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 gsap.registerPlugin(ScrollTrigger)
-
-const merchProducts = [
-  {
-    tag: "APPAREL",
-    name: "The Campaign Tee",
-    detail: "100% washed cotton · Olive · Unisex",
-    price: "₹1,499",
-    image: "/images/merch_tee.png",
-  },
-  {
-    tag: "APPAREL",
-    name: "The Historian Hoodie",
-    detail: "Heavyweight fleece · Sand · Unisex",
-    price: "₹2,999",
-    image: "/images/merch_hoodie.png",
-  },
-  {
-    tag: "COMING SOON",
-    name: "The Field Cap",
-    detail: "Washed canvas · Olive · One size",
-    price: "₹899",
-    image: "/images/topic_commanders.png",
-  },
-  {
-    tag: "COMING SOON",
-    name: "The Dispatch Tote",
-    detail: "Heavy cotton canvas · Natural",
-    price: "₹699",
-    image: "/images/topic_logistics.png",
-  },
-]
+import { splitTextIntoWords } from "@/lib/animations"
+import Image from "next/image"
+import Link from "next/link"
+import { useEffect, useRef, useState } from "react"
 
 export default function ShopPage() {
-  const preRef = useRef<HTMLDivElement>(null)
-  const headingRef = useRef<HTMLHeadingElement>(null)
-  const subRef = useRef<HTMLParagraphElement>(null)
-  const badgesRef = useRef<HTMLDivElement>(null)
-
-  const ebookImageRef = useRef<HTMLDivElement>(null)
-  const ebookContentRef = useRef<HTMLDivElement>(null)
-
+  const heroLabelRef = useRef<HTMLDivElement>(null)
+  const heroLine1Ref = useRef<HTMLHeadingElement>(null)
+  const heroLine2Ref = useRef<HTMLHeadingElement>(null)
+  const heroTagRef = useRef<HTMLParagraphElement>(null)
+  const heroBtnsRef = useRef<HTMLDivElement>(null)
+  const heroScrollDotRef = useRef<HTMLDivElement>(null)
+  
+  const bookColRef = useRef<HTMLDivElement>(null)
+  const buyColRef = useRef<HTMLDivElement>(null)
+  
+  const storyLabelRef = useRef<HTMLDivElement>(null)
+  const storyHead1Ref = useRef<HTMLHeadingElement>(null)
+  const storyHead2Ref = useRef<HTMLHeadingElement>(null)
+  const storyAttrRef = useRef<HTMLParagraphElement>(null)
+  const storyP1Ref = useRef<HTMLParagraphElement>(null)
+  const storyP2Ref = useRef<HTMLParagraphElement>(null)
+  
+  const testimonialsCardsRef = useRef<(HTMLDivElement | null)[]>([])
+  
   const merchHeadRef = useRef<HTMLHeadingElement>(null)
-  const merchSubRef = useRef<HTMLParagraphElement>(null)
-
-  const whyHeadRef = useRef<HTMLHeadingElement>(null)
-
-  const finalRef = useRef<HTMLDivElement>(null)
+  const merchCardsRef = useRef<(HTMLDivElement | null)[]>([])
+  
+  const ctaContentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // HERO ANIMATIONS (delay 0.2s)
-    const tl = gsap.timeline({ delay: 0.2 })
-
-    if (preRef.current) {
-      tl.fromTo(preRef.current, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" })
+    // 1. Hero
+    const tl = gsap.timeline()
+    
+    if (heroLabelRef.current) {
+      tl.fromTo(heroLabelRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" },
+        0.3
+      )
     }
 
-    if (headingRef.current) {
-      const words = headingRef.current.querySelectorAll(".word")
-      if (words.length > 0) {
-        tl.fromTo(
-          words,
-          { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, stagger: 0.055, duration: 0.8, ease: "power3.out" },
-          "<0.1"
-        )
-      }
+    if (heroLine1Ref.current && heroLine2Ref.current) {
+      const words1 = splitTextIntoWords(heroLine1Ref.current)
+      const words2 = splitTextIntoWords(heroLine2Ref.current)
+      
+      tl.to([...words1, ...words2], {
+        y: 0,
+        opacity: 1,
+        stagger: 0.07,
+        duration: 1,
+        ease: "power3.out"
+      }, "+=0")
+    }
+    
+    if (heroTagRef.current) {
+      tl.fromTo(heroTagRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" },
+        "+=0"
+      )
+    }
+    
+    if (heroBtnsRef.current) {
+      tl.fromTo(heroBtnsRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
+        "+=0"
+      )
     }
 
-    if (subRef.current) {
-      tl.fromTo(subRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }, "-=0.4")
+    if (heroScrollDotRef.current) {
+      gsap.fromTo(heroScrollDotRef.current,
+        { y: 0, opacity: 1 },
+        { y: 56, opacity: 0, duration: 1.5, ease: "power1.inOut", repeat: -1 }
+      )
     }
-
-    if (badgesRef.current) {
-      tl.fromTo(badgesRef.current, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" }, "-=0.3")
-    }
-
-    // EBOOK CONTENT ANIMATIONS
-    if (ebookImageRef.current) {
-      gsap.fromTo(
-        ebookImageRef.current,
-        { x: -60, opacity: 0 },
+    
+    // 2. Product Split
+    if (bookColRef.current) {
+      gsap.fromTo(bookColRef.current,
+        { x: -50, opacity: 0 },
         {
-          x: 0,
-          opacity: 1,
-          duration: 1,
-          ease: "power3.out",
-          delay: 0.3,
+          x: 0, opacity: 1, duration: 1, ease: "power3.out",
           scrollTrigger: {
-            trigger: ebookImageRef.current,
-            start: "top 80%",
-            once: true,
+            trigger: bookColRef.current,
+            start: "top 75%",
+            once: true
           },
           onComplete: () => {
-            gsap.to(ebookImageRef.current, {
-              y: "-=6",
-              duration: 3,
-              ease: "sine.inOut",
-              repeat: -1,
-              yoyo: true,
+            const bookCover = bookColRef.current?.querySelector(".book-cover")
+            if (bookCover) {
+              gsap.fromTo(bookCover, 
+                { y: 0 },
+                { y: -8, duration: 2, ease: "sine.inOut", repeat: -1, yoyo: true }
+              )
+            }
+          }
+        }
+      )
+    }
+    
+    if (buyColRef.current) {
+      gsap.fromTo(buyColRef.current,
+        { x: 50, opacity: 0 },
+        {
+          x: 0, opacity: 1, duration: 1, ease: "power3.out", delay: 0.15,
+          scrollTrigger: {
+            trigger: buyColRef.current,
+            start: "top 75%",
+            once: true
+          }
+        }
+      )
+    }
+    
+    // 3. Story
+    if (storyLabelRef.current) {
+      ScrollTrigger.create({
+        trigger: storyLabelRef.current,
+        start: "top 80%",
+        once: true,
+        onEnter: () => {
+          gsap.fromTo(storyLabelRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 })
+          
+          if (storyHead1Ref.current && storyHead2Ref.current) {
+            const words1 = splitTextIntoWords(storyHead1Ref.current)
+            const words2 = splitTextIntoWords(storyHead2Ref.current)
+            gsap.to([...words1, ...words2], {
+              y: 0, opacity: 1, stagger: 0.05, duration: 0.8, delay: 0.2
             })
-          },
+          }
+          
+          if (storyAttrRef.current) {
+            gsap.fromTo(storyAttrRef.current, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, delay: 0.8 })
+          }
+          
+          if (storyP1Ref.current && storyP2Ref.current) {
+            gsap.fromTo([storyP1Ref.current, storyP2Ref.current], 
+              { y: 24, opacity: 0 }, 
+              { y: 0, opacity: 1, stagger: 0.15, duration: 0.7, delay: 1 }
+            )
+          }
         }
-      )
+      })
     }
 
-    if (ebookContentRef.current) {
-      const children = ebookContentRef.current.children
-      gsap.fromTo(
-        children,
-        { y: 24, opacity: 0 },
+    // 4. Testimonials
+    const validTestimonials = testimonialsCardsRef.current.filter(Boolean) as HTMLDivElement[]
+    if (validTestimonials.length > 0) {
+      gsap.fromTo(validTestimonials,
+        { y: 40, opacity: 0 },
         {
-          y: 0,
-          opacity: 1,
-          stagger: 0.1,
-          duration: 0.7,
-          ease: "power2.out",
+          y: 0, opacity: 1, stagger: 0.12, duration: 0.7, ease: "power2.out",
           scrollTrigger: {
-            trigger: ebookContentRef.current,
-            start: "top 80%",
-            once: true,
-          },
+            trigger: validTestimonials[0],
+            start: "top 85%",
+            once: true
+          }
         }
       )
     }
-
-    // MERCH SECTION
+    
+    // 5. Merch
     if (merchHeadRef.current) {
-      const words = merchHeadRef.current.querySelectorAll(".word")
-      if (words.length > 0) {
-        gsap.fromTo(
-          words,
-          { y: 40, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            stagger: 0.05,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: merchHeadRef.current,
-              start: "top 85%",
-              once: true,
-            },
+      ScrollTrigger.create({
+        trigger: merchHeadRef.current,
+        start: "top 85%",
+        once: true,
+        onEnter: () => {
+          if (merchHeadRef.current) {
+            const words = splitTextIntoWords(merchHeadRef.current)
+            gsap.to(words, { y: 0, opacity: 1, stagger: 0.05, duration: 0.8 })
           }
-        )
-      }
+        }
+      })
     }
-
-    if (merchSubRef.current) {
-      gsap.fromTo(
-        merchSubRef.current,
-        { y: 20, opacity: 0 },
+    
+    const validMerchCards = merchCardsRef.current.filter(Boolean) as HTMLDivElement[]
+    if (validMerchCards.length > 0) {
+      gsap.fromTo(validMerchCards,
+        { y: 40, opacity: 0 },
         {
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
-          ease: "power2.out",
+          y: 0, opacity: 1, stagger: 0.12, duration: 0.7, ease: "power2.out",
           scrollTrigger: {
-            trigger: merchSubRef.current,
+            trigger: validMerchCards[0],
             start: "top 85%",
-            once: true,
-          },
+            once: true
+          }
         }
       )
     }
 
-    gsap.fromTo(
-      ".merch-card",
-      { y: 40, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        stagger: 0.1,
-        duration: 0.7,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".merch-grid",
-          start: "top 85%",
-          once: true,
-        },
-      }
-    )
+    validMerchCards.forEach((wrapper) => {
+      const glow = wrapper.querySelector(".merch-glow") as HTMLElement
+      const inner = wrapper.querySelector(".merch-inner") as HTMLElement
+      const image = wrapper.querySelector("img") as HTMLElement
 
-    // WHY HISTOBIT
-    if (whyHeadRef.current) {
-      const words = whyHeadRef.current.querySelectorAll(".word")
-      if (words.length > 0) {
-        gsap.fromTo(
-          words,
-          { y: 40, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            stagger: 0.05,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: whyHeadRef.current,
-              start: "top 85%",
-              once: true,
-            },
-          }
-        )
-      }
-    }
+      if (!inner) return
 
-    gsap.fromTo(
-      ".why-card",
-      { y: 40, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        stagger: 0.12,
-        duration: 0.7,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".why-grid",
-          start: "top 85%",
-          once: true,
-        },
+      function handleMouseMove(e: MouseEvent) {
+        const rect = inner.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+        const centerX = rect.width / 2
+        const centerY = rect.height / 2
+        const rotateY = ((x - centerX) / centerX) * 6
+        const rotateX = ((centerY - y) / centerY) * 6
+        
+        inner.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`
       }
-    )
 
-    // FINAL CTA
-    if (finalRef.current) {
-      gsap.fromTo(
-        finalRef.current,
-        { y: 30, opacity: 0 },
+      function handleMouseEnter() {
+        inner.style.transition = "transform 300ms ease-out"
+        inner.style.transform = "perspective(1000px) scale(1.03)"
+        
+        if (glow) {
+          glow.style.opacity = "1"
+          glow.style.transform = "scale(1.0)"
+        }
+        if (image) {
+          image.style.transition = "filter 500ms ease"
+          image.style.filter = "grayscale(0%)"
+        }
+        
+        setTimeout(() => {
+          inner.style.transition = "none"
+        }, 300)
+      }
+
+      function handleMouseLeave() {
+        inner.style.transition = "transform 400ms ease"
+        inner.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1.0)"
+        
+        if (glow) {
+          glow.style.opacity = "0"
+          glow.style.transform = "scale(0.85)"
+        }
+        if (image) {
+          image.style.filter = "grayscale(100%)"
+        }
+      }
+
+      inner.addEventListener("mousemove", handleMouseMove)
+      inner.addEventListener("mouseenter", handleMouseEnter)
+      inner.addEventListener("mouseleave", handleMouseLeave)
+    })
+    
+    // 6. CTA
+    if (ctaContentRef.current) {
+      gsap.fromTo(ctaContentRef.current,
+        { y: 40, opacity: 0 },
         {
-          y: 0,
-          opacity: 1,
-          duration: 0.7,
-          ease: "power2.out",
+          y: 0, opacity: 1, duration: 0.8, ease: "power2.out",
           scrollTrigger: {
-            trigger: finalRef.current,
+            trigger: ctaContentRef.current,
             start: "top 85%",
-            once: true,
-          },
+            once: true
+          }
         }
       )
     }
+
   }, [])
 
-  const handleCardMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const card = e.currentTarget
-    const rect = card.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    const centerX = rect.width / 2
-    const centerY = rect.height / 2
-    const rotateX = ((y - centerY) / centerY) * -6
-    const rotateY = ((x - centerX) / centerX) * 6
-    card.style.transform = `scale(1.03) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
+  const scrollToMerch = () => {
+    const section = document.getElementById("merch-section")
+    if (section) {
+      window.scrollTo({ top: section.offsetTop, behavior: "smooth" })
+    }
   }
 
-  const handleCardMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    const card = e.currentTarget
-    card.style.transform = "scale(1) rotateX(0deg) rotateY(0deg)"
-  }
+  const merchData = [
+    {
+      tag: "APPAREL",
+      name: "The Campaign Tee",
+      detail: "100% washed cotton · Olive · Unisex",
+      price: "₹1,499",
+      image: "/images/merch_tee.png",
+    },
+    {
+      tag: "APPAREL",
+      name: "The Historian Hoodie",
+      detail: "Heavyweight fleece · Sand · Unisex",
+      price: "₹2,999",
+      image: "/images/merch_hoodie.png",
+    },
+  ]
 
   return (
     <>
       <CustomCursor />
       <Navigation />
+      
       <main style={{ backgroundColor: "#faf5ee", paddingTop: 64 }}>
-        {/* === SECTION 1: HERO HEADER === */}
-        <section
-          style={{
-            background: "radial-gradient(ellipse 80% 60% at 50% 40%, #efd5a8 0%, #f5e6c8 40%, #faf5ee 100%)",
-            height: 380,
+        {/* SECTION 1 — CINEMATIC HERO */}
+        <section style={{ 
+          minHeight: "100vh", 
+          backgroundColor: "#1a1008", 
+          position: "relative", 
+          overflow: "hidden" 
+        }}>
+          <div className="grain-overlay" />
+          
+          <div style={{
+            fontFamily: "'EB Garamond', serif",
+            fontStyle: "italic",
+            fontSize: "clamp(120px, 18vw, 280px)",
+            fontWeight: 400,
+            color: "rgba(250, 245, 238, 0.03)",
+            position: "absolute",
+            bottom: "-40px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            whiteSpace: "nowrap",
+            userSelect: "none",
+            pointerEvents: "none",
+            letterSpacing: "-0.02em",
+            zIndex: 1
+          }}>
+            HISTOBIT
+          </div>
+          
+          <div style={{
+            position: "relative",
+            zIndex: 10,
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            position: "relative",
-          }}
-        >
-          <div className="grain-overlay" />
-          <div style={{ maxWidth: 720, padding: "0 24px", textAlign: "center", position: "relative", zIndex: 1 }}>
-            <div
-              ref={preRef}
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: 11,
-                textTransform: "uppercase",
-                letterSpacing: "0.14em",
-                color: "#c2652a",
-                fontWeight: 500,
-                marginBottom: 20,
-              }}
-            >
-              HISTOBIT · THE STORE
+            height: "100vh",
+            textAlign: "center",
+            padding: "80px 24px 0 24px"
+          }}>
+            <div ref={heroLabelRef} style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 11,
+              textTransform: "uppercase",
+              letterSpacing: "0.18em",
+              color: "#c2652a",
+              fontWeight: 500,
+              marginBottom: 28
+            }}>
+              THE HISTOBIT STORE
             </div>
-            <h1
-              ref={headingRef}
-              style={{
+            
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <h1 ref={heroLine1Ref} style={{
                 fontFamily: "'EB Garamond', serif",
                 fontStyle: "italic",
                 fontWeight: 400,
-                fontSize: "clamp(48px, 6vw, 80px)",
-                lineHeight: 1.05,
-                color: "#3a302a",
-                textAlign: "center",
-                margin: 0,
-              }}
-              dangerouslySetInnerHTML={{ __html: splitTextIntoWords("Wear the History.") }}
-            />
-            <p
-              ref={subRef}
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: 17,
-                color: "#8a7a6e",
-                lineHeight: 1.65,
-                maxWidth: 480,
-                margin: "24px auto 0",
-                textAlign: "center",
-              }}
-            >
-              Minimal pieces for people who take history seriously.
-              Warm materials. Timeless design. Made to last.
+                fontSize: "clamp(56px, 8vw, 120px)",
+                lineHeight: 0.95,
+                color: "#faf5ee",
+                margin: 0
+              }}>
+                The Logistic
+              </h1>
+              <h1 ref={heroLine2Ref} style={{
+                fontFamily: "'EB Garamond', serif",
+                fontStyle: "italic",
+                fontWeight: 400,
+                fontSize: "clamp(56px, 8vw, 120px)",
+                lineHeight: 0.95,
+                color: "#faf5ee",
+                marginLeft: "clamp(0px, 6vw, 80px)",
+                margin: 0
+              }}>
+                Nightmare.
+              </h1>
+            </div>
+            
+            <div style={{
+              width: 60,
+              height: 1,
+              background: "#c2652a",
+              margin: "40px auto",
+              opacity: 0.6
+            }} />
+            
+            <p ref={heroTagRef} style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 18,
+              color: "rgba(250, 245, 238, 0.65)",
+              letterSpacing: "0.02em",
+              maxWidth: 520,
+              textAlign: "center",
+              lineHeight: 1.5,
+              margin: 0
+            }}>
+              Ancient Military Logistics. Six Commanders. One Brutal Truth.
             </p>
-            <div ref={badgesRef} style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 24 }}>
-              <div
+            
+            <div ref={heroBtnsRef} style={{
+              marginTop: 48,
+              display: "flex",
+              gap: 20,
+              justifyContent: "center",
+              flexWrap: "wrap"
+            }}>
+              <button 
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
+                  background: "#c2652a",
+                  color: "#faf5ee",
+                  padding: "16px 40px",
+                  borderRadius: 8,
                   fontFamily: "var(--font-body)",
-                  fontSize: 12,
-                  color: "#8a7a6e",
-                  border: "1px solid rgba(216,208,200,0.8)",
-                  borderRadius: 20,
-                  padding: "6px 14px",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  border: "none",
+                  cursor: "pointer",
+                  letterSpacing: "0.01em",
+                  transition: "background 200ms, transform 200ms"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#a8521f"
+                  e.currentTarget.style.transform = "scale(0.97)"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#c2652a"
+                  e.currentTarget.style.transform = "scale(1)"
                 }}
               >
-                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#c2652a", flexShrink: 0 }} />
-                Fulfilled by Qikink
-              </div>
-              <div
+                Get the Ebook — ₹499
+              </button>
+              
+              <button 
+                onClick={scrollToMerch}
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
+                  background: "transparent",
+                  color: "rgba(250, 245, 238, 0.75)",
+                  padding: "16px 32px",
+                  borderRadius: 8,
+                  border: "1px solid rgba(250, 245, 238, 0.25)",
                   fontFamily: "var(--font-body)",
-                  fontSize: 12,
-                  color: "#8a7a6e",
-                  border: "1px solid rgba(216,208,200,0.8)",
-                  borderRadius: 20,
-                  padding: "6px 14px",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  cursor: "pointer",
+                  transition: "border-color 200ms, color 200ms"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(250, 245, 238, 0.6)"
+                  e.currentTarget.style.color = "#faf5ee"
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(250, 245, 238, 0.25)"
+                  e.currentTarget.style.color = "rgba(250, 245, 238, 0.75)"
                 }}
               >
-                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#c2652a", flexShrink: 0 }} />
-                Ships Across India
-              </div>
+                Browse Merch ↓
+              </button>
+            </div>
+          </div>
+          
+          <div style={{
+            position: "absolute",
+            bottom: 40,
+            left: "50%",
+            transform: "translateX(-50%)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            zIndex: 10
+          }}>
+            <div style={{ position: "relative", width: 1, height: 60, background: "rgba(250, 245, 238, 0.2)" }}>
+              <div ref={heroScrollDotRef} style={{
+                width: 4,
+                height: 4,
+                borderRadius: "50%",
+                background: "#c2652a",
+                position: "absolute",
+                top: 0,
+                left: "50%",
+                transform: "translateX(-50%)"
+              }} />
+            </div>
+            <div style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 10,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "rgba(250, 245, 238, 0.3)",
+              marginTop: 8,
+              textAlign: "center"
+            }}>
+              SCROLL
             </div>
           </div>
         </section>
 
-        {/* === SECTION 2: EBOOK FEATURED PRODUCT === */}
-        <section
-          style={{
-            backgroundColor: "#faf5ee",
-            padding: "100px 48px",
-            maxWidth: 1100,
-            margin: "0 auto",
-          }}
-        >
-          <div
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: 11,
-              textTransform: "uppercase",
-              letterSpacing: "0.14em",
-              color: "#c2652a",
-              fontWeight: 500,
-              marginBottom: 48,
-            }}
-          >
-            DIGITAL PRODUCT
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-[80px]">
+        {/* SECTION 2 — PRODUCT SPLIT */}
+        <section style={{
+          backgroundColor: "#faf5ee",
+          padding: "120px 48px"
+        }}>
+          <div className="grid grid-cols-1 md:grid-cols-[55%_45%] gap-14 md:gap-20 max-w-[1160px] mx-auto">
             {/* LEFT COLUMN */}
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <div ref={ebookImageRef} style={{ display: "inline-block", position: "relative" }}>
-                <div
-                  style={{
-                    width: 280,
-                    height: 380,
-                    background: "linear-gradient(135deg, #3a302a 0%, #1a1008 100%)",
-                    borderRadius: "4px 12px 12px 4px",
-                    boxShadow: "-8px 8px 32px rgba(58,48,42,0.4), -2px 2px 8px rgba(0,0,0,0.3)",
+            <div ref={bookColRef} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
+                <div style={{ position: "relative", width: "fit-content" }}>
+                  <div className="book-cover" style={{
+                    width: "clamp(240px, 100%, 300px)",
+                    height: "clamp(336px, 100%, 420px)",
+                    background: "linear-gradient(160deg, #2a1e14 0%, #1a1008 60%, #0d0804 100%)",
+                    borderRadius: "6px 16px 16px 6px",
+                    boxShadow: "-12px 16px 48px rgba(0,0,0,0.5), -3px 3px 12px rgba(0,0,0,0.3), inset 1px 0 0 rgba(255,255,255,0.05)",
                     position: "relative",
                     overflow: "hidden",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    padding: 32,
-                  }}
-                >
-                  <div
-                    style={{
+                    padding: "40px 32px",
+                    cursor: "default"
+                  }}>
+                    {/* Layer 1 - texture lines overlay */}
+                    <div style={{
                       position: "absolute",
                       inset: 0,
-                      background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(250,245,238,0.02) 2px, rgba(250,245,238,0.02) 4px)",
+                      background: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(250,245,238,0.015) 3px, rgba(250,245,238,0.015) 4px)",
                       pointerEvents: "none",
-                    }}
-                  />
-                  <div
-                    style={{
+                      zIndex: 1
+                    }} />
+                    
+                    {/* Layer 2 - top accent stripe */}
+                    <div style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: 3,
+                      background: "linear-gradient(to right, #c2652a, rgba(194, 101, 42, 0.3))",
+                      zIndex: 2
+                    }} />
+                    
+                    {/* Layer 3 - spine shadow on the left */}
+                    <div style={{
                       position: "absolute",
                       left: 0,
                       top: 0,
                       bottom: 0,
-                      width: 18,
-                      background: "linear-gradient(to right, #0d0804, #1a1008)",
-                      borderRadius: "4px 0 0 4px",
-                    }}
-                  />
-                  <div
-                    style={{
-                      fontFamily: "'EB Garamond', serif",
-                      fontStyle: "italic",
-                      fontSize: 22,
-                      color: "#faf5ee",
+                      width: 24,
+                      background: "linear-gradient(to right, #080402, rgba(0,0,0,0))",
+                      zIndex: 2,
+                      borderRadius: "6px 0 0 6px"
+                    }} />
+                    
+                    {/* Layer 4 - centered content */}
+                    <div style={{
+                      position: "relative",
+                      zIndex: 3,
                       textAlign: "center",
-                      lineHeight: 1.3,
-                      marginBottom: 16,
-                      position: "relative",
-                      zIndex: 1,
-                    }}
-                  >
-                    The Logistic Nightmare
-                  </div>
-                  <div
-                    style={{
-                      width: 40,
-                      height: 1,
-                      background: "rgba(194,101,42,0.6)",
-                      margin: "0 auto 16px",
-                      position: "relative",
-                      zIndex: 1,
-                    }}
-                  />
-                  <div
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: 12,
-                      letterSpacing: "0.12em",
-                      textTransform: "uppercase",
-                      color: "rgba(250,245,238,0.5)",
-                      position: "relative",
-                      zIndex: 1,
-                    }}
-                  >
-                    Histobit
-                  </div>
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: 24,
-                      right: 24,
+                      width: "100%"
+                    }}>
+                      <div style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: 9,
+                        letterSpacing: "0.2em",
+                        textTransform: "uppercase",
+                        color: "rgba(194, 101, 42, 0.7)",
+                        marginBottom: 32
+                      }}>
+                        HISTOBIT PUBLISHING
+                      </div>
+                      
+                      <div style={{
+                        fontFamily: "'EB Garamond', serif",
+                        fontStyle: "italic",
+                        fontSize: 26,
+                        color: "#faf5ee",
+                        lineHeight: 1.2,
+                        textAlign: "center",
+                        marginBottom: 20
+                      }}>
+                        The Logistic Nightmare
+                      </div>
+                      
+                      <div style={{
+                        width: 32,
+                        height: 1,
+                        background: "rgba(194, 101, 42, 0.5)",
+                        margin: "0 auto 20px"
+                      }} />
+                      
+                      <div style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: 11,
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                        color: "rgba(250, 245, 238, 0.4)",
+                        marginBottom: 40
+                      }}>
+                        Ancient Military Logistics
+                      </div>
+                    </div>
+                    
+                    {/* Large H monogram watermark */}
+                    <div style={{
                       fontFamily: "'EB Garamond', serif",
                       fontStyle: "italic",
-                      fontSize: 64,
-                      color: "rgba(250,245,238,0.06)",
+                      fontSize: 80,
+                      color: "rgba(250, 245, 238, 0.04)",
                       lineHeight: 1,
                       userSelect: "none",
-                    }}
-                  >
-                    H
+                      position: "absolute",
+                      bottom: 20,
+                      right: 20,
+                      zIndex: 0
+                    }}>
+                      H
+                    </div>
                   </div>
                 </div>
-                <div
-                  style={{
-                    width: 240,
-                    height: 20,
-                    background: "radial-gradient(ellipse, rgba(58,48,42,0.25) 0%, transparent 70%)",
-                    margin: "16px auto 0",
-                    filter: "blur(8px)",
-                  }}
-                />
+              </div>
+              
+              <div style={{
+                width: 260,
+                height: 24,
+                background: "radial-gradient(ellipse, rgba(0,0,0,0.35) 0%, transparent 70%)",
+                margin: "12px auto 0",
+                filter: "blur(10px)"
+              }} />
+              
+              <div style={{
+                fontFamily: "var(--font-body)",
+                fontSize: 12,
+                color: "#8a7a6e",
+                textAlign: "center",
+                marginTop: 20,
+                letterSpacing: "0.04em"
+              }}>
+                87 pages · PDF · Instant delivery
               </div>
             </div>
 
             {/* RIGHT COLUMN */}
-            <div ref={ebookContentRef}>
-              <div
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: 11,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                  color: "#c2652a",
-                  fontWeight: 500,
-                  marginBottom: 16,
-                }}
-              >
-                EBOOK · PDF DOWNLOAD
+            <div ref={buyColRef} style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              <div style={{
+                fontFamily: "var(--font-body)",
+                fontSize: 11,
+                textTransform: "uppercase",
+                letterSpacing: "0.12em",
+                color: "#c2652a",
+                fontWeight: 500,
+                marginBottom: 20
+              }}>
+                DIGITAL PRODUCT · EBOOK
               </div>
-              <h2
-                style={{
-                  fontFamily: "'EB Garamond', serif",
-                  fontStyle: "italic",
-                  fontWeight: 400,
-                  fontSize: "clamp(32px, 4vw, 52px)",
-                  lineHeight: 1.1,
-                  color: "#3a302a",
-                  marginBottom: 8,
-                }}
-              >
+              
+              <h2 style={{
+                fontFamily: "'EB Garamond', serif",
+                fontStyle: "italic",
+                fontSize: "clamp(32px, 4vw, 48px)",
+                lineHeight: 1.05,
+                color: "#3a302a",
+                marginBottom: 12,
+                marginTop: 0
+              }}>
                 The Logistic Nightmare
               </h2>
-              <div
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: 15,
-                  color: "#8a7a6e",
-                  marginBottom: 24,
-                  lineHeight: 1.5,
-                }}
-              >
+              
+              <p style={{
+                fontFamily: "var(--font-body)",
+                fontSize: 15,
+                color: "#8a7a6e",
+                lineHeight: 1.5,
+                marginBottom: 24,
+                marginTop: 0
+              }}>
                 Ancient Military Logistics — Alexander, Rome, Hannibal, the Mongols, Napoleon
-              </div>
-              <div style={{ display: "flex", alignItems: "center", marginBottom: 28 }}>
-                <div style={{ color: "#c2652a", fontSize: 16, letterSpacing: 2 }}>★★★★★</div>
-                <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "#8a7a6e", marginLeft: 10 }}>
-                  4.9 · 127 readers
+              </p>
+              
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 32 }}>
+                <div style={{ fontSize: 15, color: "#c2652a", letterSpacing: 3 }}>★★★★★</div>
+                <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "#8a7a6e", marginLeft: 12 }}>
+                  4.9 out of 5 · 127 readers
                 </div>
               </div>
-              <p
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: 16,
-                  lineHeight: 1.8,
+              
+              <div style={{ width: "100%", height: 1, background: "rgba(216, 208, 200, 0.6)", marginBottom: 32 }} />
+              
+              <div style={{ display: "flex", alignItems: "baseline", gap: 16, marginBottom: 8 }}>
+                <div style={{
+                  fontFamily: "'EB Garamond', serif",
+                  fontStyle: "italic",
+                  fontSize: 52,
                   color: "#3a302a",
-                  marginBottom: 32,
-                }}
-              >
-                Every army in history ran on one thing that had nothing to do with courage: logistics. This book is the story of how the greatest commanders in ancient history fed, moved, and sustained armies across deserts, mountains, and oceans — and how those who failed to solve the supply problem lost everything. Alexander the Great. The Roman Legion. Hannibal crossing the Alps. The Mongol war machine. Napoleon's catastrophic Russian march. Six commanders. Six logistics systems. One brutal truth: you win before the battle begins, or you don't win at all.
-              </p>
-              <div>
-                {[
-                  "6 deep chapters — one per commander, one per logistics system",
-                  "87 pages of original research — no Wikipedia, no mythology",
-                  "Instant PDF delivery to your inbox after purchase",
-                  "Written in Histobit's cinematic, authoritative style",
-                ].map((item, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
-                    <div style={{ width: 20, height: 20, borderRadius: 4, background: "#c2652a", flexShrink: 0 }} />
-                    <div style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "#3a302a", lineHeight: 1.5 }}>
-                      {item}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 32, marginBottom: 24 }}>
-                <div
-                  style={{
-                    fontFamily: "'EB Garamond', serif",
-                    fontStyle: "italic",
-                    fontSize: 40,
-                    color: "#c2652a",
-                    fontWeight: 400,
-                  }}
-                >
+                  fontWeight: 400,
+                  lineHeight: 1
+                }}>
                   ₹499
                 </div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 18,
-                    color: "#8a7a6e",
-                    textDecoration: "line-through",
-                  }}
-                >
+                <div style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: 18,
+                  color: "#8a7a6e",
+                  textDecoration: "line-through"
+                }}>
                   ₹799
                 </div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 12,
-                    fontWeight: 500,
-                    background: "rgba(194,101,42,0.12)",
-                    color: "#c2652a",
-                    padding: "4px 10px",
-                    borderRadius: 4,
-                  }}
-                >
+                <div style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "#faf5ee",
+                  background: "#c2652a",
+                  padding: "4px 10px",
+                  borderRadius: 4,
+                  alignSelf: "center"
+                }}>
                   38% OFF
                 </div>
               </div>
-              <button
+              
+              <div style={{
+                fontFamily: "var(--font-body)",
+                fontSize: 13,
+                color: "#8a7a6e",
+                marginBottom: 28
+              }}>
+                One-time payment. Yours forever. Instant PDF delivery.
+              </div>
+              
+              <button 
                 style={{
                   width: "100%",
-                  padding: "16px 32px",
+                  padding: "18px 32px",
                   borderRadius: 8,
                   background: "#c2652a",
                   color: "#faf5ee",
@@ -617,7 +743,8 @@ export default function ShopPage() {
                   fontWeight: 500,
                   border: "none",
                   cursor: "pointer",
-                  transition: "background 200ms, transform 150ms",
+                  letterSpacing: "0.01em",
+                  transition: "background 200ms, transform 200ms"
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "#a8521f"
@@ -630,111 +757,328 @@ export default function ShopPage() {
               >
                 Buy Now — Instant PDF Delivery
               </button>
-              <div
-                style={{
+              
+              <div style={{
+                marginTop: 20,
+                display: "flex",
+                gap: 24,
+                flexWrap: "wrap"
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: "var(--font-body)", fontSize: 12, color: "#8a7a6e" }}>
+                  <span>🔒</span> Secure payment
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: "var(--font-body)", fontSize: 12, color: "#8a7a6e" }}>
+                  <span>📄</span> PDF format
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: "var(--font-body)", fontSize: 12, color: "#8a7a6e" }}>
+                  <span>⚡</span> Instant delivery
+                </div>
+              </div>
+              
+              <div style={{ width: "100%", height: 1, background: "rgba(216, 208, 200, 0.6)", marginTop: 32, marginBottom: 32 }} />
+              
+              <div>
+                <div style={{
                   fontFamily: "var(--font-body)",
-                  fontSize: 12,
+                  fontSize: 11,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.12em",
                   color: "#8a7a6e",
-                  textAlign: "center",
-                  marginTop: 12,
-                }}
-              >
-                Secure payment · Instant delivery · PDF format
+                  fontWeight: 500,
+                  marginBottom: 20
+                }}>
+                  WHAT YOU GET
+                </div>
+                
+                {[
+                  "6 deep chapters — one per commander, one per logistics system",
+                  "87 pages of original research — no Wikipedia, no mythology",
+                  "Written in Histobit's cinematic, authoritative style",
+                  "Instant PDF to your inbox the moment you pay"
+                ].map((item, idx) => (
+                  <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
+                    <div style={{
+                      width: 18,
+                      height: 18,
+                      borderRadius: 3,
+                      background: "#c2652a",
+                      flexShrink: 0,
+                      marginTop: 2
+                    }} />
+                    <div style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "#3a302a", lineHeight: 1.5 }}>
+                      {item}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </section>
 
-        {/* === SECTION 3: DIVIDER === */}
-        <section
-          style={{
-            backgroundColor: "#faf5ee",
-            padding: "0 48px",
-            maxWidth: 900,
-            margin: "0 auto",
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{
-              width: 1,
-              height: 80,
-              background: "rgba(216,208,200,0.8)",
-              margin: "0 auto",
-            }}
-          />
-        </section>
-
-        {/* === SECTION 4: MERCH SECTION === */}
-        <section
-          style={{
-            backgroundColor: "#faf5ee",
-            padding: "80px 48px 120px 48px",
-            maxWidth: 1100,
-            margin: "0 auto",
-          }}
-        >
-          <div
-            style={{
+        {/* SECTION 3 — STORY SECTION */}
+        <section style={{
+          background: "linear-gradient(180deg, #faf5ee 0%, #f0e8dc 100%)",
+          padding: "120px 48px"
+        }}>
+          <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
+            <div ref={storyLabelRef} style={{
               fontFamily: "var(--font-body)",
               fontSize: 11,
               textTransform: "uppercase",
               letterSpacing: "0.14em",
               color: "#c2652a",
               fontWeight: 500,
-              marginBottom: 16,
-            }}
-          >
-            THE COLLECTION
-          </div>
-          <h2
-            ref={merchHeadRef}
-            style={{
+              marginBottom: 24
+            }}>
+              THE BOOK
+            </div>
+            
+            <h2 ref={storyHead1Ref} style={{
               fontFamily: "'EB Garamond', serif",
               fontStyle: "italic",
-              fontWeight: 400,
-              fontSize: "clamp(32px, 4vw, 48px)",
+              fontSize: "clamp(36px, 5vw, 64px)",
+              lineHeight: 1.05,
               color: "#3a302a",
-              lineHeight: 1.1,
+              marginBottom: 8,
+              marginTop: 0
+            }}>
+              War is not won by armies.
+            </h2>
+            <h2 ref={storyHead2Ref} style={{
+              fontFamily: "'EB Garamond', serif",
+              fontStyle: "italic",
+              fontSize: "clamp(36px, 5vw, 64px)",
+              lineHeight: 1.05,
+              color: "#3a302a",
+              marginBottom: 40,
+              marginLeft: "clamp(0px, 4vw, 60px)",
+              marginTop: 0
+            }}>
+              It is won by the man who feeds them.
+            </h2>
+            
+            <p ref={storyAttrRef} style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 13,
+              color: "#8a7a6e",
+              marginBottom: 64,
+              marginTop: 0
+            }}>
+              — Ancient military proverb
+            </p>
+            
+            <p ref={storyP1Ref} style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 17,
+              lineHeight: 1.85,
+              color: "#3a302a",
+              maxWidth: 720,
+              margin: "0 auto 28px auto"
+            }}>
+              "Every battle you know by name was decided before it began. Not in strategy meetings, not in the brilliance of the charge — but in the supply lines, the grain depots, the river crossings, and the men who kept 50,000 soldiers fed across 2,000 miles of hostile territory. This is the history that gets left out of every documentary."
+            </p>
+            
+            <p ref={storyP2Ref} style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 17,
+              lineHeight: 1.85,
+              color: "#3a302a",
+              maxWidth: 720,
+              margin: "0 auto 28px auto"
+            }}>
+              "The Logistic Nightmare traces six of the greatest military machines in history and the one question that defined them all: how do you keep an army alive long enough to win? Alexander solved it. Hannibal almost solved it. Napoleon didn't. The Mongols rewrote the rules entirely. This book tells you exactly how — and why it still matters."
+            </p>
+          </div>
+        </section>
+
+        {/* SECTION 4 — SOCIAL PROOF */}
+        <section style={{
+          backgroundColor: "#faf5ee",
+          padding: "100px 48px"
+        }}>
+          <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+            <h2 style={{
+              fontFamily: "'EB Garamond', serif",
+              fontStyle: "italic",
+              fontSize: "clamp(28px, 3.5vw, 40px)",
+              color: "#3a302a",
+              marginBottom: 56,
+              textAlign: "center",
+              marginTop: 0
+            }}>
+              What Readers Say
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-7">
+              {[
+                {
+                  quote: "I've studied military history for 20 years. This is the first book that made me understand why the battles ended the way they did — not who fought, but who ate.",
+                  name: "James K.",
+                  location: "Chicago, USA",
+                  initial: "J"
+                },
+                {
+                  quote: "The chapter on the Mongols alone is worth the price. I had no idea logistics was this cinematic. Read it in one sitting.",
+                  name: "Sarah M.",
+                  location: "London, UK",
+                  initial: "S"
+                },
+                {
+                  quote: "Histobit writes history the way it should be written. No textbook tone. No mythology. Just the brutal, fascinating truth.",
+                  name: "David R.",
+                  location: "Toronto, Canada",
+                  initial: "D"
+                }
+              ].map((card, idx) => (
+                <div 
+                  key={idx}
+                  ref={(el) => { if (el) testimonialsCardsRef.current[idx] = el }}
+                  style={{
+                    backgroundColor: "#faf5ee",
+                    border: "1px solid rgba(216, 208, 200, 0.6)",
+                    borderRadius: 12,
+                    padding: "36px 32px",
+                    boxShadow: "0 2px 16px rgba(58, 48, 42, 0.04)",
+                    transition: "box-shadow 300ms, transform 300ms",
+                    cursor: "default"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = "0 8px 40px rgba(58, 48, 42, 0.1)"
+                    e.currentTarget.style.transform = "translateY(-4px)"
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = "0 2px 16px rgba(58, 48, 42, 0.04)"
+                    e.currentTarget.style.transform = "translateY(0)"
+                  }}
+                >
+                  <span style={{
+                    fontFamily: "'EB Garamond', serif",
+                    fontSize: 56,
+                    color: "#c2652a",
+                    lineHeight: 0.7,
+                    display: "block",
+                    marginBottom: 20
+                  }}>
+                    "
+                  </span>
+                  <div style={{
+                    fontFamily: "'EB Garamond', serif",
+                    fontStyle: "italic",
+                    fontSize: 18,
+                    lineHeight: 1.65,
+                    color: "#3a302a",
+                    marginBottom: 28
+                  }}>
+                    {card.quote}
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <div style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: "50%",
+                      background: "linear-gradient(135deg, #c2652a, #8c3c3c)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center"
+                    }}>
+                      <span style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: 14,
+                        fontWeight: 600,
+                        color: "#faf5ee"
+                      }}>
+                        {card.initial}
+                      </span>
+                    </div>
+                    <div>
+                      <div style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        color: "#3a302a"
+                      }}>
+                        {card.name}
+                      </div>
+                      <div style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: 12,
+                        color: "#8a7a6e",
+                        marginTop: 2
+                      }}>
+                        {card.location}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 5 — MERCH */}
+        <section id="merch-section" style={{
+          backgroundColor: "#f5ede0",
+          padding: "120px 48px"
+        }}>
+          <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+            <div style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 11,
+              textTransform: "uppercase",
+              letterSpacing: "0.14em",
+              color: "#c2652a",
+              fontWeight: 500,
+              marginBottom: 16
+            }}>
+              THE COLLECTION
+            </div>
+            
+            <h2 ref={merchHeadRef} style={{
+              fontFamily: "'EB Garamond', serif",
+              fontStyle: "italic",
+              fontSize: "clamp(36px, 4.5vw, 56px)",
+              color: "#3a302a",
+              lineHeight: 1.05,
               marginBottom: 12,
-            }}
-            dangerouslySetInnerHTML={{ __html: splitTextIntoWords("Wear the Archive") }}
-          />
-          <p
-            ref={merchSubRef}
-            style={{
+              marginTop: 0
+            }}>
+              Wear the Archive.
+            </h2>
+            
+            <p style={{
               fontFamily: "var(--font-body)",
               fontSize: 15,
               color: "#8a7a6e",
-              marginBottom: 56,
-            }}
-          >
-            Minimal pieces. Warm materials. Designed for people who read history, not just watch it.
-          </p>
-
-          <div className="merch-grid grid grid-cols-1 md:grid-cols-2 gap-[32px]">
-            {merchProducts.map((product, i) => (
-              <div
-                key={i}
-                className="merch-card group"
-                style={{ position: "relative" }}
-              >
-                <div
-                  className="glow-layer opacity-0 group-hover:opacity-100 scale-85 group-hover:scale-100 transition-all duration-400"
-                  style={{
+              marginBottom: 60,
+              maxWidth: 500,
+              marginTop: 0
+            }}>
+              Minimal pieces. Warm materials. Designed for people who read history, not just watch it. Fulfilled by Qikink. Ships across India.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {merchData.map((item, idx) => (
+                <div 
+                  key={idx}
+                  ref={(el) => { if (el) merchCardsRef.current[idx] = el }}
+                  style={{ position: "relative" }}
+                >
+                  <div className="merch-glow" style={{
                     position: "absolute",
                     inset: -20,
-                    background: "rgba(194,101,42,0.18)",
+                    background: "rgba(194, 101, 42, 0.15)",
                     filter: "blur(48px)",
                     borderRadius: 36,
                     zIndex: 0,
-                    pointerEvents: "none",
-                  }}
-                />
-                <div
-                  style={{
-                    background: "#faf5ee",
-                    border: "1px solid rgba(216,208,200,0.6)",
+                    opacity: 0,
+                    transform: "scale(0.85)",
+                    transition: "opacity 400ms, transform 400ms",
+                    pointerEvents: "none"
+                  }} />
+                  
+                  <div className="merch-inner" style={{
+                    backgroundColor: "#faf5ee",
+                    border: "1px solid rgba(216, 208, 200, 0.6)",
                     borderRadius: 12,
                     overflow: "hidden",
                     zIndex: 1,
@@ -743,354 +1087,190 @@ export default function ShopPage() {
                     willChange: "transform",
                     display: "flex",
                     flexDirection: "column",
-                    perspective: 1000,
-                    transform: "scale(1) rotateX(0deg) rotateY(0deg)",
-                    transition: "transform 300ms ease-out",
-                  }}
-                  onMouseMove={handleCardMouseMove}
-                  onMouseLeave={handleCardMouseLeave}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transition = "none"
-                  }}
-                >
-                  <div style={{ aspectRatio: "3/4", overflow: "hidden", width: "100%", position: "relative" }}>
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      style={{ objectFit: "cover", filter: "grayscale(100%)", transition: "filter 500ms" }}
-                      className="group-hover:grayscale-0"
-                    />
-                  </div>
-                  <div style={{ padding: "24px 28px 28px" }}>
-                    <div
-                      style={{
+                    height: "100%"
+                  }}>
+                    <div style={{
+                      aspectRatio: "3/4",
+                      overflow: "hidden",
+                      position: "relative"
+                    }}>
+                      <Image 
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        style={{ objectFit: "cover", filter: "grayscale(100%)", transition: "filter 500ms ease" }}
+                      />
+                    </div>
+                    
+                    <div style={{ padding: "24px 28px 28px" }}>
+                      <div style={{
                         fontFamily: "var(--font-body)",
                         fontSize: 11,
                         textTransform: "uppercase",
                         letterSpacing: "0.1em",
                         color: "#c2652a",
                         fontWeight: 500,
-                        marginBottom: 10,
-                      }}
-                    >
-                      {product.tag}
-                    </div>
-                    <div
-                      style={{
+                        marginBottom: 10
+                      }}>
+                        {item.tag}
+                      </div>
+                      
+                      <div style={{
                         fontFamily: "'EB Garamond', serif",
                         fontStyle: "italic",
                         fontSize: 22,
                         color: "#3a302a",
                         lineHeight: 1.2,
-                        marginBottom: 6,
-                      }}
-                    >
-                      {product.name}
-                    </div>
-                    <div
-                      style={{
+                        marginBottom: 6
+                      }}>
+                        {item.name}
+                      </div>
+                      
+                      <div style={{
                         fontFamily: "var(--font-body)",
                         fontSize: 13,
                         color: "#8a7a6e",
-                        marginBottom: 12,
-                      }}
-                    >
-                      {product.detail}
-                    </div>
-                    <div
-                      style={{
+                        marginBottom: 12
+                      }}>
+                        {item.detail}
+                      </div>
+                      
+                      <div style={{
                         fontFamily: "'EB Garamond', serif",
                         fontStyle: "italic",
                         fontSize: 22,
                         color: "#c2652a",
-                        marginBottom: 20,
-                      }}
-                    >
-                      {product.price}
-                    </div>
-                    <a
-                      href="#"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
+                        marginBottom: 20
+                      }}>
+                        {item.price}
+                      </div>
+                      
+                      <Link href="#" target="_blank" style={{
                         fontFamily: "var(--font-body)",
                         fontSize: 13,
                         fontWeight: 500,
                         color: "#c2652a",
-                        textDecoration: "none",
+                        textDecoration: "none"
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.textDecoration = "underline")}
-                      onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
-                    >
-                      Shop on Qikink &rarr;
-                    </a>
+                      onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"}
+                      onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}
+                      >
+                        Shop on Qikink →
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          <div
-            style={{
+              ))}
+            </div>
+            
+            <div style={{
               fontFamily: "var(--font-body)",
               fontSize: 13,
               color: "#8a7a6e",
-              marginTop: 40,
               textAlign: "center",
-            }}
-          >
-            All merch is fulfilled by Qikink and ships across India within 5–7 business days.
-          </div>
-        </section>
-
-        {/* === SECTION 5: WHY HISTOBIT STORE === */}
-        <section
-          style={{
-            backgroundColor: "#3a302a",
-            padding: "100px 48px",
-            width: "100%",
-          }}
-        >
-          <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-            <h2
-              ref={whyHeadRef}
-              style={{
-                fontFamily: "'EB Garamond', serif",
-                fontStyle: "italic",
-                fontSize: "clamp(28px, 4vw, 44px)",
-                color: "#faf5ee",
-                marginBottom: 16,
-                textAlign: "center",
-              }}
-              dangerouslySetInnerHTML={{ __html: splitTextIntoWords("Why People Buy from Histobit") }}
-            />
-            <p
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: 16,
-                color: "rgba(250,245,238,0.65)",
-                textAlign: "center",
-                maxWidth: 520,
-                margin: "16px auto 64px",
-              }}
-            >
-              We don't make merch to make money. We make it for readers who want to carry the history with them.
-            </p>
-
-            <div className="why-grid grid grid-cols-1 md:grid-cols-3 gap-[32px]">
-              <div
-                className="why-card"
-                style={{
-                  background: "rgba(250,245,238,0.04)",
-                  border: "1px solid rgba(250,245,238,0.1)",
-                  borderRadius: 12,
-                  padding: 36,
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'EB Garamond', serif",
-                    fontStyle: "italic",
-                    fontSize: 48,
-                    color: "#c2652a",
-                    opacity: 0.6,
-                    lineHeight: 1,
-                    marginBottom: 16,
-                  }}
-                >
-                  01
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'EB Garamond', serif",
-                    fontStyle: "italic",
-                    fontSize: 22,
-                    color: "#faf5ee",
-                    marginBottom: 12,
-                  }}
-                >
-                  Quality First
-                </div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 14,
-                    color: "rgba(250,245,238,0.65)",
-                    lineHeight: 1.7,
-                  }}
-                >
-                  Every piece is tested before it's listed. Washed cotton that actually feels worn-in. Heavyweight fleece that lasts winters. No fast fashion.
-                </div>
-              </div>
-
-              <div
-                className="why-card"
-                style={{
-                  background: "rgba(250,245,238,0.04)",
-                  border: "1px solid rgba(250,245,238,0.1)",
-                  borderRadius: 12,
-                  padding: 36,
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'EB Garamond', serif",
-                    fontStyle: "italic",
-                    fontSize: 48,
-                    color: "#c2652a",
-                    opacity: 0.6,
-                    lineHeight: 1,
-                    marginBottom: 16,
-                  }}
-                >
-                  02
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'EB Garamond', serif",
-                    fontStyle: "italic",
-                    fontSize: 22,
-                    color: "#faf5ee",
-                    marginBottom: 12,
-                  }}
-                >
-                  Minimal Design
-                </div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 14,
-                    color: "rgba(250,245,238,0.65)",
-                    lineHeight: 1.7,
-                  }}
-                >
-                  No logos plastered everywhere. No slogans. Just quiet, considered design for people who already know what they're about.
-                </div>
-              </div>
-
-              <div
-                className="why-card"
-                style={{
-                  background: "rgba(250,245,238,0.04)",
-                  border: "1px solid rgba(250,245,238,0.1)",
-                  borderRadius: 12,
-                  padding: 36,
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: "'EB Garamond', serif",
-                    fontStyle: "italic",
-                    fontSize: 48,
-                    color: "#c2652a",
-                    opacity: 0.6,
-                    lineHeight: 1,
-                    marginBottom: 16,
-                  }}
-                >
-                  03
-                </div>
-                <div
-                  style={{
-                    fontFamily: "'EB Garamond', serif",
-                    fontStyle: "italic",
-                    fontSize: 22,
-                    color: "#faf5ee",
-                    marginBottom: 12,
-                  }}
-                >
-                  Ships Fast
-                </div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 14,
-                    color: "rgba(250,245,238,0.65)",
-                    lineHeight: 1.7,
-                  }}
-                >
-                  Fulfilled by Qikink, India's best print-on-demand partner. Every order ships within 2 business days and arrives in 5–7.
-                </div>
-              </div>
+              marginTop: 40
+            }}>
+              More pieces dropping soon. Follow on Instagram for early access.
             </div>
           </div>
         </section>
 
-        {/* === SECTION 6: FINAL CTA === */}
-        <section
-          ref={finalRef}
-          style={{
-            backgroundColor: "#c2652a",
-            padding: "100px 48px",
-            textAlign: "center",
-          }}
-        >
-          <h2
-            style={{
+        {/* SECTION 6 — FINAL CTA */}
+        <section style={{
+          backgroundColor: "#1a1008",
+          padding: "120px 48px",
+          textAlign: "center",
+          position: "relative",
+          overflow: "hidden"
+        }}>
+          <div className="grain-overlay" />
+          
+          <div style={{
+            fontFamily: "'EB Garamond', serif",
+            fontStyle: "italic",
+            fontSize: "clamp(140px, 22vw, 320px)",
+            color: "rgba(250, 245, 238, 0.03)",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            whiteSpace: "nowrap",
+            userSelect: "none",
+            pointerEvents: "none"
+          }}>
+            ₹499
+          </div>
+          
+          <div ref={ctaContentRef} style={{ position: "relative", zIndex: 10 }}>
+            <h2 style={{
               fontFamily: "'EB Garamond', serif",
               fontStyle: "italic",
-              fontWeight: 400,
-              fontSize: "clamp(36px, 5vw, 64px)",
-              lineHeight: 1.05,
+              fontSize: "clamp(36px, 5vw, 68px)",
               color: "#faf5ee",
-              marginBottom: 16,
-            }}
-          >
-            Start with the Ebook.
-          </h2>
-          <p
-            style={{
+              lineHeight: 1.0,
+              marginBottom: 0,
+              marginTop: 0
+            }}>
+              87 pages. 6 commanders.
+            </h2>
+            <h2 style={{
+              fontFamily: "'EB Garamond', serif",
+              fontStyle: "italic",
+              fontSize: "clamp(36px, 5vw, 68px)",
+              color: "#c2652a",
+              lineHeight: 1.0,
+              marginBottom: 32,
+              marginLeft: "clamp(0px, 5vw, 80px)",
+              marginTop: 0
+            }}>
+              One brutal truth.
+            </h2>
+            
+            <div style={{
               fontFamily: "var(--font-body)",
               fontSize: 17,
-              color: "rgba(250,245,238,0.75)",
-              lineHeight: 1.6,
-              maxWidth: 520,
-              margin: "0 auto 40px",
+              color: "rgba(250, 245, 238, 0.6)",
+              marginBottom: 48
+            }}>
+              Instant PDF delivery. ₹499. Yours forever.
+            </div>
+            
+            <button style={{
+              padding: "18px 56px",
+              borderRadius: 8,
+              background: "#c2652a",
+              color: "#faf5ee",
+              fontFamily: "var(--font-body)",
+              fontSize: 16,
+              fontWeight: 500,
+              border: "none",
+              cursor: "pointer",
+              letterSpacing: "0.01em",
+              transition: "background 200ms, transform 200ms"
             }}
-          >
-            87 pages. 6 commanders. One brutal truth about why armies win and lose. Instant PDF delivery. ₹499.
-          </p>
-          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <button
-              style={{
-                background: "#3a302a",
-                color: "#faf5ee",
-                padding: "16px 36px",
-                borderRadius: 8,
-                fontFamily: "var(--font-body)",
-                fontSize: 15,
-                fontWeight: 500,
-                border: "none",
-                cursor: "pointer",
-                transition: "background 200ms",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#1a1008")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "#3a302a")}
-            >
-              Buy the Ebook — ₹499
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "#a8521f"
+              e.currentTarget.style.transform = "scale(0.97)"
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "#c2652a"
+              e.currentTarget.style.transform = "scale(1)"
+            }}>
+              Get the Ebook — ₹499
             </button>
-            <button
-              style={{
-                background: "transparent",
-                color: "#faf5ee",
-                padding: "16px 36px",
-                borderRadius: 8,
-                fontFamily: "var(--font-body)",
-                fontSize: 15,
-                fontWeight: 500,
-                border: "2px solid rgba(250,245,238,0.4)",
-                cursor: "pointer",
-                transition: "border-color 200ms",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(250,245,238,0.8)")}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(250,245,238,0.4)")}
-            >
-              Browse the Merch &rarr;
-            </button>
+            
+            <div style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 13,
+              color: "rgba(250, 245, 238, 0.35)",
+              marginTop: 16
+            }}>
+              No subscription. No account needed. Just the book.
+            </div>
           </div>
         </section>
       </main>
+      
       <Footer />
     </>
   )
