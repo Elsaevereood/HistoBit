@@ -23,10 +23,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Draft not found" }, { status: 404 });
     }
 
-    // Get all active paid subscribers
+    // Get all active paid subscribers only
     const { data: subscribers, error: subError } = await supabase
       .from("subscribers")
-      .select("email, first_name")
+      .select("email")
       .eq("status", "active")
       .eq("plan", "paid");
 
@@ -34,22 +34,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to fetch subscribers" }, { status: 500 });
     }
 
-    // Also get free subscribers for this send (free tier gets newsletter too)
-    const { data: freeSubscribers } = await supabase
-      .from("subscribers")
-      .select("email, first_name")
-      .eq("status", "active")
-      .eq("plan", "free");
-
-    const allSubscribers = [...(subscribers || []), ...(freeSubscribers || [])];
-
-    if (allSubscribers.length === 0) {
-      return NextResponse.json({ error: "No active subscribers found" }, { status: 400 });
+    if (!subscribers || subscribers.length === 0) {
+      return NextResponse.json({ error: "No active paid subscribers found" }, { status: 400 });
     }
 
-    // Send to all subscribers
+    // Send to paid subscribers only
     let sentCount = 0;
-    for (const sub of allSubscribers) {
+    for (const sub of subscribers) {
       try {
         await resend.emails.send({
           from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
