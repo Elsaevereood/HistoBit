@@ -7,11 +7,13 @@ const contentDir = path.join(process.cwd(), "content/blog");
 export interface PostMeta {
   slug: string;
   title: string;
+  seoTitle?: string;
   excerpt: string;
   tag: string;
   date: string;
   readTime: string;
   image: string;
+  keywords?: string[];
 }
 
 export function getAllPosts(): PostMeta[] {
@@ -25,11 +27,13 @@ export function getAllPosts(): PostMeta[] {
       return {
         slug,
         title: data.title || "",
+        seoTitle: data.seoTitle || "",
         excerpt: data.excerpt || "",
         tag: data.tag || "",
         date: data.date || "",
         readTime: data.readTime || "",
         image: data.image || "",
+        keywords: data.keywords || [],
       };
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -44,11 +48,13 @@ export function getPostBySlug(slug: string): { meta: PostMeta; content: string }
     meta: {
       slug,
       title: data.title || "",
+      seoTitle: data.seoTitle || "",
       excerpt: data.excerpt || "",
       tag: data.tag || "",
       date: data.date || "",
       readTime: data.readTime || "",
       image: data.image || "",
+      keywords: data.keywords || [],
     },
     content,
   };

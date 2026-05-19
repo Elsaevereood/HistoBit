@@ -19,20 +19,60 @@ export async function generateMetadata(
   const { slug } = await params;
   const post = getPostBySlug(slug);
   if (!post) return { title: "Post Not Found" };
+
+  // Use seoTitle if provided, otherwise fall back to editorial title
+  const metaTitle = post.meta.seoTitle || post.meta.title;
+  const canonicalUrl = `https://histobit.com/blog/${slug}`;
+  const absoluteImage = post.meta.image.startsWith("http")
+    ? post.meta.image
+    : `https://histobit.com${post.meta.image}`;
+
   return {
-    title: post.meta.title,
+    title: metaTitle,
     description: post.meta.excerpt,
+    keywords: post.meta.keywords && post.meta.keywords.length > 0
+      ? post.meta.keywords
+      : ["military history", "war history", "battle analysis", "Histobit"],
+    authors: [{ name: "Histobit", url: "https://histobit.com" }],
+    creator: "Histobit",
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
-      title: post.meta.title,
+      title: metaTitle,
       description: post.meta.excerpt,
       type: "article",
-      url: `https://histobit.com/blog/${slug}`,
-      images: [{ url: post.meta.image, width: 1200, height: 630 }],
+      url: canonicalUrl,
+      siteName: "Histobit",
+      locale: "en_US",
+      publishedTime: new Date(post.meta.date).toISOString(),
+      authors: ["Histobit"],
+      tags: post.meta.keywords || [],
+      images: [
+        {
+          url: absoluteImage,
+          width: 1200,
+          height: 630,
+          alt: metaTitle,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
-      title: post.meta.title,
+      title: metaTitle,
       description: post.meta.excerpt,
+      images: [absoluteImage],
+      site: "@histobit",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
   };
 }
@@ -93,8 +133,53 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     notFound();
   }
 
+  const metaTitle = post.meta.seoTitle || post.meta.title;
+  const canonicalUrl = `https://histobit.com/blog/${resolvedParams.slug}`;
+  const absoluteImage = post.meta.image.startsWith("http")
+    ? post.meta.image
+    : `https://histobit.com${post.meta.image}`;
+
+  // JSON-LD Article structured data for Google
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": metaTitle,
+    "description": post.meta.excerpt,
+    "image": absoluteImage,
+    "author": {
+      "@type": "Organization",
+      "name": "Histobit",
+      "url": "https://histobit.com",
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Histobit",
+      "url": "https://histobit.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://histobit.com/favicon.png",
+      },
+    },
+    "datePublished": new Date(post.meta.date).toISOString(),
+    "dateModified": new Date(post.meta.date).toISOString(),
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+    "url": canonicalUrl,
+    "keywords": (post.meta.keywords || []).join(", "),
+    "articleSection": post.meta.tag,
+    "inLanguage": "en-US",
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#faf5ee" }}>
+
+      {/* JSON-LD structured data for Google */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* Reading progress bar — injected by client component */}
       <div id="blog-progress-bar" />
