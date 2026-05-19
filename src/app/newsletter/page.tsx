@@ -387,7 +387,7 @@ export default function NewsletterPage() {
                 padding: '2px 8px',
                 fontWeight: 600
               }}>
-                Save 25%
+                Save 30%
               </span>
             </button>
           </div>
@@ -447,7 +447,7 @@ export default function NewsletterPage() {
                   transition: 'opacity 200ms ease',
                   pointerEvents: billingCycle === "monthly" ? 'auto' : 'none'
                 }}>
-                  <span style={{ fontFamily: '"EB Garamond", serif', fontSize: '72px', color: '#c2652a', fontWeight: 400, lineHeight: 1 }}>$5</span>
+                  <span style={{ fontFamily: '"EB Garamond", serif', fontSize: '72px', color: '#c2652a', fontWeight: 400, lineHeight: 1 }}>$7</span>
                   <span style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '16px', color: '#8a7a6e' }}>/month</span>
                 </div>
                 <div style={{
@@ -459,7 +459,7 @@ export default function NewsletterPage() {
                   transition: 'opacity 200ms ease',
                   pointerEvents: billingCycle === "yearly" ? 'auto' : 'none'
                 }}>
-                  <span style={{ fontFamily: '"EB Garamond", serif', fontSize: '72px', color: '#c2652a', fontWeight: 400, lineHeight: 1 }}>$45</span>
+                  <span style={{ fontFamily: '"EB Garamond", serif', fontSize: '72px', color: '#c2652a', fontWeight: 400, lineHeight: 1 }}>$59</span>
                   <span style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '16px', color: '#8a7a6e' }}>/year</span>
                 </div>
               </div>
@@ -473,7 +473,7 @@ export default function NewsletterPage() {
                 transition: 'opacity 200ms ease',
                 marginTop: '4px'
               }}>
-                That's $3.75/month
+                That's $4.92/month
               </div>
             </div>
 
@@ -556,7 +556,7 @@ export default function NewsletterPage() {
                 transition: 'background-color 200ms',
                 marginBottom: '24px'
               }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#a8521f'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#c2652a'}>
-                Join The War Room — {billingCycle === "monthly" ? "$5/month" : "$45/year"} →
+                Join The War Room — {billingCycle === "monthly" ? "$7/month" : "$59/year"} →
               </button>
             )}
 
