@@ -74,23 +74,10 @@ export default function Navigation() {
                 {link.label}
               </Link>
             ))}
-            <div className="flex items-center gap-6 ml-6 pl-6 border-l border-[#d8d0c8]/60">
+            <div className="flex items-center ml-6 pl-6 border-l border-[#d8d0c8]/60">
               <Link
-                href="/login"
-                className="no-underline transition-colors duration-150 relative group flex items-center"
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: "#3a302a",
-                }}
-              >
-                Sign in
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-[#c2652a] transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-              <Link
-                href="/signup"
-                id="nav-signup-btn"
+                href="/newsletter"
+                id="nav-subscribe-btn"
                 className="transition-all duration-300 no-underline inline-flex items-center justify-center hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md"
                 style={{
                   background: "#c2652a",
@@ -98,7 +85,7 @@ export default function Navigation() {
                   fontFamily: "var(--font-body)",
                   fontSize: 14,
                   fontWeight: 500,
-                  borderRadius: 30,
+                  borderRadius: 8,
                   padding: "10px 24px",
                   border: "none",
                   cursor: "pointer",
@@ -106,7 +93,7 @@ export default function Navigation() {
                 onMouseEnter={(e) => (e.currentTarget.style.background = "#a8521f")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "#c2652a")}
               >
-                Sign up
+                Subscribe
               </Link>
             </div>
           </div>
@@ -167,22 +154,9 @@ export default function Navigation() {
             {link.label}
           </Link>
         ))}
-        <div className="flex flex-col items-center gap-5 mt-8 w-full max-w-[200px]">
+        <div className="flex flex-col items-center mt-8 w-full max-w-[200px]">
           <Link
-            href="/login"
-            onClick={() => setMobileOpen(false)}
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: 18,
-              fontWeight: 500,
-              color: "#3a302a",
-              textDecoration: "none",
-            }}
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/signup"
+            href="/newsletter"
             onClick={() => setMobileOpen(false)}
             className="w-full text-center transition-all duration-300 shadow-sm"
             style={{
@@ -191,12 +165,12 @@ export default function Navigation() {
               fontFamily: "var(--font-body)",
               fontSize: 18,
               fontWeight: 500,
-              borderRadius: 30,
+              borderRadius: 8,
               padding: "14px 0",
               textDecoration: "none",
             }}
           >
-            Sign up
+            Subscribe
           </Link>
         </div>
       </div>
