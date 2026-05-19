@@ -23,8 +23,11 @@ export default function NewsletterPage() {
   
   const quoteRef = useRef<HTMLDivElement>(null);
   
-  const paidLeftRef = useRef<HTMLDivElement>(null);
-  const paidRightRef = useRef<HTMLDivElement>(null);
+  const warRoomOverlineRef = useRef<HTMLDivElement>(null);
+  const warRoomHeadlineRef = useRef<HTMLHeadingElement>(null);
+  const warRoomBodyRef = useRef<HTMLParagraphElement>(null);
+  const warRoomCardRef = useRef<HTMLDivElement>(null);
+  const warRoomBenefitsRef = useRef<HTMLDivElement>(null);
   
   const socialRef = useRef<HTMLDivElement>(null);
   
@@ -120,19 +123,48 @@ export default function NewsletterPage() {
       });
     }
 
-    // PAID SECTION ANIMATIONS
-    if (paidLeftRef.current && paidRightRef.current) {
-      gsap.set(paidLeftRef.current, { x: -40, opacity: 0 });
-      gsap.set(paidRightRef.current, { x: 40, opacity: 0 });
+    // WAR ROOM PRICING ANIMATIONS
+    if (warRoomOverlineRef.current) {
+      gsap.set(warRoomOverlineRef.current, { y: 20, opacity: 0 });
       
-      ScrollTrigger.create({
-        trigger: paidLeftRef.current,
-        start: "top 80%",
-        once: true,
-        animation: gsap.timeline()
-          .to(paidLeftRef.current, { x: 0, opacity: 1, duration: 0.8, ease: "power2.out" })
-          .to(paidRightRef.current, { x: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, 0.15)
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: warRoomOverlineRef.current,
+          start: "top 75%",
+          once: true
+        }
       });
+
+      tl.to(warRoomOverlineRef.current, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" });
+      
+      if (warRoomHeadlineRef.current) {
+        const words = splitTextIntoWords(warRoomHeadlineRef.current);
+        if (words && words.length > 0) {
+          tl.to(words, {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.055,
+            ease: "power3.out"
+          }, ">-0.2");
+        }
+      }
+
+      if (warRoomBodyRef.current) {
+        gsap.set(warRoomBodyRef.current, { y: 16, opacity: 0 });
+        tl.to(warRoomBodyRef.current, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, ">-0.4");
+      }
+
+      if (warRoomCardRef.current) {
+        gsap.set(warRoomCardRef.current, { y: 40, opacity: 0 });
+        tl.to(warRoomCardRef.current, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, ">-0.2");
+      }
+
+      if (warRoomBenefitsRef.current) {
+        const items = warRoomBenefitsRef.current.querySelectorAll('.benefit-item');
+        gsap.set(items, { y: 12, opacity: 0 });
+        tl.to(items, { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" }, ">-0.3");
+      }
     }
 
     // SOCIAL PROOF ANIMATION
@@ -426,134 +458,130 @@ export default function NewsletterPage() {
           </div>
         </section>
 
-        {/* SECTION 4: PAID TIER */}
-        <section style={{ backgroundColor: '#3a302a', padding: '100px 48px', width: '100%' }}>
-          <div style={{ maxWidth: '1100px', margin: '0 auto' }} className="grid grid-cols-1 md:grid-cols-2 gap-[80px]">
-            {/* LEFT COLUMN */}
-            <div ref={paidLeftRef}>
-              <div style={{
-                fontFamily: 'var(--font-body), Manrope, sans-serif',
-                fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.12em',
-                color: '#c2652a',
-                fontWeight: 500,
-                marginBottom: '16px'
-              }}>
-                PAID TIER · COMING SOON
-              </div>
-              
-              <h2 style={{
+        {/* SECTION 4: WAR ROOM PRICING */}
+        <section style={{ backgroundColor: '#faf5ee', padding: '120px 48px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          
+          <div ref={warRoomOverlineRef} style={{
+            fontFamily: 'var(--font-body), Manrope, sans-serif',
+            fontSize: '11px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.14em',
+            color: '#c2652a',
+            fontWeight: 500,
+            marginBottom: '20px',
+            textAlign: 'center'
+          }}>
+            THE WAR ROOM · PAID DISPATCH
+          </div>
+          
+          <h2 ref={warRoomHeadlineRef} style={{
+            fontFamily: '"EB Garamond", serif',
+            fontStyle: 'italic',
+            fontWeight: 400,
+            fontSize: 'clamp(36px, 4vw, 52px)',
+            color: '#3a302a',
+            marginBottom: '24px',
+            textAlign: 'center'
+          }}>
+            History the way it deserves to be told.
+          </h2>
+          
+          <p ref={warRoomBodyRef} style={{
+            fontFamily: 'var(--font-body), Manrope, sans-serif',
+            fontSize: '16px',
+            color: '#6b5c4e',
+            maxWidth: '440px',
+            textAlign: 'center',
+            marginBottom: '64px',
+            lineHeight: 1.6
+          }}>
+            One email. Every week. Exclusive content that never appears on the blog or YouTube.
+          </p>
+
+          <div ref={warRoomCardRef} style={{
+            backgroundColor: 'white',
+            border: '1px solid #d8d0c8',
+            borderRadius: '8px',
+            padding: '48px',
+            boxShadow: '0 2px 24px rgba(58, 48, 42, 0.06)',
+            width: '100%',
+            maxWidth: '560px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '8px' }}>
+              <span style={{
                 fontFamily: '"EB Garamond", serif',
-                fontStyle: 'italic',
+                fontSize: '72px',
+                color: '#c2652a',
                 fontWeight: 400,
-                fontSize: 'clamp(32px, 4vw, 52px)',
-                lineHeight: 1.1,
-                color: '#faf5ee',
-                marginBottom: '20px'
-              }}>
-                The Inner Circle
-              </h2>
-              
-              <p style={{
+                lineHeight: 1
+              }}>$5</span>
+              <span style={{
                 fontFamily: 'var(--font-body), Manrope, sans-serif',
                 fontSize: '16px',
-                lineHeight: 1.8,
-                color: 'rgba(250,245,238,0.75)',
-                marginBottom: '32px'
-              }}>
-                For the readers who want to go deeper. The Inner Circle is a paid tier for people who treat history as a serious pursuit — not a hobby. Extended deep-dives. Primary source breakdowns. Early access to new research. And a direct line to the Histobit archive before anything goes public.
-              </p>
-              
-              <div>
-                {[
-                  "Extended deep-dives — 3,000 to 5,000 word essays on single battles",
-                  "Primary source breakdowns — what the generals actually wrote",
-                  "Early access — read new research before it goes public",
-                  "Direct archive access — every past issue, fully searchable"
-                ].map((text, idx) => (
-                  <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '16px' }}>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '4px', backgroundColor: '#c2652a', flexShrink: 0, marginTop: '3px' }} />
-                    <span style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '15px', color: 'rgba(250,245,238,0.85)', lineHeight: 1.5 }}>
-                      {text}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                color: '#8a7a6e'
+              }}>/month</span>
             </div>
-            
-            {/* RIGHT COLUMN */}
-            <div ref={paidRightRef}>
-              <div style={{
-                backgroundColor: 'rgba(250,245,238,0.06)',
-                border: '1px solid rgba(250,245,238,0.12)',
-                borderRadius: '12px',
-                padding: '40px'
-              }}>
-                <div style={{
-                  display: 'inline-block',
-                  backgroundColor: 'rgba(194,101,42,0.2)',
-                  color: '#c2652a',
-                  fontFamily: 'var(--font-body), Manrope, sans-serif',
-                  fontSize: '11px',
-                  fontWeight: 500,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  padding: '6px 14px',
-                  borderRadius: '20px',
-                  marginBottom: '24px'
-                }}>
-                  LAUNCHING SOON
+
+            <div style={{
+              height: '1px',
+              backgroundColor: '#d8d0c8',
+              margin: '28px 0'
+            }} />
+
+            <div ref={warRoomBenefitsRef} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px' }}>
+              {[
+                { title: "The Untold Detail", desc: "one fact per week too niche for YouTube" },
+                { title: "The Source", desc: "one book or document recommendation" },
+                { title: "This Week in Military History", desc: "what happened this exact week" },
+                { title: "Early Access", desc: "know the next video topic before anyone else" }
+              ].map((benefit, idx) => (
+                <div key={idx} className="benefit-item" style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  <span style={{ color: '#c2652a', fontSize: '15px', marginTop: '2px' }}>•</span>
+                  <div style={{
+                    fontFamily: 'var(--font-body), Manrope, sans-serif',
+                    fontSize: '15px',
+                    color: '#3a302a',
+                    lineHeight: 1.8
+                  }}>
+                    <strong>{benefit.title}</strong> — {benefit.desc}
+                  </div>
                 </div>
-                
-                <h3 style={{ fontFamily: '"EB Garamond", serif', fontStyle: 'italic', fontSize: '28px', color: '#faf5ee', marginBottom: '8px' }}>
-                  Be First on the List
-                </h3>
-                
-                <p style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '14px', color: 'rgba(250,245,238,0.6)', marginBottom: '32px' }}>
-                  The paid tier opens soon. Leave your email and you'll be the first to know — with a founding member discount.
-                </p>
-                
-                <input type="email" placeholder="your@email.com" className="placeholder-[rgba(250,245,238,0.4)]" style={{
-                  width: '100%',
-                  padding: '13px 16px',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(250,245,238,0.2)',
-                  backgroundColor: 'rgba(250,245,238,0.08)',
-                  fontFamily: 'var(--font-body), Manrope, sans-serif',
-                  fontSize: '14px',
-                  color: '#faf5ee',
-                  outline: 'none',
-                  transition: 'border-color 200ms'
-                }} onFocus={(e) => e.target.style.borderColor = '#c2652a'} onBlur={(e) => e.target.style.borderColor = 'rgba(250,245,238,0.2)'} />
-                
-                <button style={{
-                  width: '100%',
-                  marginTop: '12px',
-                  backgroundColor: '#c2652a',
-                  color: '#faf5ee',
-                  fontFamily: 'var(--font-body), Manrope, sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  padding: '15px 24px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'background-color 200ms'
-                }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#a8521f'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#c2652a'}>
-                  Notify Me When It Launches
-                </button>
-                
-                <p style={{
-                  fontFamily: 'var(--font-body), Manrope, sans-serif',
-                  fontSize: '12px',
-                  color: 'rgba(250,245,238,0.4)',
-                  textAlign: 'center',
-                  marginTop: '16px'
-                }}>
-                  Planned pricing: $5/month or $50/year
-                </p>
-              </div>
+              ))}
+            </div>
+
+            <button onClick={() => console.log("Razorpay coming soon")} style={{
+              width: '100%',
+              height: '52px',
+              backgroundColor: '#c2652a',
+              color: '#faf5ee',
+              fontFamily: 'var(--font-body), Manrope, sans-serif',
+              fontSize: '15px',
+              fontWeight: 500,
+              borderRadius: '8px',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background-color 200ms',
+              marginBottom: '24px'
+            }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#a8521f'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#c2652a'}>
+              Join The War Room →
+            </button>
+
+            <div style={{
+              fontFamily: 'var(--font-body), Manrope, sans-serif',
+              fontSize: '12px',
+              color: '#8a7a6e',
+              textAlign: 'center',
+              marginBottom: '8px'
+            }}>
+              Cancel anytime. No questions asked.
+            </div>
+            <div style={{
+              fontFamily: 'var(--font-body), Manrope, sans-serif',
+              fontSize: '12px',
+              color: '#8a7a6e',
+              textAlign: 'center'
+            }}>
+              Annual plan available — $45/year (save 25%)
             </div>
           </div>
         </section>
