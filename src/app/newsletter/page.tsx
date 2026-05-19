@@ -18,52 +18,18 @@ export default function NewsletterPage() {
   const subRef = useRef<HTMLParagraphElement>(null);
   const trustRef = useRef<HTMLDivElement>(null);
   
-  const freeLeftRef = useRef<HTMLDivElement>(null);
-  const freeRightRef = useRef<HTMLDivElement>(null);
-  
   const quoteRef = useRef<HTMLDivElement>(null);
   
   const warRoomOverlineRef = useRef<HTMLDivElement>(null);
   const warRoomHeadlineRef = useRef<HTMLHeadingElement>(null);
   const warRoomBodyRef = useRef<HTMLParagraphElement>(null);
+  const warRoomToggleRef = useRef<HTMLDivElement>(null);
   const warRoomCardRef = useRef<HTMLDivElement>(null);
   const warRoomBenefitsRef = useRef<HTMLDivElement>(null);
   
   const socialRef = useRef<HTMLDivElement>(null);
-  
-  const finalCtaRef = useRef<HTMLDivElement>(null);
 
-  const [firstName, setFirstName] = useState("");
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) {
-      setError("Email is required");
-      return;
-    }
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch("/api/newsletter/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, firstName })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to subscribe");
-      }
-      setSuccess(true);
-    } catch (err: any) {
-      setError(err.message || "An error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
 
   useEffect(() => {
     // HERO ANIMATIONS
@@ -97,21 +63,6 @@ export default function NewsletterPage() {
       tl.to(trustRef.current, { opacity: 1, duration: 0.4, ease: "power2.out" }, ">");
     }
 
-    // FREE SECTION ANIMATIONS
-    if (freeLeftRef.current && freeRightRef.current) {
-      gsap.set(freeLeftRef.current, { x: -40, opacity: 0 });
-      gsap.set(freeRightRef.current, { x: 40, opacity: 0 });
-      
-      ScrollTrigger.create({
-        trigger: freeLeftRef.current,
-        start: "top 80%",
-        once: true,
-        animation: gsap.timeline()
-          .to(freeLeftRef.current, { x: 0, opacity: 1, duration: 0.8, ease: "power2.out" })
-          .to(freeRightRef.current, { x: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, 0.15)
-      });
-    }
-
     // DIVIDER WITH QUOTE
     if (quoteRef.current) {
       gsap.set(quoteRef.current, { y: 30, opacity: 0 });
@@ -127,7 +78,7 @@ export default function NewsletterPage() {
     if (warRoomOverlineRef.current) {
       gsap.set(warRoomOverlineRef.current, { y: 20, opacity: 0 });
       
-      const tl = gsap.timeline({
+      const pricingTl = gsap.timeline({
         scrollTrigger: {
           trigger: warRoomOverlineRef.current,
           start: "top 75%",
@@ -135,12 +86,12 @@ export default function NewsletterPage() {
         }
       });
 
-      tl.to(warRoomOverlineRef.current, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" });
+      pricingTl.to(warRoomOverlineRef.current, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" });
       
       if (warRoomHeadlineRef.current) {
         const words = splitTextIntoWords(warRoomHeadlineRef.current);
         if (words && words.length > 0) {
-          tl.to(words, {
+          pricingTl.to(words, {
             y: 0,
             opacity: 1,
             duration: 0.8,
@@ -152,18 +103,23 @@ export default function NewsletterPage() {
 
       if (warRoomBodyRef.current) {
         gsap.set(warRoomBodyRef.current, { y: 16, opacity: 0 });
-        tl.to(warRoomBodyRef.current, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, ">-0.4");
+        pricingTl.to(warRoomBodyRef.current, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, ">-0.4");
+      }
+
+      if (warRoomToggleRef.current) {
+        gsap.set(warRoomToggleRef.current, { y: 12, opacity: 0 });
+        pricingTl.to(warRoomToggleRef.current, { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" }, ">-0.2");
       }
 
       if (warRoomCardRef.current) {
         gsap.set(warRoomCardRef.current, { y: 40, opacity: 0 });
-        tl.to(warRoomCardRef.current, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, ">-0.2");
+        pricingTl.to(warRoomCardRef.current, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, ">-0.2");
       }
 
       if (warRoomBenefitsRef.current) {
         const items = warRoomBenefitsRef.current.querySelectorAll('.benefit-item');
         gsap.set(items, { y: 12, opacity: 0 });
-        tl.to(items, { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" }, ">-0.3");
+        pricingTl.to(items, { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" }, ">-0.3");
       }
     }
 
@@ -177,18 +133,6 @@ export default function NewsletterPage() {
         start: "top 85%",
         once: true,
         animation: gsap.to(cards, { y: 0, opacity: 1, stagger: 0.12, duration: 0.7, ease: "power2.out" })
-      });
-    }
-
-    // FINAL CTA STRIP
-    if (finalCtaRef.current) {
-      gsap.set(finalCtaRef.current, { y: 30, opacity: 0 });
-      
-      ScrollTrigger.create({
-        trigger: finalCtaRef.current,
-        start: "top 85%",
-        once: true,
-        animation: gsap.to(finalCtaRef.current, { y: 0, opacity: 1, duration: 0.7, ease: "power2.out" })
       });
     }
 
@@ -267,174 +211,12 @@ export default function NewsletterPage() {
               <span>No spam</span>
               <span style={{ color: '#d8d0c8' }}>·</span>
               <span>Unsubscribe anytime</span>
-              <span style={{ color: '#d8d0c8' }}>·</span>
-              <span>Free forever</span>
             </div>
           </div>
         </section>
 
-        {/* SECTION 2: FREE TIER SIGNUP */}
-        <section style={{ backgroundColor: '#faf5ee', padding: '100px 48px', maxWidth: '1100px', margin: '0 auto' }}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-[80px]">
-            {/* LEFT COLUMN */}
-            <div ref={freeLeftRef}>
-              <div style={{
-                fontFamily: 'var(--font-body), Manrope, sans-serif',
-                fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.12em',
-                color: '#c2652a',
-                fontWeight: 500,
-                marginBottom: '16px'
-              }}>
-                FREE TIER
-              </div>
-              
-              <h2 style={{
-                fontFamily: '"EB Garamond", serif',
-                fontStyle: 'italic',
-                fontWeight: 400,
-                fontSize: 'clamp(32px, 4vw, 52px)',
-                lineHeight: 1.1,
-                color: '#3a302a',
-                marginBottom: '20px'
-              }}>
-                The Weekly Dispatch
-              </h2>
-              
-              <p style={{
-                fontFamily: 'var(--font-body), Manrope, sans-serif',
-                fontSize: '16px',
-                lineHeight: 1.8,
-                color: '#3a302a',
-                marginBottom: '32px'
-              }}>
-                Every week, Histobit publishes one deep-dive into military history. A battle you think you know — told the way it actually happened. A commander whose genius was in his supply lines, not his cavalry charge. A war whose outcome was decided six months before the first shot was fired. This is the newsletter that Epic History TV fans, Kings and Generals viewers, and serious history readers have been waiting for.
-              </p>
-              
-              <div>
-                {[
-                  "One deep-dive every week — battles, commanders, logistics, strategy",
-                  "Written in Histobit's cinematic, authoritative style. No dry textbook tone.",
-                  "Exclusive content not published on YouTube or the blog",
-                  "Free forever. No credit card. No catch."
-                ].map((text, idx) => (
-                  <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '16px' }}>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '4px', backgroundColor: '#c2652a', flexShrink: 0, marginTop: '3px' }} />
-                    <span style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '15px', color: '#3a302a', lineHeight: 1.5 }}>
-                      {text}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* RIGHT COLUMN */}
-            <div ref={freeRightRef}>
-              <div style={{
-                backgroundColor: '#fff8f0',
-                border: '1px solid rgba(216,208,200,0.6)',
-                borderRadius: '12px',
-                padding: '40px',
-                boxShadow: '0 2px 24px rgba(58,48,42,0.06)'
-              }}>
-                <h3 style={{ fontFamily: '"EB Garamond", serif', fontStyle: 'italic', fontSize: '28px', color: '#3a302a', marginBottom: '8px' }}>
-                  Start Reading Free
-                </h3>
-                
-                <p style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '14px', color: '#8a7a6e', marginBottom: '32px' }}>
-                  Join 12,000 readers. Cancel anytime.
-                </p>
-                
-                {success ? (
-                  <div style={{ padding: '40px 0', textAlign: 'center' }}>
-                    <p style={{ fontFamily: '"EB Garamond", serif', fontStyle: 'italic', fontSize: '24px', color: '#3a302a' }}>
-                      You're in. First dispatch arrives next week.
-                    </p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubscribe}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      <div>
-                        <label style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '12px', fontWeight: 500, color: '#3a302a', marginBottom: '6px', display: 'block' }}>
-                          First Name
-                        </label>
-                        <input type="text" placeholder="Your first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={{
-                          width: '100%',
-                          padding: '13px 16px',
-                          borderRadius: '8px',
-                          border: '1px solid #d8d0c8',
-                          backgroundColor: 'white',
-                          fontFamily: 'var(--font-body), Manrope, sans-serif',
-                          fontSize: '14px',
-                          color: '#3a302a',
-                          outline: 'none',
-                          transition: 'border-color 200ms'
-                        }} onFocus={(e) => e.target.style.borderColor = '#c2652a'} onBlur={(e) => e.target.style.borderColor = '#d8d0c8'} />
-                      </div>
-                      
-                      <div>
-                        <label style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '12px', fontWeight: 500, color: '#3a302a', marginBottom: '6px', display: 'block' }}>
-                          Email Address
-                        </label>
-                        <input type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} style={{
-                          width: '100%',
-                          padding: '13px 16px',
-                          borderRadius: '8px',
-                          border: '1px solid #d8d0c8',
-                          backgroundColor: 'white',
-                          fontFamily: 'var(--font-body), Manrope, sans-serif',
-                          fontSize: '14px',
-                          color: '#3a302a',
-                          outline: 'none',
-                          transition: 'border-color 200ms'
-                        }} onFocus={(e) => e.target.style.borderColor = '#c2652a'} onBlur={(e) => e.target.style.borderColor = '#d8d0c8'} />
-                      </div>
-                    </div>
-                    
-                    <button type="submit" disabled={loading} style={{
-                      width: '100%',
-                      marginTop: '8px',
-                      backgroundColor: '#c2652a',
-                      color: '#faf5ee',
-                      fontFamily: 'var(--font-body), Manrope, sans-serif',
-                      fontSize: '14px',
-                      fontWeight: 500,
-                      padding: '15px 24px',
-                      borderRadius: '8px',
-                      border: 'none',
-                      cursor: loading ? 'not-allowed' : 'pointer',
-                      transition: 'background-color 200ms',
-                      opacity: loading ? 0.7 : 1
-                    }} onMouseOver={(e) => !loading && (e.currentTarget.style.backgroundColor = '#a8521f')} onMouseOut={(e) => !loading && (e.currentTarget.style.backgroundColor = '#c2652a')}>
-                      {loading ? 'Joining...' : "Join the Dispatch — It's Free"}
-                    </button>
-
-                    {error && (
-                      <div style={{ color: 'red', fontSize: '12px', marginTop: '8px', textAlign: 'center', fontFamily: 'var(--font-body), Manrope, sans-serif' }}>
-                        {error}
-                      </div>
-                    )}
-                    
-                    <p style={{
-                      fontFamily: 'var(--font-body), Manrope, sans-serif',
-                      fontSize: '11px',
-                      color: '#8a7a6e',
-                      textAlign: 'center',
-                      marginTop: '12px',
-                      lineHeight: 1.6
-                    }}>
-                      By subscribing you agree to receive weekly emails from Histobit.<br />Unsubscribe at any time.
-                    </p>
-                  </form>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* SECTION 3: DIVIDER WITH QUOTE */}
-        <section style={{ backgroundColor: '#faf5ee', padding: '0 48px 100px 48px', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+        {/* SECTION 2: DIVIDER WITH QUOTE */}
+        <section style={{ backgroundColor: '#faf5ee', padding: '100px 48px 100px 48px', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
           <div style={{ width: '60px', height: '2px', backgroundColor: '#c2652a', margin: '0 auto 40px auto' }} />
           
           <div ref={quoteRef}>
@@ -458,7 +240,7 @@ export default function NewsletterPage() {
           </div>
         </section>
 
-        {/* SECTION 4: WAR ROOM PRICING */}
+        {/* SECTION 3: WAR ROOM PRICING */}
         <section style={{ backgroundColor: '#faf5ee', padding: '120px 48px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           
           <div ref={warRoomOverlineRef} style={{
@@ -492,34 +274,125 @@ export default function NewsletterPage() {
             color: '#6b5c4e',
             maxWidth: '440px',
             textAlign: 'center',
-            marginBottom: '64px',
+            margin: '16px auto 0',
             lineHeight: 1.6
           }}>
             One email. Every week. Exclusive content that never appears on the blog or YouTube.
           </p>
 
+          {/* TOGGLE */}
+          <div ref={warRoomToggleRef} style={{
+            marginTop: '40px',
+            backgroundColor: '#ede8e1',
+            borderRadius: '100px',
+            padding: '4px',
+            display: 'inline-flex',
+            alignItems: 'center'
+          }}>
+            <button 
+              onClick={() => setBillingCycle("monthly")}
+              style={{
+                borderRadius: '100px',
+                padding: '8px 24px',
+                fontFamily: 'var(--font-body), Manrope, sans-serif',
+                fontSize: '14px',
+                fontWeight: 500,
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 200ms ease',
+                backgroundColor: billingCycle === "monthly" ? '#c2652a' : 'transparent',
+                color: billingCycle === "monthly" ? '#faf5ee' : '#6b5c4e'
+              }}
+            >
+              Monthly
+            </button>
+            <button 
+              onClick={() => setBillingCycle("yearly")}
+              style={{
+                borderRadius: '100px',
+                padding: '8px 24px',
+                fontFamily: 'var(--font-body), Manrope, sans-serif',
+                fontSize: '14px',
+                fontWeight: 500,
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 200ms ease',
+                backgroundColor: billingCycle === "yearly" ? '#c2652a' : 'transparent',
+                color: billingCycle === "yearly" ? '#faf5ee' : '#6b5c4e',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              Yearly
+              <span style={{
+                fontSize: '11px',
+                backgroundColor: 'rgba(194,101,42,0.12)',
+                color: '#c2652a',
+                borderRadius: '100px',
+                padding: '2px 8px',
+                fontWeight: 600
+              }}>
+                Save 25%
+              </span>
+            </button>
+          </div>
+
           <div ref={warRoomCardRef} style={{
-            backgroundColor: 'white',
+            backgroundColor: '#ffffff',
             border: '1px solid #d8d0c8',
             borderRadius: '8px',
             padding: '48px',
             boxShadow: '0 2px 24px rgba(58, 48, 42, 0.06)',
             width: '100%',
-            maxWidth: '560px'
+            maxWidth: '520px',
+            marginTop: '32px'
           }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '8px' }}>
-              <span style={{
-                fontFamily: '"EB Garamond", serif',
-                fontSize: '72px',
-                color: '#c2652a',
-                fontWeight: 400,
-                lineHeight: 1
-              }}>$5</span>
-              <span style={{
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column',
+              alignItems: 'center', 
+              justifyContent: 'center',
+              height: '96px' // Keep height stable to prevent layout jump
+            }}>
+              <div style={{ position: 'relative', height: '72px', width: '100%', display: 'flex', justifyContent: 'center' }}>
+                <div style={{
+                  position: 'absolute',
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  gap: '8px',
+                  opacity: billingCycle === "monthly" ? 1 : 0,
+                  transition: 'opacity 200ms ease',
+                  pointerEvents: billingCycle === "monthly" ? 'auto' : 'none'
+                }}>
+                  <span style={{ fontFamily: '"EB Garamond", serif', fontSize: '72px', color: '#c2652a', fontWeight: 400, lineHeight: 1 }}>$5</span>
+                  <span style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '16px', color: '#8a7a6e' }}>/month</span>
+                </div>
+                <div style={{
+                  position: 'absolute',
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  gap: '8px',
+                  opacity: billingCycle === "yearly" ? 1 : 0,
+                  transition: 'opacity 200ms ease',
+                  pointerEvents: billingCycle === "yearly" ? 'auto' : 'none'
+                }}>
+                  <span style={{ fontFamily: '"EB Garamond", serif', fontSize: '72px', color: '#c2652a', fontWeight: 400, lineHeight: 1 }}>$45</span>
+                  <span style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '16px', color: '#8a7a6e' }}>/year</span>
+                </div>
+              </div>
+              
+              <div style={{
                 fontFamily: 'var(--font-body), Manrope, sans-serif',
-                fontSize: '16px',
-                color: '#8a7a6e'
-              }}>/month</span>
+                fontSize: '13px',
+                color: '#8a7a6e',
+                height: '20px',
+                opacity: billingCycle === "yearly" ? 1 : 0,
+                transition: 'opacity 200ms ease',
+                marginTop: '4px'
+              }}>
+                That's $3.75/month
+              </div>
             </div>
 
             <div style={{
@@ -563,30 +436,21 @@ export default function NewsletterPage() {
               transition: 'background-color 200ms',
               marginBottom: '24px'
             }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#a8521f'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#c2652a'}>
-              Join The War Room →
+              Join The War Room — {billingCycle === "monthly" ? "$5/month" : "$45/year"} →
             </button>
 
             <div style={{
               fontFamily: 'var(--font-body), Manrope, sans-serif',
               fontSize: '12px',
               color: '#8a7a6e',
-              textAlign: 'center',
-              marginBottom: '8px'
-            }}>
-              Cancel anytime. No questions asked.
-            </div>
-            <div style={{
-              fontFamily: 'var(--font-body), Manrope, sans-serif',
-              fontSize: '12px',
-              color: '#8a7a6e',
               textAlign: 'center'
             }}>
-              Annual plan available — $45/year (save 25%)
+              Cancel anytime. No questions asked.
             </div>
           </div>
         </section>
 
-        {/* SECTION 5: SOCIAL PROOF STRIP */}
+        {/* SECTION 4: SOCIAL PROOF STRIP */}
         <section ref={socialRef} style={{ backgroundColor: '#faf5ee', padding: '80px 48px', maxWidth: '1100px', margin: '0 auto' }}>
           <h2 style={{
             fontFamily: '"EB Garamond", serif',
@@ -662,60 +526,6 @@ export default function NewsletterPage() {
                 </div>
               </div>
             ))}
-          </div>
-        </section>
-
-        {/* SECTION 6: FINAL CTA STRIP */}
-        <section ref={finalCtaRef} style={{ backgroundColor: '#c2652a', padding: '100px 48px', textAlign: 'center' }}>
-          <h2 style={{
-            fontFamily: '"EB Garamond", serif',
-            fontStyle: 'italic',
-            fontWeight: 400,
-            fontSize: 'clamp(32px, 4.5vw, 58px)',
-            lineHeight: 1.05,
-            color: '#faf5ee',
-            marginBottom: '16px'
-          }}>
-            Still Reading? You Already Know.
-          </h2>
-          
-          <p style={{
-            fontFamily: 'var(--font-body), Manrope, sans-serif',
-            fontSize: '17px',
-            color: 'rgba(250,245,238,0.75)',
-            marginBottom: '40px'
-          }}>
-            12,000 people get this every week. Join them.
-          </p>
-          
-          <div className="flex flex-col md:flex-row gap-[12px] max-w-[480px] mx-auto w-full">
-            <input type="email" placeholder="Your email address" style={{
-              padding: '14px 20px',
-              borderRadius: '8px',
-              border: 'none',
-              fontFamily: 'var(--font-body), Manrope, sans-serif',
-              fontSize: '14px',
-              backgroundColor: 'rgba(250,245,238,0.95)',
-              color: '#3a302a',
-              flex: 1,
-              outline: 'none'
-            }} className="w-full md:w-auto" />
-            
-            <button style={{
-              padding: '14px 28px',
-              borderRadius: '8px',
-              backgroundColor: '#3a302a',
-              color: '#faf5ee',
-              fontFamily: 'var(--font-body), Manrope, sans-serif',
-              fontSize: '14px',
-              fontWeight: 500,
-              border: 'none',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              transition: 'background-color 200ms'
-            }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1a1008'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3a302a'} className="w-full md:w-auto">
-              Join Free
-            </button>
           </div>
         </section>
       </main>
