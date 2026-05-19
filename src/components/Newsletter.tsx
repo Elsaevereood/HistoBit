@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { splitTextIntoWords } from "@/lib/animations";
@@ -14,6 +14,11 @@ export default function Newsletter() {
   const sublineRef = useRef<HTMLParagraphElement>(null);
   const microRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!sectionRef.current) return;
@@ -68,6 +73,27 @@ export default function Newsletter() {
       tl.to(formRef.current, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, "+=0.2");
     }
   }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) { setError("Please enter your email"); return; }
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to subscribe");
+      setSuccess(true);
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section
@@ -138,58 +164,78 @@ export default function Newsletter() {
         <span>·</span>
         <span>Unsubscribe anytime</span>
         <span>·</span>
-        <span>Read by 40,000 people</span>
+        <span>Read by 12,000 people</span>
       </div>
 
-      <form
-        ref={formRef}
-        className="flex"
-        style={{
+      {success ? (
+        <div style={{
           maxWidth: 480,
           margin: "40px auto 0",
-        }}
-        onSubmit={(e) => e.preventDefault()}
-      >
-        <input
-          type="email"
-          placeholder="Your email address"
-          id="newsletter-email"
-          style={{
-            flex: 1,
-            height: 48,
-            background: "#faf5ee",
-            border: "none",
-            borderRadius: "8px 0 0 8px",
-            padding: "0 20px",
-            fontFamily: "var(--font-body)",
-            fontSize: 14,
-            color: "#3a302a",
-            outline: "none",
-          }}
-        />
-        <button
-          type="submit"
-          id="newsletter-submit"
-          className="transition-colors duration-200"
-          style={{
-            height: 48,
-            background: "#3a302a",
-            color: "#faf5ee",
-            fontFamily: "var(--font-body)",
-            fontSize: 14,
-            fontWeight: 500,
-            padding: "0 28px",
-            borderRadius: "0 8px 8px 0",
-            border: "none",
-            cursor: "pointer",
-            whiteSpace: "nowrap",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = "#1a1008")}
-          onMouseLeave={(e) => (e.currentTarget.style.background = "#3a302a")}
+          fontFamily: "var(--font-heading)",
+          fontStyle: "italic",
+          fontSize: 22,
+          color: "#faf5ee",
+          textAlign: "center",
+        }}>
+          You&apos;re in. First dispatch arrives next week.
+        </div>
+      ) : (
+        <form
+          ref={formRef}
+          className="flex flex-col items-center gap-3"
+          style={{ maxWidth: 480, margin: "40px auto 0" }}
+          onSubmit={handleSubmit}
         >
-          Send Me the History
-        </button>
-      </form>
+          <div className="flex w-full">
+            <input
+              type="email"
+              placeholder="Your email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={{
+                flex: 1,
+                height: 48,
+                background: "#faf5ee",
+                border: "none",
+                borderRadius: "8px 0 0 8px",
+                padding: "0 20px",
+                fontFamily: "var(--font-body)",
+                fontSize: 14,
+                color: "#3a302a",
+                outline: "none",
+              }}
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="transition-colors duration-200"
+              style={{
+                height: 48,
+                background: "#3a302a",
+                color: "#faf5ee",
+                fontFamily: "var(--font-body)",
+                fontSize: 14,
+                fontWeight: 500,
+                padding: "0 28px",
+                borderRadius: "0 8px 8px 0",
+                border: "none",
+                cursor: loading ? "not-allowed" : "pointer",
+                whiteSpace: "nowrap",
+                opacity: loading ? 0.7 : 1,
+              }}
+              onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = "#1a1008"; }}
+              onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = "#3a302a"; }}
+            >
+              {loading ? "Joining..." : "Send Me the History"}
+            </button>
+          </div>
+          {error && (
+            <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "#faf5ee", opacity: 0.85 }}>
+              {error}
+            </div>
+          )}
+        </form>
+      )}
     </section>
   );
 }
