@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     // Send welcome email via Resend
     try {
       await resend.emails.send({
-        from: process.env.RESEND_FROM_EMAIL || "newsletter@histobit.com",
+        from: process.env.RESEND_FROM_EMAIL || "info@histobit.com",
         to: email,
         subject: "Welcome to The Dispatch — Histobit",
         html: `
