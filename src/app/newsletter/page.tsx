@@ -218,7 +218,7 @@ export default function NewsletterPage() {
               margin: '24px auto 0',
               textAlign: 'center'
             }}>
-              Join 40,000 readers getting deep military history every week. No mythology. No filler. Just the stories that actually changed the world.
+              Join 12,000 readers getting deep military history every week. No mythology. No filler. Just the stories that actually changed the world.
             </p>
             
             <div ref={trustRef} style={{
@@ -311,7 +311,7 @@ export default function NewsletterPage() {
                 </h3>
                 
                 <p style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '14px', color: '#8a7a6e', marginBottom: '32px' }}>
-                  Join 40,000 readers. Cancel anytime.
+                  Join 12,000 readers. Cancel anytime.
                 </p>
                 
                 {success ? (
@@ -657,7 +657,7 @@ export default function NewsletterPage() {
             color: 'rgba(250,245,238,0.75)',
             marginBottom: '40px'
           }}>
-            40,000 people get this every week. Join them.
+            12,000 people get this every week. Join them.
           </p>
           
           <div className="flex flex-col md:flex-row gap-[12px] max-w-[480px] mx-auto w-full">

@@ -38,7 +38,7 @@ export default function ReaderVoices() {
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ marginBottom: 56 }}>
           <div style={{ fontFamily: "var(--font-body)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.14em", color: "#c2652a", fontWeight: 500, marginBottom: 12 }}>READER VOICES</div>
-          <h2 ref={headingRef} style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(32px, 4vw, 48px)", color: "#3a302a", lineHeight: 1.1 }}>What 40,000 Readers Say</h2>
+          <h2 ref={headingRef} style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(32px, 4vw, 48px)", color: "#3a302a", lineHeight: 1.1 }}>What Readers Say</h2>
         </div>
 
         <div className="voices-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>

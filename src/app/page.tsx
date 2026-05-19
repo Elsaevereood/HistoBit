@@ -10,7 +10,6 @@ import LatestArchive from "@/components/LatestArchive"
 const TopicExplorer = dynamic(() => import("@/components/TopicExplorer"))
 const WhatIsHistobit = dynamic(() => import("@/components/WhatIsHistobit"))
 const TrustBar = dynamic(() => import("@/components/TrustBar"))
-const MerchPreview = dynamic(() => import("@/components/MerchPreview"))
 const ReaderVoices = dynamic(() => import("@/components/ReaderVoices"))
 const Newsletter = dynamic(() => import("@/components/Newsletter"))
 const Footer = dynamic(() => import("@/components/Footer"))
@@ -28,7 +27,6 @@ export default async function Home() {
         <TopicExplorer />
         <WhatIsHistobit />
         <TrustBar />
-        <MerchPreview />
         <ReaderVoices />
         <Newsletter />
       </main>

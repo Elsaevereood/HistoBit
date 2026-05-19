@@ -611,7 +611,7 @@ export default function AboutPage() {
             </p>
             <p style={{ fontFamily: "var(--font-body)", fontSize: 16, lineHeight: 1.85, color: "#3a302a", marginBottom: 28 }}>
               The channel has reached over 8 million views across 60 countries.
-              40,000 people read the weekly newsletter. None of that happened because
+              12,000 people read the weekly newsletter. None of that happened because
               of luck. It happened because the audience for serious military history is
               enormous — and almost nobody was serving them properly.
             </p>
@@ -744,7 +744,7 @@ export default function AboutPage() {
           alignItems: "center"
         }}>
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontSize: "clamp(36px, 5vw, 56px)", color: "#c2652a" }}>40,000</div>
+            <div style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontSize: "clamp(36px, 5vw, 56px)", color: "#c2652a" }}>12,000</div>
             <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "#8a7a6e", marginTop: 4, letterSpacing: "0.04em" }}>Weekly Readers</div>
           </div>
           <div style={{ height: 40, width: 1, background: "rgba(216,208,200,0.8)" }}></div>
@@ -761,7 +761,7 @@ export default function AboutPage() {
 
         <div ref={section6FormRef} style={{ maxWidth: 500, margin: "0 auto" }}>
           <div style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontSize: 28, color: "#3a302a", marginBottom: 8 }}>
-            Join 40,000 Readers
+            Join 12,000 Readers
           </div>
           <div style={{ fontFamily: "var(--font-body)", fontSize: 15, color: "#8a7a6e", marginBottom: 28 }}>
             One email. Every week. The history they left out — in your inbox.

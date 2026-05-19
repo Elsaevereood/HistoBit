@@ -6,6 +6,7 @@ import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Footer from "@/components/Footer";
+import Navigation from "@/components/Navigation";
 import type { PostMeta } from "@/lib/mdx";
 
 if (typeof window !== "undefined") {
@@ -244,6 +245,7 @@ export default function BlogIndexClient({ posts }: { posts: PostMeta[] }) {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#faf5ee", paddingTop: 64 }}>
+      <Navigation />
       {/* HERO HEADER SECTION */}
       <section
         className="relative flex items-center justify-center overflow-hidden"

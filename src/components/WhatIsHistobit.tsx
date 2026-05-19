@@ -36,7 +36,7 @@ export default function WhatIsHistobit() {
       if (countRef.current) {
         ScrollTrigger.create({
           trigger: countRef.current, start: "top 80%", once: true,
-          onEnter: () => countUpAnimation(countRef.current!, 40000, "+"),
+          onEnter: () => countUpAnimation(countRef.current!, 12000, "+"),
         });
       }
     });
@@ -54,7 +54,7 @@ export default function WhatIsHistobit() {
           <div style={{ fontFamily: "var(--font-script)", fontSize: "clamp(36px, 4.5vw, 58px)", color: "#c2652a", lineHeight: 1.2, marginBottom: 36 }}>told properly.</div>
           <p style={pStyle}>Histobit is a military history channel built for people who want the real story — not the mythology, not the Hollywood version. The research goes deep. The writing is cinematic.</p>
           <p style={pStyle}>Every video, every post, every newsletter dispatch meets the same standard: if it isn&apos;t specific, it isn&apos;t good enough.</p>
-          <p style={pStyle}>8 million views. 60 countries. 40,000 readers every week. None of that happened by accident.</p>
+          <p style={pStyle}>8 million views. 60 countries. 12,000 readers every week. None of that happened by accident.</p>
           <Link href="/about" className="cta-link" style={{ fontFamily: "var(--font-body)", fontSize: 14, fontWeight: 500, color: "#c2652a", textDecoration: "none", marginTop: 8, display: "inline-block" }}>Read the Full Story →</Link>
         </div>
 

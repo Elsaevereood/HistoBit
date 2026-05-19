@@ -8,8 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const items = [
   { num: "8M+", label: "Total Views" },
-  { num: "40,000", label: "Newsletter Readers" },
-  { num: "#1", label: "Military History" },
+  { num: "12,000", label: "Newsletter Readers" },
   { num: "60+", label: "Countries" },
   { num: "Est. 2022", label: "Independent" },
 ];

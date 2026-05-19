@@ -13,7 +13,6 @@ export default function HeroSection() {
   const line2Ref = useRef<HTMLDivElement>(null);
   const line3Ref = useRef<HTMLDivElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
-  const btnsRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
 
@@ -83,20 +82,6 @@ export default function HeroSection() {
             y: 0,
             opacity: 1,
             duration: 0.6,
-          },
-          ">"
-        );
-      }
-
-      // Buttons
-      if (btnsRef.current) {
-        gsap.set(btnsRef.current, { y: 16, opacity: 0 });
-        tl.to(
-          btnsRef.current,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.5,
           },
           ">"
         );
@@ -299,73 +284,10 @@ export default function HeroSection() {
           Deep research. No mythology. Every week.
         </p>
 
-        {/* Buttons */}
-        <div
-          ref={btnsRef}
-          style={{
-            marginTop: 40,
-            display: "flex",
-            gap: 16,
-            justifyContent: "center",
-            flexWrap: "wrap",
-          }}
-        >
-          <button
-            onClick={() => (window.location.href = "/blog")}
-            style={{
-              background: "#c2652a",
-              color: "#faf5ee",
-              padding: "16px 36px",
-              borderRadius: 8,
-              fontFamily: "var(--font-body)",
-              fontSize: 14,
-              fontWeight: 500,
-              border: "none",
-              cursor: "pointer",
-              transition: "background 200ms, transform 200ms",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "#a8521f";
-              e.currentTarget.style.transform = "scale(0.97)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "#c2652a";
-              e.currentTarget.style.transform = "scale(1)";
-            }}
-          >
-            Read the Blog
-          </button>
-          <button
-            onClick={() => (window.location.href = "/newsletter")}
-            style={{
-              background: "transparent",
-              color: "rgba(250,245,238,0.8)",
-              padding: "16px 32px",
-              borderRadius: 8,
-              border: "1px solid rgba(250,245,238,0.2)",
-              fontFamily: "var(--font-body)",
-              fontSize: 14,
-              fontWeight: 500,
-              cursor: "pointer",
-              transition: "border-color 200ms, color 200ms",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "rgba(250,245,238,0.5)";
-              e.currentTarget.style.color = "#faf5ee";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "rgba(250,245,238,0.2)";
-              e.currentTarget.style.color = "rgba(250,245,238,0.8)";
-            }}
-          >
-            Join the Newsletter
-          </button>
-        </div>
-
         {/* Trust line */}
         <div
           style={{
-            marginTop: 20,
+            marginTop: 40,
             fontFamily: "var(--font-body)",
             fontSize: 12,
             color: "rgba(250,245,238,0.3)",
@@ -373,7 +295,7 @@ export default function HeroSection() {
             textAlign: "center",
           }}
         >
-          40,000 subscribers · 8 million views · 60 countries
+          12,000 subscribers · 8 million views · 60 countries
         </div>
       </div>
 
