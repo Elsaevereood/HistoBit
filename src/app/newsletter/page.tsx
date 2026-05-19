@@ -30,8 +30,62 @@ export default function NewsletterPage() {
   const socialRef = useRef<HTMLDivElement>(null);
 
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+  const [checkoutEmail, setCheckoutEmail] = useState("");
+  const [showEmailCapture, setShowEmailCapture] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  const handleCheckout = async () => {
+    if (!checkoutEmail) return;
+    
+    const planId = billingCycle === "monthly" 
+      ? process.env.NEXT_PUBLIC_RAZORPAY_PLAN_MONTHLY 
+      : process.env.NEXT_PUBLIC_RAZORPAY_PLAN_YEARLY;
+
+    try {
+      const res = await fetch("/api/newsletter/create-subscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId })
+      });
+      const data = await res.json();
+      if (!data.subscription_id) throw new Error("No subscription id");
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        subscription_id: data.subscription_id,
+        name: "Histobit — The War Room",
+        description: billingCycle === "monthly" ? "Monthly Dispatch — ₹599/month" : "Yearly Dispatch — ₹4,999/year",
+        theme: { color: "#c2652a" },
+        handler: async function(response: any) {
+          const upgradeRes = await fetch("/api/newsletter/upgrade", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: checkoutEmail,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_subscription_id: response.razorpay_subscription_id,
+              razorpay_signature: response.razorpay_signature
+            })
+          });
+          const upgradeData = await upgradeRes.json();
+          if (upgradeData.success) {
+            setPaymentSuccess(true);
+          }
+        }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      console.error("Payment failed", err);
+    }
+  };
 
   useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    document.body.appendChild(script);
+
     // HERO ANIMATIONS
     const tl = gsap.timeline({ delay: 0.2 });
     
@@ -348,6 +402,34 @@ export default function NewsletterPage() {
             maxWidth: '520px',
             marginTop: '32px'
           }}>
+            {paymentSuccess ? (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                padding: '32px 0'
+              }}>
+                <h3 style={{
+                  fontFamily: '"EB Garamond", serif',
+                  fontStyle: 'italic',
+                  fontSize: '28px',
+                  color: '#3a302a',
+                  marginBottom: '8px'
+                }}>
+                  You're in. First dispatch arrives next week.
+                </h3>
+                <p style={{
+                  fontFamily: 'var(--font-body), Manrope, sans-serif',
+                  fontSize: '15px',
+                  color: '#6b5c4e'
+                }}>
+                  Check your inbox for a confirmation.
+                </p>
+              </div>
+            ) : (
+              <>
             <div style={{ 
               display: 'flex', 
               flexDirection: 'column',
@@ -422,22 +504,61 @@ export default function NewsletterPage() {
               ))}
             </div>
 
-            <button onClick={() => console.log("Razorpay coming soon")} style={{
-              width: '100%',
-              height: '52px',
-              backgroundColor: '#c2652a',
-              color: '#faf5ee',
-              fontFamily: 'var(--font-body), Manrope, sans-serif',
-              fontSize: '15px',
-              fontWeight: 500,
-              borderRadius: '8px',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'background-color 200ms',
-              marginBottom: '24px'
-            }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#a8521f'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#c2652a'}>
-              Join The War Room — {billingCycle === "monthly" ? "$5/month" : "$45/year"} →
-            </button>
+            {showEmailCapture ? (
+              <div style={{ marginBottom: '24px', width: '100%' }}>
+                <input 
+                  type="email" 
+                  placeholder="Enter your email" 
+                  value={checkoutEmail}
+                  onChange={(e) => setCheckoutEmail(e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: '52px',
+                    padding: '0 16px',
+                    backgroundColor: '#faf5ee',
+                    border: '1px solid #d8d0c8',
+                    borderRadius: '8px',
+                    fontFamily: 'var(--font-body), Manrope, sans-serif',
+                    fontSize: '15px',
+                    color: '#3a302a',
+                    outline: 'none',
+                    marginBottom: '12px'
+                  }}
+                />
+                <button onClick={handleCheckout} style={{
+                  width: '100%',
+                  height: '52px',
+                  backgroundColor: '#c2652a',
+                  color: '#faf5ee',
+                  fontFamily: 'var(--font-body), Manrope, sans-serif',
+                  fontSize: '15px',
+                  fontWeight: 500,
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'background-color 200ms'
+                }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#a8521f'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#c2652a'}>
+                  Continue to Payment →
+                </button>
+              </div>
+            ) : (
+              <button onClick={() => setShowEmailCapture(true)} style={{
+                width: '100%',
+                height: '52px',
+                backgroundColor: '#c2652a',
+                color: '#faf5ee',
+                fontFamily: 'var(--font-body), Manrope, sans-serif',
+                fontSize: '15px',
+                fontWeight: 500,
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background-color 200ms',
+                marginBottom: '24px'
+              }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#a8521f'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#c2652a'}>
+                Join The War Room — {billingCycle === "monthly" ? "$5/month" : "$45/year"} →
+              </button>
+            )}
 
             <div style={{
               fontFamily: 'var(--font-body), Manrope, sans-serif',
@@ -447,6 +568,8 @@ export default function NewsletterPage() {
             }}>
               Cancel anytime. No questions asked.
             </div>
+            </>
+            )}
           </div>
         </section>
 
