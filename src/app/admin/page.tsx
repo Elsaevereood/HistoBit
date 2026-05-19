@@ -69,7 +69,7 @@ export default function AdminPage() {
       .order("created_at", { ascending: false });
     setSubscribers(data || []);
     setSubsLoading(false);
-  }, [supabase]);
+  }, []);
 
   const fetchStats = useCallback(async () => {
     setStatsLoading(true);
@@ -80,7 +80,7 @@ export default function AdminPage() {
       .order("sent_at", { ascending: false });
     setSentDrafts(data || []);
     setStatsLoading(false);
-  }, [supabase]);
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) return;

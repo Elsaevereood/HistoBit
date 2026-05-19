@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Hessians Were Not Mercenaries — Histobit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:    #c2652a;
+      --bg:         #faf5ee;
+      --tertiary:   #8c3c3c;
+      --border:     rgba(216, 208, 200, 0.6);
+      --shadow:     rgba(58, 48, 42, 0.04);
+      --text:       #2a2018;
+      --text-muted: #6b5d52;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Manrope', sans-serif;
+      font-size: 17px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── READING PROGRESS BAR ─────────────────────────────────────── */
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: var(--primary);
+      z-index: 1000;
+      transition: width 0.1s linear;
+    }
+
+    /* ─── HERO ─────────────────────────────────────────────────────── */
+    .hero {
+      width: 100%;
+      height: 72vh;
+      min-height: 420px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-img-wrap {
+      width: 100%;
+      height: 110%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .hero-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      display: block;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(30, 20, 12, 0.18) 0%,
+        rgba(30, 20, 12, 0.52) 100%
+      );
+    }
+
+    .hero-caption {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 700px;
+      text-align: center;
+      font-family: 'Manrope', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.78);
+      letter-spacing: 0.03em;
+      font-style: italic;
+    }
+
+    /* ─── NAV BAR (minimal) ────────────────────────────────────────── */
+    .site-nav {
+      position: fixed;
+      top: 3px;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 56px;
+      background: rgba(250, 245, 238, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .site-nav .logo {
+      font-family: 'EB Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+
+    .site-nav .nav-tag {
+      font-family: 'Manrope', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ─── ARTICLE WRAPPER ──────────────────────────────────────────── */
+    .article-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 64px 24px 120px;
+    }
+
+    /* ─── ARTICLE META ─────────────────────────────────────────────── */
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 36px;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .article-meta.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .meta-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    .meta-divider {
+      width: 1px;
+      height: 14px;
+      background: var(--border);
+    }
+
+    .meta-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── HEADLINE ─────────────────────────────────────────────────── */
+    h1.article-title {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(32px, 5.5vw, 52px);
+      font-weight: 500;
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 28px;
+      letter-spacing: -0.01em;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s;
+    }
+
+    h1.article-title.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── INTRO PARAGRAPH WITH DROP CAP ───────────────────────────── */
+    .intro-para::first-letter {
+      font-family: 'EB Garamond', serif;
+      font-size: 5.2em;
+      font-weight: 600;
+      float: left;
+      line-height: 0.78;
+      margin-right: 8px;
+      margin-top: 8px;
+      color: var(--primary);
+    }
+
+    /* ─── BODY COPY ────────────────────────────────────────────────── */
+    .article-body p {
+      font-family: 'Manrope', sans-serif;
+      font-size: 17px;
+      line-height: 1.82;
+      color: var(--text);
+      margin-bottom: 22px;
+    }
+
+    /* ─── SECTION HEADINGS ─────────────────────────────────────────── */
+    .article-body h2 {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(24px, 3.8vw, 36px);
+      font-weight: 500;
+      color: var(--text);
+      margin-top: 64px;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      opacity: 0;
+      transform: translateX(-18px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .article-body h2.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .section-rule {
+      width: 48px;
+      height: 2px;
+      background: var(--primary);
+      margin-bottom: 28px;
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+    }
+
+    .section-rule.visible {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+
+    /* ─── PULL QUOTE ───────────────────────────────────────────────── */
+    .pull-quote {
+      border-left: 3px solid var(--primary);
+      padding: 20px 28px;
+      margin: 44px 0;
+      background: rgba(194, 101, 42, 0.04);
+      border-radius: 0 6px 6px 0;
+      opacity: 0;
+      transform: scale(0.97);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .pull-quote.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .pull-quote p {
+      font-family: 'EB Garamond', serif !important;
+      font-size: 22px !important;
+      font-style: italic;
+      color: var(--tertiary) !important;
+      line-height: 1.5 !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* ─── INLINE IMAGES ────────────────────────────────────────────── */
+    .article-image {
+      margin: 48px 0;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+
+    .article-image.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .article-image img {
+      width: 100%;
+      border-radius: 4px;
+      display: block;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 32px var(--shadow);
+    }
+
+    .article-image figcaption {
+      margin-top: 12px;
+      font-size: 13px;
+      font-style: italic;
+      color: var(--text-muted);
+      font-family: 'Manrope', sans-serif;
+      line-height: 1.5;
+      padding-left: 2px;
+      opacity: 0;
+      transition: opacity 0.5s ease 0.3s;
+    }
+
+    .article-image.visible figcaption {
+      opacity: 1;
+    }
+
+    /* ─── DIVIDER ──────────────────────────────────────────────────── */
+    .article-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 60px 0;
+    }
+
+    /* ─── CONCLUSION CALLOUT ───────────────────────────────────────── */
+    .conclusion-box {
+      background: rgba(194, 101, 42, 0.06);
+      border: 1px solid rgba(194, 101, 42, 0.2);
+      border-radius: 6px;
+      padding: 32px 36px;
+      margin-top: 56px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .conclusion-box.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .conclusion-box p {
+      font-family: 'EB Garamond', serif !important;
+      font-size: 20px !important;
+      line-height: 1.65 !important;
+      color: var(--text) !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* ─── FOOTER ───────────────────────────────────────────────────── */
+    .article-footer {
+      text-align: center;
+      margin-top: 80px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+    }
+
+    .article-footer .footer-logo {
+      font-family: 'EB Garamond', serif;
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .article-footer p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+
+    /* ─── FADE-IN UTILITY ──────────────────────────────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── RESPONSIVE ───────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .article-wrap { padding: 48px 18px 80px; }
+      .site-nav { padding: 0 18px; }
+      .pull-quote { padding: 16px 20px; }
+      .conclusion-box { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Reading progress bar -->
+  <div id="progress-bar"></div>
+
+  <!-- Minimal nav -->
+  <nav class="site-nav">
+    <a href="#" class="logo">Histobit</a>
+    <span class="nav-tag">Military History</span>
+  </nav>
+
+  <!-- Hero image with parallax -->
+  <div class="hero" id="hero">
+    <div class="hero-img-wrap" id="hero-img-wrap">
+      <img src="hessians-hero.jpg" alt="Trenton, December 26, 1776 — Hessian infantry scrambling in the snow" />
+    </div>
+    <div class="hero-overlay"></div>
+    <p class="hero-caption">Trenton, December 26, 1776. Soaked powder and three weeks of exhaustion, not alcohol, broke the Hessian garrison.</p>
+  </div>
+
+  <!-- Article content -->
+  <main class="article-wrap">
+
+    <div class="article-meta">
+      <span class="meta-tag">American Revolution</span>
+      <div class="meta-divider"></div>
+      <span class="meta-text">Military History · Long Read</span>
+    </div>
+
+    <h1 class="article-title">The Hessians Were Not Mercenaries. They Were Not Drunk. They Were Not Even Bad Soldiers.</h1>
+
+    <div class="article-body">
+
+      <p class="intro-para fade-in">For two hundred years, Americans have believed three things about the German soldiers who fought for the British during the Revolutionary War. That they were greedy mercenaries. That they were drunken cowards at Trenton. That they were a bloodthirsty foreign menace unleashed on freeborn Englishmen by a tyrant king.</p>
+
+      <p class="fade-in">All three are wrong.</p>
+
+      <p class="fade-in">The cultural endpoint of the lie is Washington Irving's headless Hessian, the ghost of a German trooper "whose head had been carried away by a cannonball," riding through the woods of Sleepy Hollow forever in search of it. Irving published the story in 1820, forty years after the war ended, and even by then the Hessian had stopped being a person and become a creature. Faceless. Decapitated. Monstrous. A useful villain. Around 30,000 German soldiers fought in the Revolution. Roughly 5,000 to 6,000 of them stayed and became Americans. Their descendants are walking around right now, mostly unaware that their ancestors are still cast as the ghouls of American folklore.</p>
+
+      <p class="fade-in">This article exists to take that apart.</p>
+
+      <!-- WHERE THE MYTH CAME FROM -->
+      <h2>Where the Myth Came From</h2>
+      <div class="section-rule"></div>
+
+      <p class="fade-in">The propaganda was deliberate from day one. When Thomas Jefferson drafted the Declaration of Independence in the summer of 1776, the very first Hessians had not yet set foot on American soil. He attacked them anyway. King George III, Jefferson wrote, was "transporting large Armies of foreign Mercenaries to compleat the works of death, desolation and tyranny, already begun with circumstances of Cruelty &amp; perfidy scarcely paralleled in the most barbarous ages, and totally unworthy the Head of a civilized nation."</p>
+
+      <p class="fade-in">That sentence did the work the Patriots needed it to do. It framed the German soldier as a monster before any American had met one. It also gave the colonial press its template. By the time Hessian regiments landed at Staten Island that August, the newspapers were primed. Stories of mass rapes, bayoneted prisoners, and burning farms filled the broadsides. Most of those stories were invented or wildly exaggerated. American officer Aaron Burr, the same Aaron Burr who would later kill Alexander Hamilton, investigated the atrocity claims and wrote flatly that "various have been the reports concerning the barbarities committed by the Hessians, most of them [are] incredible and false."</p>
+
+      <p class="fade-in">The cleverest piece of anti-Hessian work appeared in early 1777, just after Washington's victory at Trenton. It was a fake letter, written in French, supposedly from a German "Count de Schaumberg" to a "Baron Hohendorf." The Count expressed delight at the high Hessian casualties because the British paid bounties for each dead soldier. He suggested that medics let the wounded die to maximize the payout. The whole document is now called The Sale of the Hessians. It was a forgery. The Count, the Baron, and the letter itself were fabricated to disgust European readers and encourage Hessian desertion. For more than a century the piece has been attributed to Benjamin Franklin, but the attribution rests on a guess made in 1874 by a biographer named John Bigelow, who reasoned that nobody else could have written it. The editor of The Papers of Benjamin Franklin, William Willcox, found no evidence Franklin had anything to do with it. The author remains unknown.</p>
+
+      <p class="fade-in">What is not unknown is the purpose. The Continental Congress needed the Germans to be inhuman. A war against fellow Englishmen was a civil war. A war against foreign monsters was something else.</p>
+
+      <!-- MYTH ONE -->
+      <h2>Myth One: They Were Mercenaries</h2>
+      <div class="section-rule"></div>
+
+      <p class="fade-in">A mercenary, in eighteenth century international law, was a specific thing. The Swiss legal scholar Emer de Vattel laid it out in his 1758 work The Law of Nations, which was the standard reference of the era. A mercenary was an individual who personally enlisted in a foreign army for personal financial gain, abandoning his native allegiance to do so.</p>
+
+      <p class="fade-in">The Hessians did none of that.</p>
+
+      <p class="fade-in">They did not sign up with the British. They were ordered to America by their own princes. They marched under their own flags. They were commanded by their own officers. They were tried under their own military codes. They were paid by their own treasuries at their own standard rates. The transaction was between governments, not between the British and the individual soldier. Vattel had a word for that arrangement, and it was not mercenary. It was auxiliary.</p>
+
+      <p class="fade-in">The men themselves came from the Prussian-style Canton system, in which territories were divided into recruiting districts and each district was permanently tied to a specific regiment. Recruits were not drifters and they were not soldiers of fortune. They were farm boys, working-class kids, the sons of the rural Lutheran underclass, conscripted or enlisted as part of a legal obligation to their sovereign. The Landgrave of Hesse-Cassel kept somewhere between 5 and 7 percent of his population in uniform in peacetime, a higher ratio than Prussia itself.</p>
+
+      <p class="fade-in">The money is where the mercenary myth keeps its grip. The British did pay enormous subsidies, in the millions of pounds sterling, to the German princes. The Landgrave of Hesse-Cassel took in roughly thirteen years' worth of his normal tax revenue from the deal. But that money went to the treasury, not the trooper. Friedrich II used most of it to lower taxes, fund public works, run a welfare system, and remit taxes for the families of his deployed soldiers. The individual Hessian got his standard military pay, which was decent by the standards of European armies and slightly better than what a British private earned, but nobody was getting rich.</p>
+
+      <div class="pull-quote">
+        <p>"The Hessians weren't individual soldiers who signed up with Britain to make money. They were troops raised by their respective German rulers, and then these rulers contracted with Britain to essentially rent out complete military units with their own commanders."</p>
+      </div>
+
+      <p class="fade-in">The modern historical consensus is unambiguous. Friederike Baer, whose 2022 book <em>Hessians: German Soldiers in the American Revolutionary War</em> is now the definitive English-language study, puts it plainly in the quote above. Rodney Atwood and Dennis Showalter, both major military historians who worked the subject before her, reach the same conclusion. The mercenary label is propaganda. It always was.</p>
+
+      <!-- MYTH TWO -->
+      <h2>Myth Two: They Were Drunk at Trenton</h2>
+      <div class="section-rule"></div>
+
+      <p class="fade-in">This is the big one. The story most Americans grow up with goes like this. On Christmas night 1776, the Hessian garrison at Trenton was deep in its cups, sleeping off a holiday bender, when George Washington crossed the Delaware and caught them with their boots off. The Patriots won because the Germans were too hungover to fight.</p>
+
+      <p class="fade-in">It is a great story. None of it is true.</p>
+
+      <p class="fade-in">The man who shredded the myth most completely was John Greenwood, a sixteen-year-old fifer in the Continental Army who fought at Trenton and then helped supervise the captured Hessians afterwards. He was on the ground. He guarded the prisoners. He had every patriotic reason to claim he had beaten a drunken enemy. Instead he wrote: "I am certain not a drop of liquor was drunk during the whole night, nor, as I could see, even a piece of bread eaten." Elsewhere he doubled down. "I am willing to go upon oath that I did not see even a solitary drunken soldier belonging to the enemy."</p>
+
+      <p class="fade-in">The military historian Edward G. Lengel, who has written extensively on Washington, says it directly: "The Germans were dazed and tired but there is no truth to the legend claiming that they were helplessly drunk." Mark Maloy, a National Park Service historian whose book <em>Victory or Death</em> covers the Ten Crucial Days from Trenton to Princeton, calls the drunken Hessian story "the biggest myth of the Battle of Trenton" and traces it to British officers spreading rumors after the battle to humiliate the Germans whose embarrassing defeat had cost them New Jersey.</p>
+
+      <p class="fade-in">What actually beat the Hessians at Trenton was something far less dramatic and far more honest. They had been on alert for three weeks. American militia had been running constant hit-and-run attacks on the Trenton garrison since mid-December, and Colonel Johann Rall had kept his men sleeping in full uniform, with weapons ready, night after night. They were exhausted. They were also operating under genuinely terrible weather. The same nor'easter that nearly stopped Washington's crossing of the Delaware was hammering Trenton with sleet, hail, and freezing rain. The morning patrols that should have spotted Washington's army were cancelled because of the storm. The musket powder in the Hessian guard posts was soaked through and would misfire when the moment came.</p>
+
+      <p class="fade-in">Rall himself had ignored three separate warnings of an attack. One came from a British spy, one from a Loyalist doctor, one from two American deserters. On Christmas night he was at the home of a Trenton merchant named Abraham Hunt, playing cards, when a local Tory pushed a written warning into his hand. Rall stuffed the note into his coat pocket without reading it. American surgeons found the unopened note when they cut away his uniform after the battle.</p>
+
+      <p class="fade-in">He had refused to build defensive fortifications. His superior, Colonel von Donop, had ordered redoubts dug. Rall ignored that order too, partly out of arrogance, partly out of a stubborn conviction that the Americans would never attack. "Let them come," he reportedly said. "We will go at them with the bayonet."</p>
+
+      <p class="fade-in">They came. The bayonet failed. When Washington's columns hit Trenton just after eight in the morning of December 26, the soaked powder neutralized the Hessian infantry's standard volley fire. American artillery dominated King and Queen Streets within minutes. Rall got on his horse to organize a counterattack and was struck by two musket balls in the side. He was carried into St. Michael's church and died the next evening. Of his 1,500 men, nearly 900 were captured. The Americans lost two killed, both from exposure on the march, and four wounded.</p>
+
+      <!-- BODY IMAGE 2 — Rall being shot -->
+      <figure class="article-image">
+        <img src="hessians-rall.jpg" alt="Colonel Johann Rall struck by two musket balls on a Trenton street" />
+        <figcaption>Colonel Johann Rall, struck by two musket balls in the side. The unread warning was still in his coat pocket.</figcaption>
+      </figure>
+
+      <p class="fade-in">The Germans were not drunk. They were beaten by a desperate enemy who outthought them, by a storm that broke their weapons, and by a commander who would not read his mail.</p>
+
+      <!-- MYTH THREE -->
+      <h2>Myth Three: They Were Foreign Monsters</h2>
+      <div class="section-rule"></div>
+
+      <p class="fade-in">The Hessian as bloodthirsty alien is the third pillar of the legend, and it does not survive a single afternoon with the primary sources.</p>
+
+      <p class="fade-in">The Hessian Jägers, the elite light infantry who carried hunting rifles and operated as skirmishers, were not recruited from prisons or gutters. They were professional foresters, gamekeepers, huntsmen, men whose civilian work involved tracking animals through dense German woods. They became deadly accurate sharpshooters in America because they had been deadly accurate sharpshooters before America. Their commander, Captain Johann Ewald, kept one of the most respected military diaries of the entire war. Modern historians treat his <em>Diary of the American War</em> as essential reading on Revolutionary-era partisan warfare. Ewald was professional, observant, often disgusted by British strategic blundering, and entirely human.</p>
+
+      <!-- BODY IMAGE 1 — Jäger portrait -->
+      <figure class="article-image">
+        <img src="hessians-jager.jpg" alt="A Hessian Jäger light infantryman — professional forester turned sharpshooter" />
+        <figcaption>A Hessian Jäger. Recruited from professional foresters and gamekeepers, not prisons or gutters.</figcaption>
+      </figure>
+
+      <p class="fade-in">He was not alone. A young German named Christian Friedrich Michaelis volunteered for the Hessian corps so he could search for mastodon bones in New York. Another, Friedrich Adam Julius von Wangenheim, published books on the trees and shrubs of North America while on duty. The German soldiers wrote thousands of pages of diaries, letters, and reports during their seven years in America. They commented on the landscape. They commented on the prosperity of white American farmers compared to the European peasants they had left behind. They commented, repeatedly and often with horror, on American slavery. Baer notes that the German soldiers were "oppressed and mistreated, often very cruelly by whites," as one of them wrote of Black Americans, was something they had not seen at home and could not square with the rhetoric of liberty echoing around them.</p>
+
+      <p class="fade-in">This is not the diary of a monster. This is the diary of an observant professional in a strange country.</p>
+
+      <p class="fade-in">The Hessians did loot. So did everyone in the eighteenth century, including the American militia they were fighting. Looting was the standard supplementary income for soldiers across European armies, technically forbidden and almost universally tolerated. Hessian conduct in 1776 New Jersey was harsh and made plenty of civilians furious, but it did not exceed the brutality of any other army in the war, and the worst of the atrocity stories were political fiction. Burr investigated them and called most of them "incredible and false." His verdict has not been improved upon in 250 years.</p>
+
+      <p class="fade-in">What is true is that the Hessians fought hard. At the Battle of Long Island in August 1776, their bayonet charge broke American lines and contributed to the largest single defeat of Washington's army. At Fort Washington that November, they led the assault that captured roughly 2,800 American prisoners, the worst capitulation of the war until Charleston in 1780. They suffered heavily too. A Brunswick detachment under Colonel Friedrich Baum was annihilated at Bennington in August 1777, where 207 Germans were killed and 700 captured, and the loss broke Burgoyne's Saratoga campaign before it had finished failing. They fought well. They died in large numbers. They were soldiers.</p>
+
+      <!-- WHAT THEY ACTUALLY WERE -->
+      <h2>What They Actually Were</h2>
+      <div class="section-rule"></div>
+
+      <p class="fade-in">The numbers are unsparing. Of the roughly 30,000 German troops sent to North America, about 7,500 died there. Only 1,200 of those died in combat. The rest were killed by disease, exposure, malarial swamps in West Florida, the Atlantic crossing, the brutal winters of the northern colonies. The Waldeck regiment posted to the Gulf Coast lost men to yellow fever faster than American musket balls could touch them.</p>
+
+      <p class="fade-in">Of the 23,000 who survived, roughly 17,000 sailed back to Europe in 1783 and were folded back into the peacetime armies of their respective principalities. Between 5,000 and 6,000 chose to stay. Some had married American women. Some had been prisoners of war billeted out to labor on German-American farms in Pennsylvania and Virginia, where they had seen what a country without serfdom and feudal restrictions actually looked like. Some had simply decided that 50 acres of unappropriated land, offered by the Continental Congress to any German deserter, was a better deal than returning to the rigid social hierarchy of the Holy Roman Empire. They anglicized their names and disappeared into the broader stream of German-American immigration, which by the nineteenth century would become the largest single ethnic group in America.</p>
+
+      <p class="fade-in">The most valuable thing the Hessians left behind, for historians at least, is the paper. Captain Ewald's diary. Captain Pausch's account of the artillery train at Saratoga. The journals of Baroness Frederika Riedesel, who followed her Brunswicker husband through the Burgoyne campaign and wrote one of the most vivid civilian accounts of the war. The diaries of Johann Conrad Doehla and Stephen Popp, enlisted men from Ansbach-Bayreuth who recorded the siege of Yorktown and their years as prisoners in American backcountry camps. Modern academics, Baer chief among them, now treat the Hessian writings as a third perspective on the Revolution, neither British nor American, often more honest about the war than either side wanted to be.</p>
+
+      <p class="fade-in">That is what was thrown away when the Hessian became a faceless ghost in a folk story.</p>
+
+      <!-- WHY THE TRUTH MATTERS -->
+      <h2>Why the Truth Matters</h2>
+      <div class="section-rule"></div>
+
+      <p class="fade-in">The Headless Horseman has been good for American culture. He is fun. He sells movies and Halloween decorations and a whole industry around Sleepy Hollow. He is also, in a way nobody quite notices, an act of historical erasure that has lasted longer than the United States itself.</p>
+
+      <p class="fade-in">The German soldier who came to America in 1776 was a conscripted farm boy in a blue coat who marched under a foreign king's flag because his own sovereign had ordered him to. He was probably literate. He probably wrote home to his wife or his mother. He probably looked at American slavery and felt sick. He fought hard, was beaten at Trenton by an enemy he had underestimated, and either died of fever in a swamp or stayed and became somebody's American great-great-grandfather.</p>
+
+      <hr class="article-divider" />
+
+      <div class="conclusion-box">
+        <p>That story is harder than the one with the headless ghost. It is also true.</p>
+      </div>
+
+    </div><!-- /.article-body -->
+
+    <!-- Footer -->
+    <footer class="article-footer fade-in">
+      <span class="footer-logo">Histobit</span>
+      <p>Military history for people who want the real story.</p>
+    </footer>
+
+  </main><!-- /.article-wrap -->
+
+  <script>
+    // ── Reading progress bar ──────────────────────────────────────────
+    const bar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      bar.style.width = progress + '%';
+    }, { passive: true });
+
+    // ── Parallax hero ─────────────────────────────────────────────────
+    const heroWrap = document.getElementById('hero-img-wrap');
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      if (scrollY < window.innerHeight * 1.2) {
+        heroWrap.style.transform = `translateY(${scrollY * 0.28}px)`;
+      }
+    }, { passive: true });
+
+    // ── Intersection Observer for scroll animations ───────────────────
+    const observerOptions = {
+      threshold: 0.12,
+      rootMargin: '0px 0px -40px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Observe everything that needs animation
+    const targets = document.querySelectorAll(
+      '.fade-in, h2, .section-rule, .pull-quote, .article-image, .article-meta, h1.article-title, .conclusion-box'
+    );
+    targets.forEach(el => observer.observe(el));
+
+    // ── Stagger fade-in paragraphs slightly ───────────────────────────
+    document.querySelectorAll('.fade-in').forEach((el, i) => {
+      el.style.transitionDelay = `${Math.min(i * 0.04, 0.3)}s`;
+    });
+  </script>
+
+</body>
+</html>

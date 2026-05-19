@@ -33,13 +33,20 @@ export default function NewsletterPage() {
   const [checkoutEmail, setCheckoutEmail] = useState("");
   const [showEmailCapture, setShowEmailCapture] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
 
   const handleCheckout = async () => {
     if (!checkoutEmail) return;
-    
-    const planId = billingCycle === "monthly" 
-      ? process.env.NEXT_PUBLIC_RAZORPAY_PLAN_MONTHLY 
+    setCheckoutError("");
+
+    const planId = billingCycle === "monthly"
+      ? process.env.NEXT_PUBLIC_RAZORPAY_PLAN_MONTHLY
       : process.env.NEXT_PUBLIC_RAZORPAY_PLAN_YEARLY;
+
+    if (!planId) {
+      setCheckoutError("Payment is not configured. Please contact support.");
+      return;
+    }
 
     try {
       const res = await fetch("/api/newsletter/create-subscription", {
@@ -48,7 +55,9 @@ export default function NewsletterPage() {
         body: JSON.stringify({ planId })
       });
       const data = await res.json();
-      if (!data.subscription_id) throw new Error("No subscription id");
+      if (!res.ok || !data.subscription_id) {
+        throw new Error(data.error || "Failed to create subscription");
+      }
 
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -70,14 +79,17 @@ export default function NewsletterPage() {
           const upgradeData = await upgradeRes.json();
           if (upgradeData.success) {
             setPaymentSuccess(true);
+          } else {
+            setCheckoutError("Payment verified but account activation failed. Please contact support.");
           }
         }
       };
 
       const rzp = new (window as any).Razorpay(options);
       rzp.open();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Payment failed", err);
+      setCheckoutError(err.message || "Something went wrong. Please try again.");
     }
   };
 
@@ -540,6 +552,17 @@ export default function NewsletterPage() {
                 }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#a8521f'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#c2652a'}>
                   Continue to Payment →
                 </button>
+                {checkoutError && (
+                  <p style={{
+                    fontFamily: 'var(--font-body), Manrope, sans-serif',
+                    fontSize: '13px',
+                    color: '#c0392b',
+                    marginTop: '8px',
+                    textAlign: 'center'
+                  }}>
+                    {checkoutError}
+                  </p>
+                )}
               </div>
             ) : (
               <button onClick={() => setShowEmailCapture(true)} style={{

@@ -190,3 +190,185 @@ h1, h2, h3, h4, h5, h6 {
     display: none !important;
   }
 }
+
+/* ===== BLOG POST ANIMATIONS ===== */
+
+/* Reading progress bar */
+#blog-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: #c2652a;
+  z-index: 1001;
+  transition: width 0.1s linear;
+}
+
+/* Scroll-reveal base state */
+.blog-reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+.blog-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Heading slide-in from left */
+.blog-heading-reveal {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.blog-heading-reveal.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Section rule grow */
+.blog-section-rule {
+  width: 0px;
+  height: 2px;
+  background: #c2652a;
+  margin-bottom: 32px;
+  transition: width 0.55s ease 0.15s;
+  display: block;
+}
+
+.blog-section-rule.visible {
+  width: 48px;
+}
+
+/* Drop cap on first paragraph */
+.blog-content .blog-dropcap::first-letter {
+  font-family: 'EB Garamond', serif;
+  font-size: 5em;
+  font-weight: 600;
+  float: left;
+  line-height: 0.78;
+  margin-right: 8px;
+  margin-top: 10px;
+  color: #c2652a;
+}
+
+/* Inline blog images */
+.blog-content img {
+  width: 100%;
+  border-radius: 6px;
+  display: block;
+  border: 1px solid rgba(216, 208, 200, 0.6);
+  box-shadow: 0 4px 32px rgba(58, 48, 42, 0.06);
+  margin: 40px 0 12px;
+}
+
+.blog-content em {
+  display: block;
+  font-size: 13px;
+  font-style: italic;
+  color: #8a7a6e;
+  margin-bottom: 32px;
+  padding-left: 2px;
+  font-family: var(--font-body), sans-serif;
+}
+
+/* Make em after img act as caption */
+.blog-content img + em {
+  margin-top: -4px;
+}
+
+/* Blockquote / pull quote */
+.blog-content blockquote {
+  border-left: 3px solid #c2652a;
+  padding: 20px 28px;
+  margin: 44px 0;
+  background: rgba(194, 101, 42, 0.04);
+  border-radius: 0 6px 6px 0;
+}
+
+.blog-content blockquote p {
+  font-family: 'EB Garamond', serif !important;
+  font-size: 22px !important;
+  font-style: italic;
+  color: #8c3c3c !important;
+  line-height: 1.55 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Strong / bold */
+.blog-content strong {
+  font-weight: 600;
+  color: #3a302a;
+}
+
+/* Italic */
+.blog-content p em {
+  display: inline;
+  font-style: italic;
+  font-size: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+/* Hero parallax wrapper — full bleed */
+.blog-hero-wrap-full {
+  width: 100vw;
+  height: 78vh;
+  min-height: 420px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 0;
+}
+
+.blog-hero-img {
+  width: 100%;
+  height: 110%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.blog-hero-img img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center 30% !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+}
+
+.blog-hero-overlay-full {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(30,20,12,0.08) 0%, rgba(30,20,12,0.45) 100%);
+  z-index: 1;
+}
+
+/* Image scale-in animation */
+.blog-img-reveal {
+  opacity: 0;
+  transform: translateY(24px) scale(0.99);
+  transition: opacity 0.75s ease, transform 0.75s ease;
+}
+
+.blog-img-reveal.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@media (max-width: 640px) {
+  .blog-hero-wrap-full {
+    height: 56vw;
+    min-height: 220px;
+  }
+  .blog-content blockquote {
+    padding: 16px 18px;
+  }
+}

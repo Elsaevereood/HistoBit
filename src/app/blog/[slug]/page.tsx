@@ -1,10 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import type { Metadata } from "next";
 import { getAllPosts, getPostBySlug } from "@/lib/mdx";
 import Footer from "@/components/Footer";
+import BlogAnimations from "./BlogAnimations";
 
 export async function generateStaticParams() {
   const posts = getAllPosts();
@@ -38,51 +38,50 @@ export async function generateMetadata(
 }
 
 const components = {
-  h2: (props: any) => (
-    <h2
-      style={{
+  h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <>
+      <h2 className="blog-heading-reveal" style={{
         fontFamily: "'EB Garamond', serif",
         fontStyle: "italic",
-        fontSize: "28px",
+        fontSize: "clamp(26px, 3.8vw, 36px)",
         fontWeight: 400,
         color: "#3a302a",
-        marginTop: "48px",
-        marginBottom: "24px",
-      }}
-      {...props}
-    />
+        marginTop: "64px",
+        marginBottom: "6px",
+        lineHeight: 1.2,
+        letterSpacing: "-0.01em",
+      }} {...props} />
+      <span className="blog-section-rule" />
+    </>
   ),
-  p: (props: any) => (
-    <p
-      style={{
-        fontFamily: "var(--font-body)",
-        fontSize: "17px",
-        lineHeight: 1.8,
-        color: "#3a302a",
-        marginBottom: "24px",
-      }}
-      {...props}
-    />
+  p: (props: React.HTMLAttributes<HTMLParagraphElement>) => (
+    <p className="blog-reveal" style={{
+      fontFamily: "var(--font-body)",
+      fontSize: "17px",
+      lineHeight: 1.82,
+      color: "#3a302a",
+      marginBottom: "22px",
+    }} {...props} />
   ),
-  strong: (props: any) => (
-    <strong
-      style={{
-        fontWeight: 600,
-        color: "#3a302a",
-      }}
-      {...props}
-    />
+  strong: (props: React.HTMLAttributes<HTMLElement>) => (
+    <strong style={{ fontWeight: 600, color: "#3a302a" }} {...props} />
   ),
-  hr: (props: any) => (
-    <hr
-      style={{
-        borderColor: "#d8d0c8",
-        borderStyle: "solid",
-        borderWidth: "1px 0 0 0",
-        margin: "48px 0",
-      }}
-      {...props}
-    />
+  em: (props: React.HTMLAttributes<HTMLElement>) => (
+    <em style={{ fontStyle: "italic" }} {...props} />
+  ),
+  hr: (props: React.HTMLAttributes<HTMLHRElement>) => (
+    <hr style={{
+      borderColor: "#d8d0c8",
+      borderStyle: "solid",
+      borderWidth: "1px 0 0 0",
+      margin: "56px 0",
+    }} {...props} />
+  ),
+  blockquote: (props: React.HTMLAttributes<HTMLElement>) => (
+    <blockquote className="blog-reveal" {...props} />
+  ),
+  img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+    <img className="blog-img-reveal" {...props} />
   ),
 };
 
@@ -96,13 +95,30 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: "#faf5ee" }}>
-      <main className="flex-grow" style={{ paddingTop: 100 }}>
-        <article className="w-full" style={{ maxWidth: 800, margin: "0 auto", padding: "0 24px" }}>
-          
-          <div style={{ marginBottom: 40 }}>
+
+      {/* Reading progress bar — injected by client component */}
+      <div id="blog-progress-bar" />
+
+      {/* Client component handles all scroll animations */}
+      <BlogAnimations />
+
+      <main className="flex-grow" style={{ paddingTop: 80 }}>
+
+          {/* Hero image — full viewport width, outside article container */}
+          <div className="blog-hero-wrap-full">
+            <div className="blog-hero-img" id="blog-hero-img">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={post.meta.image} alt={post.meta.title} />
+            </div>
+            <div className="blog-hero-overlay-full" />
+          </div>
+
+        <article className="w-full" style={{ maxWidth: 760, margin: "0 auto", padding: "0 24px" }}>
+
+          {/* Back link */}
+          <div className="blog-reveal" style={{ marginBottom: 40, marginTop: 48 }}>
             <Link
               href="/blog"
-              className="hover:underline"
               style={{
                 fontFamily: "var(--font-body)",
                 fontSize: 14,
@@ -118,88 +134,91 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </Link>
           </div>
 
-          <div className="relative w-full mb-12" style={{ aspectRatio: "16/9", overflow: "hidden", borderRadius: 12 }}>
-            <Image
-              src={post.meta.image}
-              alt={post.meta.title}
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-
-          <div style={{ marginBottom: 40 }}>
-            <div
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: 12,
-                letterSpacing: "0.1em",
-                color: "#c2652a",
-                fontWeight: 500,
-                marginBottom: 16,
-              }}
-            >
-              {post.meta.tag}
+          {/* Meta: tag, title, date */}
+          <div className="blog-reveal" style={{ marginBottom: 44 }}>
+            <div style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 11,
+              letterSpacing: "0.14em",
+              color: "#c2652a",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              marginBottom: 16,
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+            }}>
+              <span style={{
+                border: "1.5px solid #c2652a",
+                borderRadius: 4,
+                padding: "3px 10px",
+              }}>
+                {post.meta.tag}
+              </span>
             </div>
 
-            <h1
-              style={{
-                fontFamily: "'EB Garamond', serif",
-                fontStyle: "italic",
-                fontWeight: 400,
-                fontSize: "clamp(36px, 5vw, 56px)",
-                color: "#3a302a",
-                lineHeight: 1.1,
-                marginBottom: 24,
-              }}
-            >
+            <h1 style={{
+              fontFamily: "'EB Garamond', serif",
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: "clamp(34px, 5vw, 54px)",
+              color: "#3a302a",
+              lineHeight: 1.12,
+              marginBottom: 24,
+              letterSpacing: "-0.01em",
+            }}>
               {post.meta.title}
             </h1>
 
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 16,
-                fontFamily: "var(--font-body)",
-                fontSize: 14,
-                color: "#8a7a6e",
-              }}
-            >
-              <span>{new Date(post.meta.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })}</span>
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 16,
+              fontFamily: "var(--font-body)",
+              fontSize: 13,
+              color: "#8a7a6e",
+              paddingBottom: 32,
+              borderBottom: "1px solid rgba(216,208,200,0.6)",
+            }}>
+              <span>
+                {new Date(post.meta.date).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                  timeZone: "UTC",
+                })}
+              </span>
               <span>&middot;</span>
               <span>{post.meta.readTime}</span>
             </div>
           </div>
 
-          <div className="blog-content pb-20">
+          {/* Article body */}
+          <div className="blog-content">
             <MDXRemote source={post.content} components={components} />
           </div>
+
         </article>
 
-        {/* NEWSLETTER CTA STRIP */}
-        <section style={{ background: "#c2652a", padding: "80px 48px" }}>
+        {/* Newsletter CTA */}
+        <section style={{ background: "#c2652a", padding: "80px 48px", marginTop: 80 }}>
           <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
-            <h2
-              style={{
-                fontFamily: "'EB Garamond', serif",
-                fontStyle: "italic",
-                fontWeight: 400,
-                fontSize: "clamp(28px, 4vw, 40px)",
-                color: "#faf5ee",
-                marginBottom: 12,
-              }}
-            >
+            <h2 style={{
+              fontFamily: "'EB Garamond', serif",
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: "clamp(28px, 4vw, 40px)",
+              color: "#faf5ee",
+              marginBottom: 12,
+            }}>
               Get the Next Dispatch in Your Inbox
             </h2>
-            <p
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: 15,
-                color: "rgba(250,245,238,0.75)",
-                marginBottom: 32,
-              }}
-            >
+            <p style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 15,
+              color: "rgba(250,245,238,0.75)",
+              marginBottom: 32,
+            }}>
               Free weekly newsletter. Real history. No algorithms.
             </p>
             <div className="flex flex-col md:flex-row justify-center items-center gap-3 w-full">
@@ -237,7 +256,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </section>
       </main>
 
-      {/* FOOTER */}
       <Footer />
     </div>
   );
