@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 type Subscriber = {
@@ -61,7 +61,7 @@ export default function AdminPage() {
     }
   };
 
-  const fetchSubscribers = async () => {
+  const fetchSubscribers = useCallback(async () => {
     setSubsLoading(true);
     const { data } = await supabase
       .from("subscribers")
@@ -69,9 +69,9 @@ export default function AdminPage() {
       .order("created_at", { ascending: false });
     setSubscribers(data || []);
     setSubsLoading(false);
-  };
+  }, [supabase]);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     setStatsLoading(true);
     const { data } = await supabase
       .from("newsletter_drafts")
@@ -80,13 +80,14 @@ export default function AdminPage() {
       .order("sent_at", { ascending: false });
     setSentDrafts(data || []);
     setStatsLoading(false);
-  };
+  }, [supabase]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
     if (activeSection === "subscribers") fetchSubscribers();
-    if (activeSection === "stats") fetchStats();
-  }, [activeSection, isAuthenticated]);
+    // Stats needs subscriber counts too
+    if (activeSection === "stats") { fetchSubscribers(); fetchStats(); }
+  }, [activeSection, isAuthenticated, fetchSubscribers, fetchStats]);
 
   const handleSaveDraft = async (): Promise<{ id: string } | null> => {
     setIsSaving(true);
@@ -194,9 +195,9 @@ export default function AdminPage() {
                   width: "100%", padding: "12px 24px", cursor: "pointer",
                   background: active ? "rgba(194,101,42,0.15)" : "transparent",
                   color: active ? "#c2652a" : "#8a7a6e",
+                  borderTop: "none", borderRight: "none", borderBottom: "none",
                   borderLeft: active ? "2px solid #c2652a" : "2px solid transparent",
                   fontFamily: "var(--font-body)", fontSize: 14,
-                  border: "none", borderLeft: active ? "2px solid #c2652a" : "2px solid transparent",
                   transition: "all 150ms", textAlign: "left",
                 }}
                 onMouseEnter={(e) => { if (!active) { (e.currentTarget as HTMLButtonElement).style.color = "#faf5ee"; (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.04)"; } }}
