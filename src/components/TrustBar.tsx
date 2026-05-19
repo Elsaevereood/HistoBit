@@ -10,7 +10,7 @@ const items = [
   { num: "8M+", label: "Total Views" },
   { num: "12,000", label: "Newsletter Readers" },
   { num: "60+", label: "Countries" },
-  { num: "Est. 2022", label: "Independent" },
+  { num: "Est. 2025", label: "Independent" },
 ];
 
 export default function TrustBar() {

@@ -31,6 +31,8 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     return () => {
       lenis.destroy();
       gsap.ticker.remove(rafLoop);
+      ScrollTrigger.getAll().forEach(t => t.kill());
+      ScrollTrigger.clearScrollMemory();
     };
   }, []);
 

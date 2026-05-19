@@ -187,7 +187,7 @@ export default function HeroSection() {
             marginBottom: 36,
           }}
         >
-          MILITARY HISTORY · EST. 2022
+          MILITARY HISTORY · EST. 2025
         </div>
 
         {/* Headline Line 1 */}
@@ -265,7 +265,7 @@ export default function HeroSection() {
             marginTop: 24,
           }}
         >
-          2022 — Present
+          2025 — Present
         </div>
 
         {/* Subheadline */}
@@ -284,10 +284,72 @@ export default function HeroSection() {
           Deep research. No mythology. Every week.
         </p>
 
-        {/* Trust line */}
+        {/* Buttons */}
         <div
           style={{
             marginTop: 40,
+            display: "flex",
+            gap: 16,
+            justifyContent: "center",
+            flexWrap: "wrap",
+          }}
+        >
+          <button
+            onClick={() => (window.location.href = "/blog")}
+            style={{
+              background: "#c2652a",
+              color: "#faf5ee",
+              padding: "16px 36px",
+              borderRadius: 8,
+              fontFamily: "var(--font-body)",
+              fontSize: 14,
+              fontWeight: 500,
+              border: "none",
+              cursor: "pointer",
+              transition: "background 200ms, transform 200ms",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "#a8521f";
+              e.currentTarget.style.transform = "scale(0.97)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "#c2652a";
+              e.currentTarget.style.transform = "scale(1)";
+            }}
+          >
+            Read the Blog
+          </button>
+          <button
+            onClick={() => (window.location.href = "/newsletter")}
+            style={{
+              background: "transparent",
+              color: "rgba(250,245,238,0.8)",
+              padding: "16px 32px",
+              borderRadius: 8,
+              border: "1px solid rgba(250,245,238,0.2)",
+              fontFamily: "var(--font-body)",
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: "pointer",
+              transition: "border-color 200ms, color 200ms",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(250,245,238,0.5)";
+              e.currentTarget.style.color = "#faf5ee";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(250,245,238,0.2)";
+              e.currentTarget.style.color = "rgba(250,245,238,0.8)";
+            }}
+          >
+            Join the Newsletter
+          </button>
+        </div>
+
+        {/* Trust line */}
+        <div
+          style={{
+            marginTop: 20,
             fontFamily: "var(--font-body)",
             fontSize: 12,
             color: "rgba(250,245,238,0.3)",
