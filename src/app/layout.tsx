@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Manrope, Dancing_Script } from "next/font/google";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const dancingScript = Dancing_Script({
@@ -108,7 +109,10 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
