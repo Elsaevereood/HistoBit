@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Manrope, Dancing_Script } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const dancingScript = Dancing_Script({
@@ -89,6 +90,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${ebGaramond.variable} ${manrope.variable} ${dancingScript.variable}`}>
+      <head>
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}');
+              `}
+            </Script>
+          </>
+        )}
+      </head>
       <body>{children}</body>
     </html>
   );
