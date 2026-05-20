@@ -1,4 +1,50 @@
+import type { Metadata } from "next";
 import { getAllPosts } from "@/lib/mdx";
+
+export const metadata: Metadata = {
+  title: "Histobit — Military History for Serious People",
+  description:
+    "Deep research. No mythology. Every week — military history told the way it deserves. Battles, logistics, command failures, and the turning points that textbooks summarize in one paragraph.",
+  keywords: [
+    "military history",
+    "war history",
+    "ancient warfare",
+    "battle analysis",
+    "historical research",
+    "military strategy",
+    "history newsletter",
+    "Kings and Generals",
+    "Epic History TV",
+    "Histobit",
+  ],
+  alternates: {
+    canonical: "https://histobit.com",
+  },
+  openGraph: {
+    title: "Histobit — Military History for Serious People",
+    description:
+      "Deep research. No mythology. Every week — for people who actually want to understand war.",
+    url: "https://histobit.com",
+    siteName: "Histobit",
+    type: "website",
+    locale: "en_US",
+    images: [
+      {
+        url: "https://histobit.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Histobit — Military History for Serious People",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Histobit — Military History for Serious People",
+    description: "Deep research. No mythology. Every week.",
+    images: ["https://histobit.com/og-image.png"],
+    site: "@histobit",
+  },
+};
 
 import dynamic from "next/dynamic"
 const SmoothScroll = dynamic(() => import("@/components/SmoothScroll"))
