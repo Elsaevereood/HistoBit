@@ -28,7 +28,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginError, setLoginError] = useState("");
-  const [activeSection, setActiveSection] = useState<"composer" | "subscribers" | "stats">("composer");
+  const [activeSection, setActiveSection] = useState<"composer" | "subscribers" | "stats" | "analytics">("composer");
 
   // Composer state
   const [subject, setSubject] = useState("");
@@ -44,6 +44,21 @@ export default function AdminPage() {
   // Stats state
   const [sentDrafts, setSentDrafts] = useState<Draft[]>([]);
   const [statsLoading, setStatsLoading] = useState(false);
+
+  // Analytics state
+  interface BlogPost { path: string; views: number; }
+  interface AnalyticsSource { source: string; sessions: number; }
+  interface AnalyticsCountry { country: string; users: number; }
+  interface AnalyticsData {
+    totalSessions: number;
+    totalUsers: number;
+    blogPosts: BlogPost[];
+    sources: AnalyticsSource[];
+    countries: AnalyticsCountry[];
+  }
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsError, setAnalyticsError] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +86,24 @@ export default function AdminPage() {
     setSubsLoading(false);
   }, []);
 
+  const fetchAnalytics = useCallback(async () => {
+    setAnalyticsLoading(true);
+    setAnalyticsError("");
+    try {
+      const res = await fetch("/api/admin/analytics", {
+        headers: {
+          "Authorization": password,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to fetch analytics");
+      setAnalyticsData(await res.json());
+    } catch {
+      setAnalyticsError("Could not load GA4 data. Check your credentials.");
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  }, [password]);
+
   const fetchStats = useCallback(async () => {
     setStatsLoading(true);
     const { data } = await supabase
@@ -85,9 +118,9 @@ export default function AdminPage() {
   useEffect(() => {
     if (!isAuthenticated) return;
     if (activeSection === "subscribers") fetchSubscribers();
-    // Stats needs subscriber counts too
     if (activeSection === "stats") { fetchSubscribers(); fetchStats(); }
-  }, [activeSection, isAuthenticated, fetchSubscribers, fetchStats]);
+    if (activeSection === "analytics") fetchAnalytics();
+  }, [activeSection, isAuthenticated, fetchSubscribers, fetchStats, fetchAnalytics]);
 
   const handleSaveDraft = async (): Promise<{ id: string } | null> => {
     setIsSaving(true);
@@ -179,11 +212,12 @@ export default function AdminPage() {
         <div style={{ height: 1, background: "rgba(255,255,255,0.08)", margin: "24px 0" }} />
 
         <nav style={{ display: "flex", flexDirection: "column" }}>
-          {(["composer", "subscribers", "stats"] as const).map((section) => {
+          {(["composer", "subscribers", "stats", "analytics"] as const).map((section) => {
             const labels: Record<string, { icon: string; label: string }> = {
               composer: { icon: "✍", label: "Newsletter" },
               subscribers: { icon: "👥", label: "Subscribers" },
               stats: { icon: "📊", label: "Stats" },
+              analytics: { icon: "📈", label: "Analytics" },
             };
             const active = activeSection === section;
             return (
@@ -396,6 +430,139 @@ export default function AdminPage() {
             </div>
           </div>
         )}
+        {/* ── ANALYTICS ── */}
+        {activeSection === "analytics" && (
+          <div>
+            {/* Header row */}
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 32, flexWrap: "wrap", gap: 12 }}>
+              <div>
+                <h1 style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontSize: 36, color: "#3a302a", margin: 0 }}>
+                  Analytics — Histobit Admin
+                </h1>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "#8a7a6e", marginTop: 4 }}>
+                  Data pulled from Google Analytics 4
+                </p>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "#8a7a6e", background: "rgba(216,208,200,0.4)", padding: "4px 12px", borderRadius: 4 }}>
+                  Last 30 days
+                </span>
+                <button
+                  onClick={fetchAnalytics}
+                  disabled={analyticsLoading}
+                  style={{ padding: "8px 18px", background: "#c2652a", color: "#fff", border: "none", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 13, fontWeight: 500, cursor: analyticsLoading ? "not-allowed" : "pointer", opacity: analyticsLoading ? 0.7 : 1 }}
+                >
+                  {analyticsLoading ? "Loading…" : "Refresh"}
+                </button>
+              </div>
+            </div>
+
+            {analyticsError && (
+              <p style={{ color: "#8c3c3c", fontSize: 13, fontFamily: "var(--font-body)", marginBottom: 20 }}>{analyticsError}</p>
+            )}
+
+            {analyticsLoading && !analyticsData && (
+              <p style={{ color: "#8a7a6e", fontFamily: "var(--font-body)", fontSize: 14, marginBottom: 32 }}>Fetching data from GA4…</p>
+            )}
+
+            {analyticsData && (
+              <>
+                {/* Stat cards */}
+                <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 32 }}>
+                  {[
+                    { label: "Total Visits", value: analyticsData.totalSessions.toLocaleString() },
+                    { label: "Total Users", value: analyticsData.totalUsers.toLocaleString() },
+                    { label: "Blog Posts Tracked", value: analyticsData.blogPosts.length },
+                    { label: "Top Country", value: analyticsData.countries[0]?.country ?? "—" },
+                  ].map(({ label, value }) => (
+                    <div
+                      key={label}
+                      style={{ flex: "1 1 180px", background: "white", border: "1px solid #d8d0c8", borderRadius: 8, padding: "24px 28px", boxShadow: "0 2px 16px rgba(58,48,42,0.04)" }}
+                    >
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: 11, color: "#8a7a6e", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8, marginTop: 0 }}>{label}</p>
+                      <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", color: "#c2652a", fontWeight: 600, lineHeight: 1, margin: 0 }}>{value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Blog posts table */}
+                <div style={{ background: "white", border: "1px solid #d8d0c8", borderRadius: 8, padding: 28, marginBottom: 24, boxShadow: "0 2px 16px rgba(58,48,42,0.04)" }}>
+                  <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.3rem", color: "#3a302a", fontWeight: 600, margin: "0 0 20px 0" }}>Blog Post Performance</h2>
+                  {!analyticsData.blogPosts.length ? (
+                    <p style={{ color: "#8a7a6e", fontSize: 14, fontFamily: "var(--font-body)" }}>No blog data found for this period.</p>
+                  ) : (
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                      <thead>
+                        <tr>
+                          <th style={{ textAlign: "left", fontSize: 11, color: "#8a7a6e", textTransform: "uppercase", letterSpacing: "0.06em", paddingBottom: 12, borderBottom: "1px solid rgba(216,208,200,0.6)", fontWeight: 500 }}>Post Path</th>
+                          <th style={{ textAlign: "right", fontSize: 11, color: "#8a7a6e", textTransform: "uppercase", letterSpacing: "0.06em", paddingBottom: 12, borderBottom: "1px solid rgba(216,208,200,0.6)", fontWeight: 500 }}>Page Views</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {analyticsData.blogPosts.map((post, i) => (
+                          <tr key={post.path}>
+                            <td style={{ padding: "12px 0", borderBottom: i < analyticsData.blogPosts.length - 1 ? "1px solid rgba(216,208,200,0.4)" : "none", fontSize: 14, color: "#3a302a", fontFamily: "var(--font-body)" }}>{post.path}</td>
+                            <td style={{ padding: "12px 0", borderBottom: i < analyticsData.blogPosts.length - 1 ? "1px solid rgba(216,208,200,0.4)" : "none", textAlign: "right", fontFamily: "var(--font-heading)", fontSize: "1.05rem", color: "#c2652a", fontWeight: 600 }}>{post.views.toLocaleString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+
+                {/* Sources + Countries */}
+                <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                  {/* Traffic Sources */}
+                  <div style={{ flex: "1 1 280px", background: "white", border: "1px solid #d8d0c8", borderRadius: 8, padding: 28, boxShadow: "0 2px 16px rgba(58,48,42,0.04)" }}>
+                    <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.3rem", color: "#3a302a", fontWeight: 600, margin: "0 0 20px 0" }}>Top Traffic Sources</h2>
+                    {!analyticsData.sources.length ? (
+                      <p style={{ color: "#8a7a6e", fontSize: 14, fontFamily: "var(--font-body)" }}>No data.</p>
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                        {analyticsData.sources.map((s) => {
+                          const maxSessions = analyticsData.sources[0]?.sessions ?? 1;
+                          const pct = Math.round((s.sessions / maxSessions) * 100);
+                          return (
+                            <div key={s.source}>
+                              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                                <span style={{ fontSize: 14, color: "#3a302a", fontFamily: "var(--font-body)" }}>{s.source}</span>
+                                <span style={{ fontSize: "1.05rem", color: "#c2652a", fontFamily: "var(--font-heading)", fontWeight: 600 }}>{s.sessions.toLocaleString()}</span>
+                              </div>
+                              <div style={{ height: 6, background: "rgba(216,208,200,0.5)", borderRadius: 3, overflow: "hidden" }}>
+                                <div style={{ height: "100%", width: `${pct}%`, background: "#c2652a", borderRadius: 3 }} />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Countries */}
+                  <div style={{ flex: "1 1 280px", background: "white", border: "1px solid #d8d0c8", borderRadius: 8, padding: 28, boxShadow: "0 2px 16px rgba(58,48,42,0.04)" }}>
+                    <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.3rem", color: "#3a302a", fontWeight: 600, margin: "0 0 20px 0" }}>Top Countries</h2>
+                    {!analyticsData.countries.length ? (
+                      <p style={{ color: "#8a7a6e", fontSize: 14, fontFamily: "var(--font-body)" }}>No data.</p>
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                        {analyticsData.countries.map((c, i) => (
+                          <div key={c.country} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: 12, borderBottom: i < analyticsData.countries.length - 1 ? "1px solid rgba(216,208,200,0.4)" : "none" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                              <span style={{ fontFamily: "var(--font-heading)", fontSize: 13, color: "#8a7a6e", minWidth: 18 }}>{i + 1}.</span>
+                              <span style={{ fontSize: 14, color: "#3a302a", fontFamily: "var(--font-body)" }}>{c.country}</span>
+                            </div>
+                            <span style={{ fontFamily: "var(--font-heading)", fontSize: "1.05rem", color: "#c2652a", fontWeight: 600 }}>{c.users.toLocaleString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
       </main>
     </div>
   );
