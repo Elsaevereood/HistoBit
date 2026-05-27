@@ -5,6 +5,8 @@ import type { Metadata } from "next";
 import { getAllPosts, getPostBySlug } from "@/lib/mdx";
 import Footer from "@/components/Footer";
 import BlogAnimations from "./BlogAnimations";
+import ShareBar from "@/components/ui/ShareBar";
+
 
 export async function generateStaticParams() {
   const posts = getAllPosts();
@@ -282,6 +284,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <div className="blog-content">
             <MDXRemote source={post.content} components={components} />
           </div>
+
+          <ShareBar title={post.meta.title} slug={resolvedParams.slug} />
 
         </article>
 
