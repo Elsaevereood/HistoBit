@@ -8,9 +8,7 @@ interface ShareBarProps {
 }
 
 export default function ShareBar({ title, slug }: ShareBarProps) {
-  const url = `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug}`
-    .replace(/^undefined\//, "https://histobit.com/")
-    .replace(/^\/blog\//, "https://histobit.com/blog/");
+  const url = `https://histobit.com/blog/${slug}`;
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
