@@ -343,6 +343,37 @@ const components = {
     );
   },
 
+  BarChart: ({
+    title,
+    subtitle,
+    items,
+    unit,
+  }: {
+    title: string;
+    subtitle?: string;
+    items: Array<{ label: string; value: number; displayValue?: string; highlight?: boolean }>;
+    unit?: string;
+  }) => {
+    const max = Math.max(...items.map((i) => i.value));
+    return (
+      <div className="blog-reveal" style={{ margin: '48px 0', padding: '28px 32px', background: 'rgba(58,48,42,0.02)', border: '1px solid rgba(216,208,200,0.55)', borderRadius: 8 }}>
+        <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#c2652a', fontWeight: 600, marginBottom: subtitle ? 6 : 24 }}>{title}</div>
+        {subtitle && <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: '#8a7a6e', marginBottom: 24, lineHeight: 1.5 }}>{subtitle}</div>}
+        {items.map((item, i) => (
+          <div key={i} style={{ marginBottom: i < items.length - 1 ? 20 : 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 7 }}>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: item.highlight ? '#3a302a' : '#6b5c4e', fontWeight: item.highlight ? 500 : 400, lineHeight: 1.4, maxWidth: '70%' }}>{item.label}</span>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700, color: item.highlight ? '#c2652a' : '#8a7a6e', whiteSpace: 'nowrap', marginLeft: 12 }}>{item.displayValue ?? item.value}{unit || ''}</span>
+            </div>
+            <div style={{ height: 6, background: 'rgba(216,208,200,0.45)', borderRadius: 3, overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${(item.value / max) * 100}%`, background: item.highlight ? '#c2652a' : 'rgba(194,101,42,0.28)', borderRadius: 3 }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  },
+
   OrderOfBattle: ({ title, rows = [] }: { title: string; rows?: Array<{ unit: string; commander: string; strength: string }> }) => {
     const safeRows = Array.isArray(rows) ? rows : [];
     return (

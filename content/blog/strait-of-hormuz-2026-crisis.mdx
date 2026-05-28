@@ -40,7 +40,26 @@ The Strait of Hormuz is 21 miles wide at its narrowest point. Inside that width,
 
 The LNG dependency is equally severe. **Qatar**, the world's second-largest LNG exporter, ships 93 percent of its gas through the Strait. The **UAE** ships 96 percent. There is no pipeline alternative for either country.
 
+| Country | LNG Exported Through Hormuz | Pipeline Bypass |
+|---|---|---|
+| Qatar | 93% | None |
+| UAE | 96% | None |
+| Saudi Arabia | Partial (crude) | East-West Petroline |
+| Kuwait | ~100% | None |
+| Iraq | ~100% | None |
+
 **Saudi Arabia** does operate the **East-West Petroline** across the peninsula, which carries crude from its eastern fields to the Red Sea port of **Yanbu**, bypassing the Strait entirely. Its theoretical capacity sits around 5 million barrels per day. Roughly 2 million of that was already in use before the crisis. Even at absolute maximum, it covers perhaps a third of what the Strait normally moves. There is no other way around. The geography is the trap.
+
+<BarChart
+  title="Oil Bypass Capacity vs. Hormuz Throughput"
+  subtitle="Maximum theoretical throughput by route — millions of barrels per day"
+  unit="M bpd"
+  items={[
+    { label: "Strait of Hormuz (normal flow)", value: 20, highlight: true },
+    { label: "East-West Petroline (maximum capacity)", value: 5 },
+    { label: "East-West Petroline (active pre-crisis)", value: 2 }
+  ]}
+/>
 
 ## How Iran Closed a Waterway Without Sinking a Ship
 
@@ -53,6 +72,16 @@ The insurance market confirmed the calculation. On March 5, seven of the twelve 
 <StatBox number="187" label="Total commercial transits through the Strait of Hormuz since March 4, against a pre-crisis monthly average of 4,140" />
 
 **Automatic Identification System** data tracked by **Starboard Maritime Intelligence** tells the rest of the story in two numbers: before February 28, the Strait averaged 138 commercial transits per day. Since March 4, the total over roughly ten weeks stands at 187. Not 187 per day. 187 total. The vessels that do move largely go dark, disabling their AIS transponders, negotiating passage through IRGC-designated coastal routes deep inside Iranian territorial waters, and coordinating through intermediaries. Many pay informal transit fees. They are not transiting freely. They are transiting on Iranian terms.
+
+<BarChart
+  title="Daily Commercial Transits — Before and After the Blockade"
+  subtitle="Average transits per day through the Strait of Hormuz"
+  unit="/day"
+  items={[
+    { label: "Pre-crisis average (before Feb 28)", value: 138, highlight: true },
+    { label: "Post-blockade average (Mar 4 – May 2026)", value: 3, displayValue: "~3" }
+  ]}
+/>
 
 ## The Crisis Behind the Crisis: Fertilizer and Food
 
@@ -77,11 +106,31 @@ Of the 187 successful transits since March 4, over half are operated by companie
 
 This is not coincidence. **Beijing** has leveraged its position as Tehran's largest oil buyer and most consequential economic partner to secure passage for its domestic supply chains. While **Japanese**, **South Korean**, and **European** tankers sit anchored in the Gulf of Oman, Chinese vessels are moving. The 2026 Hormuz closure has not just disrupted global energy. It has created a visible, tracked geopolitical bifurcation in who can access the world's most important oil corridor and who cannot. Every day this continues, that gap compounds.
 
+| Operator | Transit Status | Reason |
+|---|---|---|
+| China | Moving | Beijing-Tehran bilateral agreement |
+| Russia | Moving (limited) | Informal IRGC transit fees |
+| Japan | Blocked | War-risk insurance cancelled |
+| South Korea | Blocked | War-risk insurance cancelled |
+| Europe | Blocked | War-risk insurance cancelled |
+| USA | Blocked | Naval standoff, sanctions |
+
 ## The OPEC Fracture
 
 The UAE watched all of this from inside the Gulf, its own export operations disrupted by a war it had no part in starting. On April 28, **Abu Dhabi** announced it was leaving **OPEC** and the broader OPEC+ alliance, effective May 1. Fifty-nine years of membership, ended in a press release.
 
 The decision had been building for years, driven by a fundamental tension: the UAE had invested heavily in upstream capacity, reaching around 4.8 million barrels per day, with plans to hit 5 million by 2027. OPEC quota constraints forced Abu Dhabi to keep much of that capacity idle, destroying the return on its sovereign infrastructure investment. The Hormuz crisis accelerated the timeline. Abu Dhabi intends to produce at full capacity and monetize its reserves before the global energy transition permanently erodes their value.
+
+<BarChart
+  title="UAE Oil Production — Capacity vs. OPEC Constraint"
+  subtitle="Millions of barrels per day"
+  unit="M bpd"
+  items={[
+    { label: "UAE production capacity (2026)", value: 4.8, highlight: true },
+    { label: "UAE 2027 production target", value: 5 },
+    { label: "Estimated OPEC quota (pre-exit)", value: 3.2 }
+  ]}
+/>
 
 **Saudi Arabia** and **Iraq**, the cartel's two largest remaining members, are now exposed to a producer that will add barrels to the market without asking anyone's permission. Riyadh's ability to set global oil macroeconomics just took a structural blow.
 
