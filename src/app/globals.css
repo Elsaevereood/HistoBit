@@ -372,3 +372,13 @@ h1, h2, h3, h4, h5, h6 {
     padding: 16px 18px;
   }
 }
+
+/* ===== NEWSLETTER SECTION MOBILE ADJUSTMENTS ===== */
+@media (max-width: 640px) {
+  .whats-inside-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .whats-inside-section {
+    padding: 0 24px 80px 24px !important;
+  }
+}

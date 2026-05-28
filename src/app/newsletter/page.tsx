@@ -235,7 +235,7 @@ export default function NewsletterPage() {
               fontWeight: 500,
               marginBottom: '20px'
             }}>
-              MILITARY HISTORY · THE DISPATCH
+              HISTORY & GEOPOLITICS · THE DISPATCH
             </div>
             
             <h1 ref={headingRef} style={{
@@ -248,7 +248,7 @@ export default function NewsletterPage() {
               textAlign: 'center',
               margin: 0
             }}>
-              History Worth Reading. Delivered Weekly.
+              Two Disciplines. One Weekly Dispatch.
             </h1>
             
             <p ref={subRef} style={{
@@ -260,7 +260,8 @@ export default function NewsletterPage() {
               margin: '24px auto 0',
               textAlign: 'center'
             }}>
-              Join 12,000 readers getting deep military history every week. No mythology. No filler. Just the stories that actually changed the world.
+              Every week: one deep military history piece and one geopolitics story explained 
+              through a historical lens. No mythology. No filler. No news cycle noise.
             </p>
             
             <div ref={trustRef} style={{
@@ -277,6 +278,10 @@ export default function NewsletterPage() {
               <span>No spam</span>
               <span style={{ color: '#d8d0c8' }}>·</span>
               <span>Unsubscribe anytime</span>
+              <span style={{ color: '#d8d0c8' }}>·</span>
+              <span>Military History</span>
+              <span style={{ color: '#d8d0c8' }}>·</span>
+              <span>Geopolitics</span>
             </div>
           </div>
         </section>
@@ -304,6 +309,105 @@ export default function NewsletterPage() {
               — Ancient military proverb
             </p>
           </div>
+        </section>
+
+        {/* SECTION: WHAT'S INSIDE */}
+        <section className="whats-inside-section" style={{ backgroundColor: '#faf5ee', padding: '0 48px 120px 48px', maxWidth: '900px', margin: '0 auto' }}>
+          <div className="whats-inside-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+            
+            {/* Pillar 1 */}
+            <div style={{
+              backgroundColor: '#ffffff',
+              border: '1px solid rgba(216,208,200,0.6)',
+              borderRadius: '12px',
+              padding: '40px',
+              boxShadow: '0 2px 16px rgba(58,48,42,0.04)'
+            }}>
+              <div style={{
+                fontFamily: 'var(--font-body), Manrope, sans-serif',
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                color: '#c2652a',
+                fontWeight: 500,
+                marginBottom: '16px'
+              }}>
+                Military History
+              </div>
+              <h3 style={{
+                fontFamily: '"EB Garamond", serif',
+                fontStyle: 'italic',
+                fontSize: '26px',
+                color: '#3a302a',
+                lineHeight: 1.3,
+                marginBottom: '20px',
+                fontWeight: 400
+              }}>
+                Battles, commanders, tactics, and the logistics that decided it all.
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {['Battles and campaigns', 'Commanders and their decisions', 'Tactics and strategy', 'Logistics — the real reason wars are won'].map((item) => (
+                  <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ color: '#c2652a', fontSize: '14px' }}>•</span>
+                    <span style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '14px', color: '#6b5c4e', lineHeight: 1.5 }}>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Pillar 2 */}
+            <div style={{
+              backgroundColor: '#ffffff',
+              border: '1px solid rgba(216,208,200,0.6)',
+              borderRadius: '12px',
+              padding: '40px',
+              boxShadow: '0 2px 16px rgba(58,48,42,0.04)'
+            }}>
+              <div style={{
+                fontFamily: 'var(--font-body), Manrope, sans-serif',
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.14em',
+                color: '#8c3c3c',
+                fontWeight: 500,
+                marginBottom: '16px'
+              }}>
+                Geopolitics
+              </div>
+              <h3 style={{
+                fontFamily: '"EB Garamond", serif',
+                fontStyle: 'italic',
+                fontSize: '26px',
+                color: '#3a302a',
+                lineHeight: 1.3,
+                marginBottom: '20px',
+                fontWeight: 400
+              }}>
+                Active conflicts and power shifts — explained through history, not headlines.
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {['Active conflicts and their roots', 'World events in historical context', 'Power shifts and what caused them', 'Why today looks exactly like before'].map((item) => (
+                  <div key={item} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ color: '#8c3c3c', fontSize: '14px' }}>•</span>
+                    <span style={{ fontFamily: 'var(--font-body), Manrope, sans-serif', fontSize: '14px', color: '#6b5c4e', lineHeight: 1.5 }}>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
+          {/* Bottom note */}
+          <p style={{
+            fontFamily: 'var(--font-body), Manrope, sans-serif',
+            fontSize: '13px',
+            color: '#8a7a6e',
+            textAlign: 'center',
+            marginTop: '28px',
+            lineHeight: 1.6
+          }}>
+            One email every week. Never more. Straight to your inbox — no algorithm, no noise.
+          </p>
         </section>
 
         {/* SECTION 3: WAR ROOM PRICING */}
@@ -343,7 +447,7 @@ export default function NewsletterPage() {
             margin: '16px auto 0',
             lineHeight: 1.6
           }}>
-            One email. Every week. Exclusive content that never appears on the blog or YouTube.
+            History and geopolitics in one email. Every week. Exclusive depth that never appears on the blog or YouTube.
           </p>
 
           {/* TOGGLE */}
@@ -497,9 +601,9 @@ export default function NewsletterPage() {
 
             <div ref={warRoomBenefitsRef} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px' }}>
               {[
-                { title: "The Untold Detail", desc: "one fact per week too niche for YouTube" },
-                { title: "The Source", desc: "one book or document recommendation" },
-                { title: "This Week in Military History", desc: "what happened this exact week" },
+                { title: "The History Deep Dive", desc: "one battle, campaign, or commander — fully explained" },
+                { title: "The Geopolitics Lens", desc: "one active conflict or power shift through historical context" },
+                { title: "The Source", desc: "one book or document worth your time this week" },
                 { title: "Early Access", desc: "know the next video topic before anyone else" }
               ].map((benefit, idx) => (
                 <div key={idx} className="benefit-item" style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
