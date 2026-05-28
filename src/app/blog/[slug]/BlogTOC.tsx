@@ -58,7 +58,7 @@ export default function BlogTOC() {
     <aside
       style={{
         position: "sticky",
-        top: 120,
+        top: "calc(50vh - 200px)",
         width: 220,
         flexShrink: 0,
         alignSelf: "flex-start",
