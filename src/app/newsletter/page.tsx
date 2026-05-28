@@ -602,9 +602,7 @@ export default function NewsletterPage() {
             <div ref={warRoomBenefitsRef} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '40px' }}>
               {[
                 { title: "The History Deep Dive", desc: "one battle, campaign, or commander — fully explained" },
-                { title: "The Geopolitics Lens", desc: "one active conflict or power shift through historical context" },
-                { title: "The Source", desc: "one book or document worth your time this week" },
-                { title: "Early Access", desc: "know the next video topic before anyone else" }
+                { title: "The Geopolitics Lens", desc: "one active conflict or power shift through historical context" }
               ].map((benefit, idx) => (
                 <div key={idx} className="benefit-item" style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                   <span style={{ color: '#c2652a', fontSize: '15px', marginTop: '2px' }}>•</span>
