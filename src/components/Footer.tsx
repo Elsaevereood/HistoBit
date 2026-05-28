@@ -34,7 +34,6 @@ export default function Footer() {
       heading: "Explore",
       links: [
         { label: "Blog", href: "/blog" },
-        { label: "Videos", href: "https://youtube.com/@histobit", target: "_blank" },
         { label: "Topics", href: "/blog" },
       ],
     },
