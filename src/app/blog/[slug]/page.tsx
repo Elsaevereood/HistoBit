@@ -268,9 +268,9 @@ const components = {
     </div>
   ),
 
-  Versus: ({ leftLabel, rightLabel, leftItems, rightItems }: {
+  Versus: ({ leftLabel, rightLabel, leftItems = [], rightItems = [] }: {
     leftLabel: string; rightLabel: string;
-    leftItems: string[]; rightItems: string[];
+    leftItems?: string[]; rightItems?: string[];
   }) => (
     <div className="blog-reveal" style={{
       display: 'grid',
@@ -304,10 +304,12 @@ const components = {
     </div>
   ),
 
-  Timeline: ({ items }: { items: Array<{ time: string; event: string }> }) => (
+  Timeline: ({ items = [] }: { items?: Array<{ time: string; event: string }> }) => {
+    const safeItems = Array.isArray(items) ? items : [];
+    return (
     <div className="blog-reveal" style={{ margin: '48px 0', position: 'relative', paddingLeft: 104 }}>
       <div style={{ position: 'absolute', left: 83, top: 8, bottom: 8, width: 1, background: 'rgba(216,208,200,0.8)' }} />
-      {items.map((item: { time: string; event: string }, i: number) => (
+      {safeItems.map((item: { time: string; event: string }, i: number) => (
         <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 20, marginBottom: 28, position: 'relative' }}>
           <div style={{
             position: 'absolute',
@@ -337,9 +339,12 @@ const components = {
         </div>
       ))}
     </div>
-  ),
+    );
+  },
 
-  OrderOfBattle: ({ title, rows }: { title: string; rows: Array<{ unit: string; commander: string; strength: string }> }) => (
+  OrderOfBattle: ({ title, rows = [] }: { title: string; rows?: Array<{ unit: string; commander: string; strength: string }> }) => {
+    const safeRows = Array.isArray(rows) ? rows : [];
+    return (
     <div className="blog-reveal" style={{ margin: '48px 0' }}>
       <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#c2652a', fontWeight: 600, marginBottom: 16 }}>{title}</div>
       <div style={{ border: '1px solid rgba(216,208,200,0.6)', borderRadius: 8, overflow: 'hidden' }}>
@@ -348,8 +353,8 @@ const components = {
             <div key={h} style={{ fontFamily: 'var(--font-body)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6b5c4e', fontWeight: 600 }}>{h}</div>
           ))}
         </div>
-        {rows.map((row: { unit: string; commander: string; strength: string }, i: number) => (
-          <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1fr', padding: '14px 20px', borderBottom: i < rows.length - 1 ? '1px solid rgba(216,208,200,0.4)' : 'none', background: i % 2 === 0 ? 'transparent' : 'rgba(250,245,238,0.5)' }}>
+        {safeRows.map((row: { unit: string; commander: string; strength: string }, i: number) => (
+          <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 2fr 1fr', padding: '14px 20px', borderBottom: i < safeRows.length - 1 ? '1px solid rgba(216,208,200,0.4)' : 'none', background: i % 2 === 0 ? 'transparent' : 'rgba(250,245,238,0.5)' }}>
             <div style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: '#3a302a', fontWeight: 500 }}>{row.unit}</div>
             <div style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: '#6b5c4e' }}>{row.commander}</div>
             <div style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: '#6b5c4e' }}>{row.strength}</div>
@@ -357,7 +362,8 @@ const components = {
         ))}
       </div>
     </div>
-  ),
+    );
+  },
 };
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
