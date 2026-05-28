@@ -16,8 +16,9 @@ export default function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+
   const navLinks = [
-    { label: "Blog", href: "/blog" },
     { label: "Newsletter", href: "/newsletter" },
     { label: "Shop", href: "/shop" },
     { label: "About", href: "/about" },
@@ -57,6 +58,103 @@ export default function Navigation() {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center" style={{ gap: 32 }}>
+            {/* Blog Dropdown */}
+            <div
+              className="relative py-2"
+              onMouseEnter={() => setDropdownOpen(true)}
+              onMouseLeave={() => setDropdownOpen(false)}
+            >
+              <button
+                className="flex items-center gap-1 focus:outline-none transition-colors duration-150"
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: isDropdownOpen ? "#c2652a" : "#3a302a",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
+                onClick={() => setDropdownOpen(!isDropdownOpen)}
+              >
+                Blog
+                <svg
+                  width="10"
+                  height="6"
+                  viewBox="0 0 10 6"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{
+                    transform: isDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+                    transition: "transform 150ms ease",
+                  }}
+                >
+                  <path
+                    d="M1 1L5 5L9 1"
+                    stroke={isDropdownOpen ? "#c2652a" : "#3a302a"}
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+
+              {isDropdownOpen && (
+                <div
+                  className="absolute left-0 mt-2 w-48 flex flex-col z-[110]"
+                  style={{
+                    backgroundColor: "#faf5ee",
+                    border: "1px solid #d8d0c8",
+                    borderRadius: 8,
+                    boxShadow: "0 4px 24px rgba(58,48,42,0.08)",
+                    padding: "8px 0",
+                  }}
+                >
+                  <Link
+                    href="/blog/military-history"
+                    className="no-underline transition-colors duration-150 block"
+                    style={{
+                      padding: "10px 20px",
+                      fontFamily: "var(--font-body)",
+                      fontSize: 13,
+                      color: "#3a302a",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "rgba(194, 101, 42, 0.06)";
+                      e.currentTarget.style.color = "#c2652a";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.color = "#3a302a";
+                    }}
+                  >
+                    Military History
+                  </Link>
+                  <Link
+                    href="/blog/geopolitics"
+                    className="no-underline transition-colors duration-150 block"
+                    style={{
+                      padding: "10px 20px",
+                      fontFamily: "var(--font-body)",
+                      fontSize: 13,
+                      color: "#3a302a",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "rgba(194, 101, 42, 0.06)";
+                      e.currentTarget.style.color = "#c2652a";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.color = "#3a302a";
+                    }}
+                  >
+                    Geopolitics
+                  </Link>
+                </div>
+              )}
+            </div>
+
             {navLinks.map((link) => (
               <Link
                 key={link.label}
@@ -138,6 +236,32 @@ export default function Navigation() {
 
       {/* Mobile Overlay */}
       <div className={`mobile-nav-overlay ${mobileOpen ? "open" : ""}`}>
+        <Link
+          href="/blog/military-history"
+          onClick={() => setMobileOpen(false)}
+          style={{
+            fontFamily: "var(--font-heading)",
+            fontStyle: "italic",
+            fontSize: 32,
+            color: "#3a302a",
+            textDecoration: "none",
+          }}
+        >
+          Military History
+        </Link>
+        <Link
+          href="/blog/geopolitics"
+          onClick={() => setMobileOpen(false)}
+          style={{
+            fontFamily: "var(--font-heading)",
+            fontStyle: "italic",
+            fontSize: 32,
+            color: "#3a302a",
+            textDecoration: "none",
+          }}
+        >
+          Geopolitics
+        </Link>
         {navLinks.map((link) => (
           <Link
             key={link.label}

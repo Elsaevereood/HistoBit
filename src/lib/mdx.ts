@@ -9,11 +9,14 @@ export interface PostMeta {
   title: string;
   seoTitle?: string;
   excerpt: string;
-  tag: string;
+  tag: string;           // keep for backward compat (single tag, legacy)
+  tags: string[];        // NEW — array of tags e.g. ["Tactics", "Rome", "Ancient"]
+  section: string;       // NEW — either "military-history" or "geopolitics"
   date: string;
   readTime: string;
   image: string;
   keywords?: string[];
+  regionAliases?: string[]; // NEW — alternate historical names e.g. ["Persia"] maps to "Iran"
 }
 
 export function getAllPosts(): PostMeta[] {
@@ -30,10 +33,13 @@ export function getAllPosts(): PostMeta[] {
         seoTitle: data.seoTitle || "",
         excerpt: data.excerpt || "",
         tag: data.tag || "",
+        tags: data.tags || (data.tag ? [data.tag] : []),
+        section: data.section || "military-history",
         date: data.date || "",
         readTime: data.readTime || "",
         image: data.image || "",
         keywords: data.keywords || [],
+        regionAliases: data.regionAliases || [],
       };
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -51,11 +57,19 @@ export function getPostBySlug(slug: string): { meta: PostMeta; content: string }
       seoTitle: data.seoTitle || "",
       excerpt: data.excerpt || "",
       tag: data.tag || "",
+      tags: data.tags || (data.tag ? [data.tag] : []),
+      section: data.section || "military-history",
       date: data.date || "",
       readTime: data.readTime || "",
       image: data.image || "",
       keywords: data.keywords || [],
+      regionAliases: data.regionAliases || [],
     },
     content,
   };
 }
+
+export function getPostsBySection(section: string): PostMeta[] {
+  return getAllPosts().filter((post) => post.section === section);
+}
+

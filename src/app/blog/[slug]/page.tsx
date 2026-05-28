@@ -240,7 +240,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 borderRadius: 4,
                 padding: "3px 10px",
               }}>
-                {post.meta.tag}
+                {post.meta.tags && post.meta.tags.length > 0 ? post.meta.tags[0] : post.meta.tag}
               </span>
             </div>
 
@@ -288,6 +288,135 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <ShareBar title={post.meta.title} slug={resolvedParams.slug} />
 
         </article>
+
+        {/* RELATED DISPATCHES */}
+        {(() => {
+          const allPosts = getAllPosts();
+          const currentPost = post.meta;
+          const relatedPosts = allPosts
+            .filter((p) => {
+              if (p.slug === currentPost.slug) return false;
+              if (p.section !== currentPost.section) return false;
+              
+              const currentTags = (currentPost.tags || []).map((t) => t.toLowerCase());
+              const pTags = (p.tags || []).map((t) => t.toLowerCase());
+              return pTags.some((t) => currentTags.includes(t));
+            })
+            .slice(0, 3);
+
+          if (relatedPosts.length === 0) return null;
+
+          return (
+            <section style={{ maxWidth: 1200, margin: "80px auto 0 auto", padding: "0 48px", width: "100%" }}>
+              <h3
+                style={{
+                  fontFamily: "'EB Garamond', serif",
+                  fontStyle: "italic",
+                  fontWeight: 400,
+                  fontSize: 32,
+                  color: "#3a302a",
+                  marginBottom: 32,
+                  textAlign: "center",
+                }}
+              >
+                Related Dispatches
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {relatedPosts.map((p) => {
+                  const displayedTag = p.tags && p.tags.length > 0 ? p.tags[0] : p.tag;
+                  return (
+                    <Link key={p.slug} href={`/blog/${p.slug}`} className="group no-underline block h-full">
+                      <div
+                        className="flex flex-col h-full transition-all duration-300 hover:scale-[1.02] hover:border-[#c2652a] hover:shadow-[0_8px_32px_rgba(194,101,42,0.08)] cursor-pointer"
+                        style={{
+                          background: "#faf5ee",
+                          border: "1px solid rgba(216,208,200,0.6)",
+                          borderRadius: 12,
+                        }}
+                      >
+                        <div className="relative w-full overflow-hidden" style={{ aspectRatio: "16/9", height: "auto" }}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={p.image}
+                            alt={p.title}
+                            className="object-cover w-full h-full transition-all duration-500 filter grayscale group-hover:grayscale-0"
+                          />
+                        </div>
+                        
+                        <div
+                          style={{
+                            fontFamily: "var(--font-body)",
+                            fontSize: 11,
+                            letterSpacing: "0.1em",
+                            color: "#c2652a",
+                            fontWeight: 500,
+                            marginTop: 24,
+                            marginLeft: 28,
+                          }}
+                        >
+                          {displayedTag}
+                        </div>
+                        
+                        <h4
+                          style={{
+                            fontFamily: "'EB Garamond', serif",
+                            fontStyle: "italic",
+                            fontWeight: 400,
+                            fontSize: 20,
+                            lineHeight: 1.3,
+                            color: "#3a302a",
+                            padding: "10px 28px 0 28px",
+                          }}
+                        >
+                          {p.title}
+                        </h4>
+
+                        <p
+                          style={{
+                            fontFamily: "var(--font-body)",
+                            fontSize: 13,
+                            lineHeight: 1.6,
+                            color: "#8a7a6e",
+                            padding: "12px 28px 0 28px",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                            overflow: "hidden",
+                          }}
+                        >
+                          {p.excerpt}
+                        </p>
+                        
+                        <div className="flex justify-between items-center mt-auto" style={{ padding: "20px 28px 28px 28px" }}>
+                          <span
+                            style={{
+                              fontFamily: "var(--font-body)",
+                              fontSize: 12,
+                              color: "#8a7a6e",
+                            }}
+                          >
+                            {p.readTime}
+                          </span>
+                          <span
+                            className="group-hover:underline"
+                            style={{
+                              fontFamily: "var(--font-body)",
+                              fontSize: 13,
+                              fontWeight: 500,
+                              color: "#c2652a",
+                            }}
+                          >
+                            Read More &rarr;
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })()}
 
         {/* Newsletter CTA */}
         <section style={{ background: "#c2652a", padding: "80px 48px", marginTop: 80 }}>
