@@ -382,3 +382,25 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0 24px 80px 24px !important;
   }
 }
+
+/* Drop cap — first paragraph of blog content */
+.blog-content > p:first-of-type::first-letter {
+  font-family: 'EB Garamond', serif;
+  font-size: 5.2em;
+  font-weight: 400;
+  float: left;
+  line-height: 0.75;
+  margin-right: 8px;
+  margin-top: 6px;
+  color: #c2652a;
+}
+
+/* Blockquote body style */
+.blog-content blockquote p {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: clamp(18px, 2.5vw, 22px);
+  color: #3a302a;
+  line-height: 1.55;
+  margin: 0;
+}
