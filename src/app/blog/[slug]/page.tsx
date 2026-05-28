@@ -440,11 +440,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <div className="blog-hero-overlay-full" />
           </div>
 
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 48px", display: "flex", gap: 64, alignItems: "flex-start" }}>
+        <BlogTOC />
 
-          <BlogTOC />
-
-          <article className="w-full" style={{ maxWidth: 760, minWidth: 0 }}>
+        <article className="w-full" style={{ maxWidth: 760, margin: "0 auto", padding: "0 24px" }}>
 
           {/* Back link */}
           <div className="blog-reveal" style={{ marginBottom: 40, marginTop: 48 }}>
@@ -531,8 +529,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
           <ShareBar title={post.meta.title} slug={resolvedParams.slug} />
 
-          </article>
-        </div>
+        </article>
 
         {/* RELATED DISPATCHES */}
         {(() => {
