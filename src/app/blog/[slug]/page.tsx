@@ -6,6 +6,7 @@ import { getAllPosts, getPostBySlug } from "@/lib/mdx";
 import Footer from "@/components/Footer";
 import BlogAnimations from "./BlogAnimations";
 import ShareBar from "@/components/ui/ShareBar";
+import BlogTOC from "./BlogTOC";
 
 
 export async function generateStaticParams() {
@@ -439,7 +440,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <div className="blog-hero-overlay-full" />
           </div>
 
-        <article className="w-full" style={{ maxWidth: 760, margin: "0 auto", padding: "0 24px" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 48px", display: "flex", gap: 64, alignItems: "flex-start" }}>
+
+          <BlogTOC />
+
+          <article className="w-full" style={{ maxWidth: 760, minWidth: 0 }}>
 
           {/* Back link */}
           <div className="blog-reveal" style={{ marginBottom: 40, marginTop: 48 }}>
@@ -526,7 +531,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
           <ShareBar title={post.meta.title} slug={resolvedParams.slug} />
 
-        </article>
+          </article>
+        </div>
 
         {/* RELATED DISPATCHES */}
         {(() => {
