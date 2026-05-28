@@ -19,7 +19,6 @@ export default function BlogTOC() {
 
     if (headings.length === 0) return;
 
-    // Assign IDs and build TOC list
     const tocItems: TocItem[] = headings.map((el, i) => {
       const id = el.id || `toc-section-${i}`;
       el.id = id;
@@ -29,34 +28,35 @@ export default function BlogTOC() {
     setItems(tocItems);
     if (tocItems.length > 0) setActiveId(tocItems[0].id);
 
-    // Active section tracking
-    const sectionObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: "0px 0px -60% 0px", threshold: 0 }
-    );
-    headings.forEach((el) => sectionObserver.observe(el));
-
     // Show/hide based on whether the article body is in view
     const articleEl = document.querySelector(".blog-content") as HTMLElement;
     let visibilityObserver: IntersectionObserver | null = null;
     if (articleEl) {
       visibilityObserver = new IntersectionObserver(
-        (entries) => {
-          setVisible(entries[0].isIntersecting);
-        },
+        (entries) => setVisible(entries[0].isIntersecting),
         { threshold: 0 }
       );
       visibilityObserver.observe(articleEl);
     }
 
+    // Smooth active section: scroll-based, finds the last heading above 35% viewport
+    const onScroll = () => {
+      const threshold = window.scrollY + window.innerHeight * 0.35;
+      let current = tocItems[0].id;
+      for (const item of tocItems) {
+        const el = document.getElementById(item.id);
+        if (el && el.offsetTop <= threshold) {
+          current = item.id;
+        }
+      }
+      setActiveId(current);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll(); // run once on mount
+
     return () => {
-      sectionObserver.disconnect();
+      window.removeEventListener("scroll", onScroll);
       if (visibilityObserver) visibilityObserver.disconnect();
     };
   }, []);
@@ -75,13 +75,15 @@ export default function BlogTOC() {
         position: "fixed",
         top: "50%",
         transform: "translateY(-50%)",
-        // Align with left edge of the 1100px container
-        left: "calc(50vw - 550px + 48px)",
-        width: 220,
+        // Always 32px to the left of the article edge
+        // Article is maxWidth 760px centered → left edge = 50vw - 380px
+        // TOC is 180px wide with 32px gap → left = 50vw - 380px - 32px - 180px
+        left: "calc(50vw - 592px)",
+        width: 180,
         opacity: visible ? 1 : 0,
         pointerEvents: visible ? "auto" : "none",
-        transition: "opacity 0.3s ease",
-        display: "none", // overridden by CSS media query for desktop
+        transition: "opacity 0.4s ease",
+        display: "none", // overridden by CSS media query
         zIndex: 10,
       }}
     >
@@ -111,18 +113,16 @@ export default function BlogTOC() {
                 textAlign: "left",
                 background: "none",
                 border: "none",
-                borderLeft: isActive
-                  ? "2px solid #c2652a"
-                  : "2px solid rgba(216,208,200,0.5)",
-                padding: "6px 0 6px 14px",
-                marginBottom: 4,
+                borderLeft: `2px solid ${isActive ? "#c2652a" : "rgba(216,208,200,0.5)"}`,
+                padding: "7px 0 7px 14px",
+                marginBottom: 2,
                 fontFamily: "var(--font-body)",
-                fontSize: 13,
-                lineHeight: 1.45,
-                color: isActive ? "#c2652a" : "rgba(58,48,42,0.55)",
+                fontSize: 12,
+                lineHeight: 1.5,
+                color: isActive ? "#c2652a" : "rgba(58,48,42,0.5)",
                 fontWeight: isActive ? 500 : 400,
                 cursor: "pointer",
-                transition: "color 0.2s, border-color 0.2s",
+                transition: "color 0.3s ease, border-color 0.3s ease",
               }}
             >
               {item.label}

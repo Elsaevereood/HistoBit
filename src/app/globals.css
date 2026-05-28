@@ -406,7 +406,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Blog TOC sidebar — visible only on large screens */
-@media (min-width: 1200px) {
+@media (min-width: 1300px) {
   .blog-toc-sidebar {
     display: block !important;
   }
