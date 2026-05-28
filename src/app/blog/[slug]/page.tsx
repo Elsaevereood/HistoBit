@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import type { Metadata } from "next";
 import { getAllPosts, getPostBySlug } from "@/lib/mdx";
 import Footer from "@/components/Footer";
@@ -556,7 +557,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
           {/* Article body */}
           <div className="blog-content">
-            <MDXRemote source={post.content} components={components} />
+            <MDXRemote source={post.content} components={components} options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} />
           </div>
 
           <ShareBar title={post.meta.title} slug={resolvedParams.slug} />
