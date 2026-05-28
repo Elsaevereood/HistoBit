@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { gsap } from "gsap";
@@ -13,25 +13,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const MILITARY_HISTORY_TAGS = [
-  // Era
-  "Ancient", "Medieval", "Crusades", "Napoleonic", "WWI", "WWII", "Cold War", "Modern",
-  // Topic
-  "Tactics", "Commanders", "Logistics", "Siege", "Naval", "Cavalry", "Strategy", "Intelligence",
-  // Region
-  "Rome", "Greece", "Persia", "Mongolia", "Ottoman Empire", "Britain", "France",
-  "Germany", "Russia", "Japan", "India", "China", "Africa", "Middle East", "USA"
-];
 
-const GEOPOLITICS_TAGS = [
-  // Theme
-  "Alliances", "Conflict", "Diplomacy", "Nuclear", "Proxy War", "Sanctions",
-  "Trade War", "Resources", "Maritime", "Sovereignty",
-  // Region
-  "USA", "Russia", "China", "Europe", "Middle East", "India", "Africa",
-  "Southeast Asia", "Ukraine", "Taiwan", "Israel", "Iran", "Turkey",
-  "Pakistan", "NATO", "Central Asia", "Saudi Arabia", "Japan", "North Korea"
-];
 
 const SECTION_CONFIG = {
   "military-history": {
@@ -220,13 +202,25 @@ export default function BlogSectionClient({
   const [tagInputValue, setTagInputValue] = useState("");
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
 
+  const availableTags = useMemo(() => {
+    const tagCounts: Record<string, number> = {};
+    posts.forEach(post => {
+      const tagList = post.tags && post.tags.length > 0 ? post.tags : [post.tag];
+      tagList.forEach(t => {
+        if (t) tagCounts[t] = (tagCounts[t] || 0) + 1;
+      });
+    });
+    return Object.entries(tagCounts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([tag, count]) => ({ tag, count }));
+  }, [posts]);
+
   const preLabelRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const subtextRef = useRef<HTMLParagraphElement>(null);
   const controlsRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
-  const activeTagList = section === "military-history" ? MILITARY_HISTORY_TAGS : GEOPOLITICS_TAGS;
   const config = SECTION_CONFIG[section];
 
   useEffect(() => {
@@ -292,9 +286,10 @@ export default function BlogSectionClient({
       return;
     }
 
-    const filtered = activeTagList
-      .filter((tag) => tag.toLowerCase().includes(val.toLowerCase()))
-      .slice(0, 6);
+    const filtered = availableTags
+      .filter(({ tag }) => tag.toLowerCase().includes(val.toLowerCase()))
+      .slice(0, 6)
+      .map(({ tag }) => tag);
     setTagSuggestions(filtered);
   };
 
@@ -415,6 +410,45 @@ export default function BlogSectionClient({
 
       {/* CONTROLS BAR */}
       <section ref={controlsRef} className="w-full" style={{ maxWidth: 1200, margin: "0 auto", padding: "48px 48px 0 48px" }}>
+        {availableTags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-6">
+            {availableTags.slice(0, 12).map(({ tag, count }) => {
+              const isActive = activeChips.includes(tag);
+              return (
+                <button
+                  key={tag}
+                  onClick={() => isActive ? removeChip(activeChips.indexOf(tag)) : addActiveChip(tag)}
+                  style={{
+                    borderRadius: 20,
+                    padding: "7px 14px",
+                    fontSize: 12,
+                    fontFamily: "var(--font-body)",
+                    fontWeight: 500,
+                    background: isActive ? "#c2652a" : "transparent",
+                    color: isActive ? "#faf5ee" : "#8a7a6e",
+                    border: isActive ? "1px solid #c2652a" : "1px solid #d8d0c8",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.borderColor = "#c2652a";
+                      e.currentTarget.style.color = "#c2652a";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.borderColor = "#d8d0c8";
+                      e.currentTarget.style.color = "#8a7a6e";
+                    }
+                  }}
+                >
+                  {tag} <span style={{ opacity: 0.6 }}>({count})</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div
             style={{
