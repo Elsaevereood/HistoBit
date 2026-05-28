@@ -278,7 +278,7 @@ export default function BlogSectionClient({
     return () => ctx.revert();
   }, [section]);
 
-  // Suggestions filter
+  // Suggestions filter — searches existing tags from posts
   const handleTagInputChange = (val: string) => {
     setTagInputValue(val);
     if (!val.trim()) {
@@ -305,13 +305,15 @@ export default function BlogSectionClient({
     setTagSuggestions([]);
   };
 
-  // Input key controls
+  // Input key controls — allow free-form keyword chips even if no tag suggestion matches
   const handleTagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      // If there are suggestions, select the first one or exact match
       if (tagSuggestions.length > 0) {
         addActiveChip(tagSuggestions[0]);
+      } else if (tagInputValue.trim()) {
+        // Allow adding any keyword as a chip, not just existing tags
+        addActiveChip(tagInputValue.trim());
       }
     } else if (e.key === "Escape") {
       setTagInputValue("");
@@ -340,11 +342,19 @@ export default function BlogSectionClient({
       (post.regionAliases || []).some(a => a.toLowerCase().includes(searchLower));
 
     // Tag chip filter — AND logic: post must match ALL active chips
-    const matchesChips = activeChips.length === 0 || 
-      activeChips.every(chip => 
-        post.tags.some(t => t.toLowerCase() === chip.toLowerCase()) ||
-        (post.regionAliases || []).some(a => a.toLowerCase() === chip.toLowerCase())
-      );
+    // Searches across tags, regionAliases, title, excerpt, and keywords
+    // so free-form chips like "USA" or "Pearl Harbor" work even if not an exact tag
+    const matchesChips = activeChips.length === 0 ||
+      activeChips.every(chip => {
+        const c = chip.toLowerCase();
+        return (
+          post.tags.some(t => t.toLowerCase().includes(c)) ||
+          (post.regionAliases || []).some(a => a.toLowerCase().includes(c)) ||
+          post.title.toLowerCase().includes(c) ||
+          post.excerpt.toLowerCase().includes(c) ||
+          (post.keywords || []).some(k => k.toLowerCase().includes(c))
+        );
+      });
 
     return matchesSearch && matchesChips;
   });
@@ -504,7 +514,7 @@ export default function BlogSectionClient({
                 onBlur={(e) => (e.currentTarget.style.borderColor = "#d8d0c8")}
               />
 
-              {tagSuggestions.length > 0 && (
+              {tagInputValue.trim() && (tagSuggestions.length > 0 || tagInputValue.trim()) && (
                 <div
                   className="absolute left-0 mt-1 w-full flex flex-col z-[100]"
                   style={{
@@ -538,6 +548,29 @@ export default function BlogSectionClient({
                       {suggestion}
                     </div>
                   ))}
+                  {tagSuggestions.length === 0 && tagInputValue.trim() && (
+                    <div
+                      onClick={() => addActiveChip(tagInputValue.trim())}
+                      className="cursor-pointer transition-colors duration-150"
+                      style={{
+                        padding: "8px 16px",
+                        fontFamily: "var(--font-body)",
+                        fontSize: 13,
+                        color: "#8a7a6e",
+                        fontStyle: "italic",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "rgba(194, 101, 42, 0.06)";
+                        e.currentTarget.style.color = "#c2652a";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = "#8a7a6e";
+                      }}
+                    >
+                      Search for &ldquo;{tagInputValue.trim()}&rdquo;
+                    </div>
+                  )}
                 </div>
               )}
             </div>
