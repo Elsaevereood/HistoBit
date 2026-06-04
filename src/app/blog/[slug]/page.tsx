@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
@@ -98,15 +99,26 @@ const components = {
       <span className="blog-section-rule" />
     </>
   ),
-  p: (props: React.HTMLAttributes<HTMLParagraphElement>) => (
-    <p className="blog-reveal" style={{
-      fontFamily: "var(--font-body)",
-      fontSize: "17px",
-      lineHeight: 1.82,
-      color: "#3a302a",
-      marginBottom: "22px",
-    }} {...props} />
-  ),
+  p: (props: React.HTMLAttributes<HTMLParagraphElement>) => {
+    const hasBlock = React.Children.toArray(props.children).some(
+      (child) =>
+        React.isValidElement(child) &&
+        (child.type === "img" ||
+          child.type === "table" ||
+          typeof child.type === "function" ||
+          (child.type as any) === "figure")
+    );
+    const Component = hasBlock ? "div" : "p";
+    return (
+      <Component className="blog-reveal" style={{
+        fontFamily: "var(--font-body)",
+        fontSize: "17px",
+        lineHeight: 1.82,
+        color: "#3a302a",
+        marginBottom: "22px",
+      }} {...props as any} />
+    );
+  },
   strong: (props: React.HTMLAttributes<HTMLElement>) => (
     <strong style={{ fontWeight: 600, color: "#3a302a" }} {...props} />
   ),
