@@ -14,7 +14,7 @@ export const AUTHOR = {
   // Add every profile that proves the same person is behind this work.
   // Google uses sameAs to merge these into one entity.
   sameAs: [
-    "https://www.youtube.com/@Histobit",
+    "https://www.youtube.com/@HistoBit_official",
   ],
 };
 
@@ -25,7 +25,7 @@ export const ORGANIZATION = {
   description:
     "Deep research military history and geopolitics. No mythology.",
   sameAs: [
-    "https://www.youtube.com/@Histobit",
+    "https://www.youtube.com/@HistoBit_official",
   ],
 };
 
