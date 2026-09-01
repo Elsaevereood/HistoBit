@@ -146,7 +146,7 @@ export default function Newsletter() {
           margin: "28px auto 0",
         }}
       >
-        One email. Every week. Military history told the way it deserves — deep, specific, and without mythology. Free forever.
+        The Dispatch has not started sending yet. Join the waitlist and you will get the first issue before anyone else. Military history told the way it deserves. Free forever.
       </p>
 
       <div
@@ -164,7 +164,7 @@ export default function Newsletter() {
         <span>·</span>
         <span>Unsubscribe anytime</span>
         <span>·</span>
-        <span>Read by 12,000 people</span>
+        <span>Free forever</span>
       </div>
 
       {success ? (
@@ -177,7 +177,7 @@ export default function Newsletter() {
           color: "#faf5ee",
           textAlign: "center",
         }}>
-          You&apos;re in. First dispatch arrives next week.
+          You are on the waitlist. We will email you before the first dispatch goes out.
         </div>
       ) : (
         <form
@@ -226,7 +226,7 @@ export default function Newsletter() {
               onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = "#1a1008"; }}
               onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = "#3a302a"; }}
             >
-              {loading ? "Joining..." : "Send Me the History"}
+              {loading ? "Joining..." : "Join the Waitlist"}
             </button>
           </div>
           {error && (

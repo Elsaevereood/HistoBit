@@ -36,7 +36,7 @@ export default function WhatIsHistobit() {
       if (countRef.current) {
         ScrollTrigger.create({
           trigger: countRef.current, start: "top 80%", once: true,
-          onEnter: () => countUpAnimation(countRef.current!, 12000, "+"),
+          onEnter: () => countUpAnimation(countRef.current!, 13500, "+"),
         });
       }
     });
@@ -53,8 +53,8 @@ export default function WhatIsHistobit() {
           <h2 ref={headingRef} style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(32px, 4vw, 52px)", color: "#3a302a", lineHeight: 1.1, marginBottom: 4 }}>Military history</h2>
           <div style={{ fontFamily: "var(--font-script)", fontSize: "clamp(36px, 4.5vw, 58px)", color: "#c2652a", lineHeight: 1.2, marginBottom: 36 }}>told properly.</div>
           <p style={pStyle}>Histobit is a military history channel built for people who want the real story — not the mythology, not the Hollywood version. The research goes deep. The writing is cinematic.</p>
-          <p style={pStyle}>Every video, every post, every newsletter dispatch meets the same standard: if it isn&apos;t specific, it isn&apos;t good enough.</p>
-          <p style={pStyle}>8 million views. 60 countries. 12,000 readers every week. None of that happened by accident.</p>
+          <p style={pStyle}>Every video and every post meets the same standard: if it isn&apos;t specific, it isn&apos;t good enough.</p>
+          <p style={pStyle}>8 million views. 60 countries. 13,500 subscribers on YouTube. None of that happened by accident.</p>
           <Link href="/about" className="cta-link" style={{ fontFamily: "var(--font-body)", fontSize: 14, fontWeight: 500, color: "#c2652a", textDecoration: "none", marginTop: 8, display: "inline-block" }}>Read the Full Story →</Link>
         </div>
 
@@ -62,7 +62,7 @@ export default function WhatIsHistobit() {
           <div style={{ display: "flex", flexDirection: "column", gap: 48 }}>
             <div style={{ borderLeft: "2px solid rgba(194,101,42,0.3)", paddingLeft: 28 }}>
               <div ref={countRef} style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(48px, 6vw, 72px)", color: "#c2652a", lineHeight: 1 }}>0</div>
-              <div style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "#8a7a6e", marginTop: 6 }}>Weekly Newsletter Readers</div>
+              <div style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "#8a7a6e", marginTop: 6 }}>YouTube Subscribers</div>
             </div>
             <div style={{ borderLeft: "2px solid rgba(194,101,42,0.3)", paddingLeft: 28 }}>
               <div style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontWeight: 400, fontSize: "clamp(48px, 6vw, 72px)", color: "#c2652a", lineHeight: 1 }}>8M+</div>

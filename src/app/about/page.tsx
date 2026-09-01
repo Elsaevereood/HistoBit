@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import dynamic from "next/dynamic"
 import { useEffect, useRef } from "react"
 import gsap from "gsap"
@@ -610,8 +611,8 @@ export default function AboutPage() {
               The same standard: if it isn&apos;t specific, it isn&apos;t good enough.
             </p>
             <p style={{ fontFamily: "var(--font-body)", fontSize: 16, lineHeight: 1.85, color: "#3a302a", marginBottom: 28 }}>
-              The channel has reached over 8 million views across 60 countries.
-              12,000 people read the weekly newsletter. None of that happened because
+              The channel has reached over 8 million views across 60 countries and
+              13,500 subscribers. None of that happened because
               of luck. It happened because the audience for serious military history is
               enormous — and almost nobody was serving them properly.
             </p>
@@ -744,8 +745,8 @@ export default function AboutPage() {
           alignItems: "center"
         }}>
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontSize: "clamp(36px, 5vw, 56px)", color: "#c2652a" }}>12,000</div>
-            <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "#8a7a6e", marginTop: 4, letterSpacing: "0.04em" }}>Weekly Readers</div>
+            <div style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontSize: "clamp(36px, 5vw, 56px)", color: "#c2652a" }}>13,500</div>
+            <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "#8a7a6e", marginTop: 4, letterSpacing: "0.04em" }}>Subscribers</div>
           </div>
           <div style={{ height: 40, width: 1, background: "rgba(216,208,200,0.8)" }}></div>
           <div style={{ textAlign: "center" }}>
@@ -761,55 +762,31 @@ export default function AboutPage() {
 
         <div ref={section6FormRef} style={{ maxWidth: 500, margin: "0 auto" }}>
           <div style={{ fontFamily: "'EB Garamond', serif", fontStyle: "italic", fontSize: 28, color: "#3a302a", marginBottom: 8 }}>
-            Join 12,000 Readers
+            The Dispatch Launches Soon
           </div>
           <div style={{ fontFamily: "var(--font-body)", fontSize: 15, color: "#8a7a6e", marginBottom: 28 }}>
-            One email. Every week. The history they left out — in your inbox.
+            Join the waitlist and get the first issue before anyone else. Free.
           </div>
-          <form style={{ display: "flex", gap: 0 }} onSubmit={(e) => e.preventDefault()}>
-            <input 
-              type="email" 
-              placeholder="Your email address" 
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Link
+              href="/newsletter"
               style={{
-                flex: 1,
-                height: 52,
-                background: "#faf5ee",
-                border: "1px solid #d8d0c8",
-                borderRadius: "8px 0 0 8px",
-                padding: "0 20px",
-                fontFamily: "var(--font-body)",
-                fontSize: 14,
-                color: "#3a302a",
-                outline: "none"
-              }}
-              onFocus={(e) => e.target.style.borderColor = "#c2652a"}
-              onBlur={(e) => e.target.style.borderColor = "#d8d0c8"}
-            />
-            <button 
-              type="submit"
-              className="subscribe-btn"
-              style={{
-                height: 52,
+                display: "inline-block",
                 background: "#c2652a",
                 color: "#faf5ee",
                 fontFamily: "var(--font-body)",
                 fontSize: 14,
                 fontWeight: 500,
-                padding: "0 28px",
-                borderRadius: "0 8px 8px 0",
-                border: "none",
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-                transition: "background 200ms"
+                padding: "14px 28px",
+                borderRadius: 8,
+                textDecoration: "none",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#a8521f")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "#c2652a")}
             >
-              Subscribe Free
-            </button>
-          </form>
+              Join the Waitlist &rarr;
+            </Link>
+          </div>
           <div style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "#8a7a6e", textAlign: "center", marginTop: 12 }}>
-            No spam. Unsubscribe anytime. Free forever.
+            No spam. Free forever. Nothing sent until it launches.
           </div>
         </div>
       </section>

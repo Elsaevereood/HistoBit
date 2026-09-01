@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { splitTextIntoWords } from "@/lib/animations";
+import { NEWSLETTER } from "@/lib/site";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -32,6 +33,33 @@ export default function NewsletterPage() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const [checkoutEmail, setCheckoutEmail] = useState("");
   const [showEmailCapture, setShowEmailCapture] = useState(false);
+
+  // Waitlist signup (free tier). Posts to the same subscribers table.
+  const [waitEmail, setWaitEmail] = useState("");
+  const [waitLoading, setWaitLoading] = useState(false);
+  const [waitSuccess, setWaitSuccess] = useState(false);
+  const [waitError, setWaitError] = useState("");
+
+  const handleWaitlist = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!waitEmail) { setWaitError("Please enter your email"); return; }
+    setWaitLoading(true);
+    setWaitError("");
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: waitEmail }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to join the waitlist");
+      setWaitSuccess(true);
+    } catch (err) {
+      setWaitError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setWaitLoading(false);
+    }
+  };
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
 
@@ -235,7 +263,7 @@ export default function NewsletterPage() {
               fontWeight: 500,
               marginBottom: '20px'
             }}>
-              HISTORY & GEOPOLITICS · THE DISPATCH
+              HISTORY & GEOPOLITICS · THE DISPATCH · COMING SOON
             </div>
             
             <h1 ref={headingRef} style={{
@@ -248,7 +276,7 @@ export default function NewsletterPage() {
               textAlign: 'center',
               margin: 0
             }}>
-              Two Disciplines. One Weekly Dispatch.
+              Two Disciplines. One Dispatch. Launching Soon.
             </h1>
             
             <p ref={subRef} style={{
@@ -260,8 +288,9 @@ export default function NewsletterPage() {
               margin: '24px auto 0',
               textAlign: 'center'
             }}>
-              Every week: one deep military history piece and one geopolitics story explained 
-              through a historical lens. No mythology. No filler. No news cycle noise.
+              The Dispatch has not started sending yet. Join the waitlist and you will get the 
+              first issue before anyone else. One military history piece and one geopolitics story, 
+              explained through a historical lens. No mythology. No filler.
             </p>
             
             <div ref={trustRef} style={{
@@ -406,11 +435,172 @@ export default function NewsletterPage() {
             marginTop: '28px',
             lineHeight: 1.6
           }}>
-            One email every week. Never more. Straight to your inbox — no algorithm, no noise.
+            No email until it launches. When it does, one a week. Never more. No algorithm, no noise.
           </p>
         </section>
 
-        {/* SECTION 3: WAR ROOM PRICING */}
+        {/* WAITLIST SIGNUP — the only live newsletter action until launch */}
+        <section style={{ backgroundColor: '#c2652a', padding: '104px 48px', width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ maxWidth: '560px', width: '100%', textAlign: 'center' }}>
+            <div style={{
+              fontFamily: 'var(--font-body), Manrope, sans-serif',
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.14em',
+              color: 'rgba(250,245,238,0.7)',
+              fontWeight: 500,
+              marginBottom: '18px'
+            }}>
+              {NEWSLETTER.overline}
+            </div>
+            <h2 style={{
+              fontFamily: '"EB Garamond", serif',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              fontSize: 'clamp(30px, 4vw, 44px)',
+              color: '#faf5ee',
+              lineHeight: 1.15,
+              margin: '0 0 16px 0'
+            }}>
+              {NEWSLETTER.heading}
+            </h2>
+            <p style={{
+              fontFamily: 'var(--font-body), Manrope, sans-serif',
+              fontSize: '15px',
+              lineHeight: 1.7,
+              color: 'rgba(250,245,238,0.8)',
+              margin: '0 auto 32px auto',
+              maxWidth: '440px'
+            }}>
+              {NEWSLETTER.promise}
+            </p>
+
+            {waitSuccess ? (
+              <div style={{
+                fontFamily: '"EB Garamond", serif',
+                fontStyle: 'italic',
+                fontSize: '22px',
+                color: '#faf5ee'
+              }}>
+                {NEWSLETTER.success}
+              </div>
+            ) : (
+              <form onSubmit={handleWaitlist} className="flex flex-col md:flex-row justify-center items-center" style={{ gap: '12px' }}>
+                <input
+                  type="email"
+                  value={waitEmail}
+                  onChange={(e) => setWaitEmail(e.target.value)}
+                  placeholder="Your email address"
+                  className="w-full md:w-[320px]"
+                  style={{
+                    height: '50px',
+                    padding: '0 20px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: 'rgba(250,245,238,0.96)',
+                    fontFamily: 'var(--font-body), Manrope, sans-serif',
+                    fontSize: '14px',
+                    color: '#3a302a',
+                    outline: 'none'
+                  }}
+                />
+                <button
+                  type="submit"
+                  disabled={waitLoading}
+                  className="w-full md:w-auto"
+                  style={{
+                    height: '50px',
+                    padding: '0 28px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: '#3a302a',
+                    color: '#faf5ee',
+                    fontFamily: 'var(--font-body), Manrope, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    cursor: waitLoading ? 'not-allowed' : 'pointer',
+                    opacity: waitLoading ? 0.7 : 1,
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {waitLoading ? NEWSLETTER.ctaLoading : NEWSLETTER.cta}
+                </button>
+              </form>
+            )}
+
+            {waitError && (
+              <div style={{
+                fontFamily: 'var(--font-body), Manrope, sans-serif',
+                fontSize: '13px',
+                color: '#faf5ee',
+                opacity: 0.9,
+                marginTop: '14px'
+              }}>
+                {waitError}
+              </div>
+            )}
+
+            <div style={{
+              fontFamily: 'var(--font-body), Manrope, sans-serif',
+              fontSize: '12px',
+              color: 'rgba(250,245,238,0.6)',
+              marginTop: '20px'
+            }}>
+              {NEWSLETTER.micro.join('  \u00b7  ')}
+            </div>
+          </div>
+        </section>
+
+        {/* Paid tier is hidden until the newsletter actually ships */}
+        {!NEWSLETTER.live && (
+        <section style={{ backgroundColor: '#faf5ee', padding: '96px 48px', width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <div style={{
+            maxWidth: '620px',
+            textAlign: 'center',
+            border: '1px solid rgba(216,208,200,0.6)',
+            borderRadius: '12px',
+            padding: '40px 32px',
+            boxShadow: '0 2px 16px rgba(58,48,42,0.04)'
+          }}>
+            <div style={{
+              fontFamily: 'var(--font-body), Manrope, sans-serif',
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.14em',
+              color: '#c2652a',
+              fontWeight: 500,
+              marginBottom: '16px'
+            }}>
+              THE WAR ROOM · COMING LATER
+            </div>
+            <h2 style={{
+              fontFamily: '"EB Garamond", serif',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              fontSize: 'clamp(26px, 3.2vw, 34px)',
+              color: '#3a302a',
+              lineHeight: 1.2,
+              margin: '0 0 14px 0'
+            }}>
+              The paid tier opens after launch.
+            </h2>
+            <p style={{
+              fontFamily: 'var(--font-body), Manrope, sans-serif',
+              fontSize: '15px',
+              lineHeight: 1.7,
+              color: '#8a7a6e',
+              margin: 0
+            }}>
+              The free Dispatch comes first. Once it is running properly, The War Room adds the longer
+              archive pieces and the research notes behind them. Waitlist members get first access and
+              nobody is charged before then.
+            </p>
+          </div>
+        </section>
+        )}
+
+        {/* SECTION 3: WAR ROOM PRICING (hidden until NEWSLETTER.live is true) */}
+        {NEWSLETTER.live && (
         <section style={{ backgroundColor: '#faf5ee', padding: '120px 48px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           
           <div ref={warRoomOverlineRef} style={{
@@ -697,85 +887,11 @@ export default function NewsletterPage() {
             )}
           </div>
         </section>
+        )}
 
-        {/* SECTION 4: SOCIAL PROOF STRIP */}
-        <section ref={socialRef} style={{ backgroundColor: '#faf5ee', padding: '80px 48px', maxWidth: '1100px', margin: '0 auto' }}>
-          <h2 style={{
-            fontFamily: '"EB Garamond", serif',
-            fontStyle: 'italic',
-            fontSize: 'clamp(28px, 3.5vw, 40px)',
-            color: '#3a302a',
-            marginBottom: '48px',
-            textAlign: 'center'
-          }}>
-            What Readers Say
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-[28px]">
-            {[
-              {
-                quote: "I've read military history for 20 years. Histobit's newsletter is the first one I actually look forward to opening.",
-                name: "James K.",
-                location: "Chicago, USA"
-              },
-              {
-                quote: "The level of research is insane. This reads like a documentary script, not a history lesson. Genuinely addictive.",
-                name: "Sarah M.",
-                location: "London, UK"
-              },
-              {
-                quote: "Finally — someone who explains the logistics, not just the glory. This is what military history should always have been.",
-                name: "David R.",
-                location: "Toronto, Canada"
-              }
-            ].map((testimonial, idx) => (
-              <div key={idx} className="testimonial-card" style={{
-                backgroundColor: '#faf5ee',
-                border: '1px solid rgba(216,208,200,0.6)',
-                borderRadius: '12px',
-                padding: '32px',
-                boxShadow: '0 2px 16px rgba(58,48,42,0.04)'
-              }}>
-                <div style={{
-                  fontFamily: '"EB Garamond", serif',
-                  fontStyle: 'italic',
-                  fontSize: '48px',
-                  color: '#c2652a',
-                  lineHeight: 0.8,
-                  marginBottom: '16px'
-                }}>
-                  "
-                </div>
-                <p style={{
-                  fontFamily: '"EB Garamond", serif',
-                  fontStyle: 'italic',
-                  fontSize: '18px',
-                  lineHeight: 1.6,
-                  color: '#3a302a',
-                  marginBottom: '24px'
-                }}>
-                  {testimonial.quote}
-                </p>
-                <div style={{
-                  fontFamily: 'var(--font-body), Manrope, sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  color: '#3a302a'
-                }}>
-                  {testimonial.name}
-                </div>
-                <div style={{
-                  fontFamily: 'var(--font-body), Manrope, sans-serif',
-                  fontSize: '12px',
-                  color: '#8a7a6e',
-                  marginTop: '4px'
-                }}>
-                  {testimonial.location}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* Testimonials removed: the quotes were invented for a newsletter that has not shipped.
+            Replace with real, attributable reader or viewer quotes before restoring this section. */}
+
       </main>
       
       <Footer />

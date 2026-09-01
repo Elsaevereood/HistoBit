@@ -357,7 +357,7 @@ export default function HeroSection() {
             textAlign: "center",
           }}
         >
-          12,000 subscribers · 8 million views · 60 countries
+          13,500 subscribers · 8 million views · 60 countries
         </div>
       </div>
 

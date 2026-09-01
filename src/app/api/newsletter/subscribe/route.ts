@@ -50,24 +50,24 @@ export async function POST(req: NextRequest) {
       await resend.emails.send({
         from: process.env.RESEND_FROM_EMAIL || "info@histobit.com",
         to: email,
-        subject: "Welcome to The Dispatch — Histobit",
+        subject: "You are on the waitlist — Histobit",
         html: `
           <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 40px 24px; background: #faf5ee; color: #3a302a;">
             <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: #c2652a; margin-bottom: 24px;">HISTOBIT · THE DISPATCH</div>
             <h1 style="font-style: italic; font-weight: 400; font-size: 32px; line-height: 1.2; margin: 0 0 24px 0;">
-              Welcome to The Dispatch.
+              You are on the list.
             </h1>
             <p style="font-family: Arial, sans-serif; font-size: 16px; line-height: 1.8; color: #3a302a; margin: 0 0 16px 0;">
-              You're in. Every week, you'll receive one deep-dive into military history — the battles, the logistics, the commanders, and the decisions that changed the world.
+              The Dispatch has not started sending yet. You will get the first issue before anyone else, and nothing before then. No weekly emails until it actually launches.
             </p>
             <p style="font-family: Arial, sans-serif; font-size: 16px; line-height: 1.8; color: #8a7a6e; margin: 0 0 32px 0;">
-              No mythology. No filler. Just history told the way it deserves.
+              When it does launch: one deep-dive into military history a week. The battles, the logistics, the commanders, and the decisions that changed the world. No mythology. No filler.
             </p>
             <a href="https://histobit.com/blog" style="display: inline-block; background: #c2652a; color: #faf5ee; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-family: Arial, sans-serif; font-size: 14px; font-weight: 500;">
               Read the Archive →
             </a>
             <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid #d8d0c8; font-family: Arial, sans-serif; font-size: 12px; color: #8a7a6e;">
-              You subscribed at histobit.com. To unsubscribe, reply to this email with "unsubscribe".
+              You joined the waitlist at histobit.com. To be removed, reply to this email with "unsubscribe".
             </div>
           </div>
         `,

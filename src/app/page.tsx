@@ -56,7 +56,6 @@ import LatestArchive from "@/components/LatestArchive"
 const TopicExplorer = dynamic(() => import("@/components/TopicExplorer"))
 const WhatIsHistobit = dynamic(() => import("@/components/WhatIsHistobit"))
 const TrustBar = dynamic(() => import("@/components/TrustBar"))
-const ReaderVoices = dynamic(() => import("@/components/ReaderVoices"))
 const Newsletter = dynamic(() => import("@/components/Newsletter"))
 const Footer = dynamic(() => import("@/components/Footer"))
 import Link from "next/link"
@@ -107,7 +106,8 @@ export default async function Home() {
         <WhatIsHistobit />
         <ArchiveTeaser />
         <TrustBar />
-        <ReaderVoices />
+        {/* ReaderVoices removed: the quotes were invented, not from real readers.
+            Restore only with real, attributable quotes (e.g. actual YouTube comments). */}
         <Newsletter />
       </main>
       <Footer />

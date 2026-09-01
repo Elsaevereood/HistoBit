@@ -401,7 +401,7 @@ export default function BlogIndexClient({ posts }: { posts: PostMeta[] }) {
               marginBottom: 12,
             }}
           >
-            Get the Next Dispatch in Your Inbox
+            The Dispatch Launches Soon
           </h2>
           <p
             style={{
@@ -411,42 +411,26 @@ export default function BlogIndexClient({ posts }: { posts: PostMeta[] }) {
               marginBottom: 32,
             }}
           >
-            Free weekly newsletter. Real history. No algorithms.
+            Join the waitlist and get the first issue before anyone else. Free.
           </p>
-          <div className="flex flex-col md:flex-row justify-center items-center gap-3 w-full">
-            <input
-              type="email"
-              placeholder="Your email address"
-              className="w-full md:w-[320px]"
+          <div className="flex justify-center w-full">
+            <Link
+              href="/newsletter"
+              className="transition-colors"
               style={{
-                padding: "14px 20px",
-                borderRadius: 8,
-                border: "none",
-                fontSize: 14,
-                fontFamily: "var(--font-body)",
-                background: "rgba(250,245,238,0.95)",
-                color: "#3a302a",
-                outline: "none",
-              }}
-            />
-            <button
-              className="w-full md:w-auto transition-colors"
-              style={{
-                padding: "14px 24px",
+                display: "inline-block",
+                padding: "14px 28px",
                 borderRadius: 8,
                 background: "#3a302a",
                 color: "#faf5ee",
                 fontFamily: "var(--font-body)",
                 fontSize: 14,
                 fontWeight: 500,
-                border: "none",
-                cursor: "pointer",
+                textDecoration: "none",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#2a221d")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "#3a302a")}
             >
-              Subscribe Free
-            </button>
+              Join the Waitlist &rarr;
+            </Link>
           </div>
         </div>
       </section>

@@ -33,3 +33,23 @@ export const SECTION_LABELS: Record<string, string> = {
   "military-history": "Military History",
   geopolitics: "Geopolitics",
 };
+
+/**
+ * Newsletter launch state.
+ * Flip `live` to true when The Dispatch actually starts sending.
+ * Everything else on the site reads from here.
+ */
+export const NEWSLETTER = {
+  live: false,
+  overline: "THE DISPATCH · COMING SOON",
+  heading: "The Dispatch Launches Soon",
+  promise:
+    "The Dispatch has not started sending yet. Join the waitlist and you will get the first issue before anyone else, free.",
+  shortPromise: "Not sending yet. Join the waitlist and get the first issue before anyone else.",
+  cta: "Join the Waitlist",
+  ctaShort: "Join",
+  ctaLoading: "Joining...",
+  success: "You are on the waitlist. We will email you before the first dispatch goes out.",
+  successShort: "You are on the waitlist.",
+  micro: ["No spam", "Free forever", "Unsubscribe anytime"],
+};

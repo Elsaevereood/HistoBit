@@ -110,7 +110,7 @@ export default function Footer() {
               borderRadius: "6px",
               border: "1px solid rgba(194, 101, 42, 0.4)"
             }}>
-              Thanks for subscribing!
+              You are on the waitlist.
             </div>
           ) : (
             <form
@@ -152,7 +152,7 @@ export default function Footer() {
                   opacity: loading ? 0.7 : 1
                 }}
               >
-                {loading ? "..." : "Subscribe"}
+                {loading ? "..." : "Join"}
               </button>
             </form>
           )}
