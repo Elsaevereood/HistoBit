@@ -3,6 +3,28 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
 
+  // 301s from the three thin 2026 news posts consolidated into one deep piece.
+  // Preserves any inbound links and passes ranking signals to the canonical URL.
+  async redirects() {
+    return [
+      {
+        source: "/blog/iran-attacks-us-destroyers-2026",
+        destination: "/blog/patriot-missile-shortage-2026",
+        permanent: true,
+      },
+      {
+        source: "/blog/iran-war-drains-ukraine-patriot-defense",
+        destination: "/blog/patriot-missile-shortage-2026",
+        permanent: true,
+      },
+      {
+        source: "/blog/ukraine-patriot-missiles-russia-strike-2026",
+        destination: "/blog/patriot-missile-shortage-2026",
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {

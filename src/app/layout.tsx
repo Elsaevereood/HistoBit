@@ -48,7 +48,13 @@ export const metadata: Metadata = {
     "Kings and Generals",
     "Epic History TV",
   ],
-  authors: [{ name: "Histobit" }],
+  authors: [{ name: "Aniket Jha", url: "https://histobit.com/about" }],
+  alternates: {
+    canonical: "/",
+    types: {
+      "application/rss+xml": [{ url: "/feed.xml", title: "Histobit Dispatches" }],
+    },
+  },
   creator: "Histobit",
   openGraph: {
     title: "Histobit — Military History for Serious People",

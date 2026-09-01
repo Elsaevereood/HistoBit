@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import type { Metadata } from "next";
-import { getAllPosts, getPostBySlug } from "@/lib/mdx";
+import Image from "next/image";
+import { getAllPosts, getPostBySlug, getRelatedPosts, getWordCount } from "@/lib/mdx";
+import { SITE_URL, SITE_NAME, AUTHOR, ORGANIZATION, SECTION_LABELS } from "@/lib/site";
 import Footer from "@/components/Footer";
 import BlogAnimations from "./BlogAnimations";
 import ShareBar from "@/components/ui/ShareBar";
@@ -142,7 +144,16 @@ const components = {
   ),
   img: ({ src, alt, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) => (
     <figure className="blog-img-reveal" style={{ margin: '48px 0' }}>
-      <img src={src} alt={alt} style={{ width: '100%', borderRadius: 8 }} {...props} />
+      <Image
+        src={typeof src === 'string' ? src : ''}
+        alt={alt || ''}
+        width={1600}
+        height={900}
+        sizes="(max-width: 768px) 100vw, 760px"
+        quality={80}
+        loading="lazy"
+        style={{ width: '100%', height: 'auto', borderRadius: 8 }}
+      />
       {alt && (
         <figcaption style={{
           fontFamily: 'var(--font-body)',
@@ -426,37 +437,80 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     ? post.meta.image
     : `https://histobit.com${post.meta.image}`;
 
-  // JSON-LD Article structured data for Google
-  const jsonLd = {
-    "@context": "https://schema.org",
+  // JSON-LD structured data (@graph: Article + Breadcrumbs + FAQ + Author)
+  const sectionLabel = SECTION_LABELS[post.meta.section] || "Archive";
+  const sectionUrl = `${SITE_URL}/blog/${post.meta.section}`;
+  const faq = post.meta.faq || [];
+
+  const articleSchema = {
     "@type": "Article",
-    "headline": metaTitle,
-    "description": post.meta.excerpt,
-    "image": absoluteImage,
-    "author": {
-      "@type": "Organization",
-      "name": "Histobit",
-      "url": "https://histobit.com",
+    "@id": `${canonicalUrl}#article`,
+    headline: metaTitle,
+    name: post.meta.title,
+    description: post.meta.excerpt,
+    image: {
+      "@type": "ImageObject",
+      url: absoluteImage,
+      width: 1600,
+      height: 900,
     },
-    "publisher": {
+    author: {
+      "@type": "Person",
+      "@id": `${SITE_URL}#author`,
+      name: AUTHOR.name,
+      url: AUTHOR.url,
+      jobTitle: AUTHOR.jobTitle,
+      description: AUTHOR.description,
+      sameAs: AUTHOR.sameAs,
+    },
+    publisher: {
       "@type": "Organization",
-      "name": "Histobit",
-      "url": "https://histobit.com",
-      "logo": {
+      "@id": `${SITE_URL}#organization`,
+      name: ORGANIZATION.name,
+      url: ORGANIZATION.url,
+      sameAs: ORGANIZATION.sameAs,
+      logo: {
         "@type": "ImageObject",
-        "url": "https://histobit.com/favicon.png",
+        url: ORGANIZATION.logo,
       },
     },
-    "datePublished": new Date(post.meta.date).toISOString(),
-    "dateModified": new Date(post.meta.date).toISOString(),
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": canonicalUrl,
-    },
-    "url": canonicalUrl,
-    "keywords": (post.meta.keywords || []).join(", "),
-    "articleSection": post.meta.tag,
-    "inLanguage": "en-US",
+    datePublished: new Date(post.meta.date).toISOString(),
+    dateModified: new Date(post.meta.updated || post.meta.date).toISOString(),
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
+    url: canonicalUrl,
+    keywords: (post.meta.keywords || []).join(", "),
+    articleSection: sectionLabel,
+    wordCount: getWordCount(post.content),
+    inLanguage: "en-US",
+    isAccessibleForFree: true,
+  };
+
+  const breadcrumbSchema = {
+    "@type": "BreadcrumbList",
+    "@id": `${canonicalUrl}#breadcrumb`,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Archive", item: `${SITE_URL}/blog` },
+      { "@type": "ListItem", position: 3, name: sectionLabel, item: sectionUrl },
+      { "@type": "ListItem", position: 4, name: post.meta.title, item: canonicalUrl },
+    ],
+  };
+
+  const faqSchema = faq.length
+    ? {
+        "@type": "FAQPage",
+        "@id": `${canonicalUrl}#faq`,
+        mainEntity: faq.map((item) => ({
+          "@type": "Question",
+          name: item.q,
+          acceptedAnswer: { "@type": "Answer", text: item.a },
+        })),
+      }
+    : null;
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [articleSchema, breadcrumbSchema, ...(faqSchema ? [faqSchema] : [])],
   };
 
   return (
@@ -479,8 +533,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           {/* Hero image — full viewport width, outside article container */}
           <div className="blog-hero-wrap-full">
             <div className="blog-hero-img" id="blog-hero-img">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={post.meta.image} alt={post.meta.title} />
+              <Image
+                src={post.meta.image}
+                alt={post.meta.title}
+                fill
+                priority
+                fetchPriority="high"
+                sizes="100vw"
+                quality={80}
+              />
             </div>
             <div className="blog-hero-overlay-full" />
           </div>
@@ -489,24 +550,39 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         <article className="w-full" style={{ maxWidth: 760, margin: "0 auto", padding: "0 24px" }}>
 
-          {/* Back link */}
-          <div className="blog-reveal" style={{ marginBottom: 40, marginTop: 48 }}>
-            <Link
-              href="/blog"
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: 14,
-                fontWeight: 500,
-                color: "#c2652a",
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-              }}
-            >
-              &larr; Back to Archive
-            </Link>
-          </div>
+          {/* Breadcrumb trail — mirrors BreadcrumbList schema */}
+          <nav
+            className="blog-reveal"
+            aria-label="Breadcrumb"
+            style={{ marginBottom: 40, marginTop: 48 }}
+          >
+            <ol style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: 8,
+              listStyle: "none",
+              margin: 0,
+              padding: 0,
+              fontFamily: "var(--font-body)",
+              fontSize: 13,
+              color: "#8a7a6e",
+            }}>
+              <li>
+                <Link href="/" style={{ color: "#c2652a", textDecoration: "none" }}>Home</Link>
+              </li>
+              <li aria-hidden="true">/</li>
+              <li>
+                <Link href="/blog" style={{ color: "#c2652a", textDecoration: "none" }}>Archive</Link>
+              </li>
+              <li aria-hidden="true">/</li>
+              <li>
+                <Link href={`/blog/${post.meta.section}`} style={{ color: "#c2652a", textDecoration: "none" }}>
+                  {SECTION_LABELS[post.meta.section] || "Dispatches"}
+                </Link>
+              </li>
+            </ol>
+          </nav>
 
           {/* Meta: tag, title, date */}
           <div className="blog-reveal" style={{ marginBottom: 44 }}>
@@ -576,20 +652,69 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         </article>
 
+        {/* FREQUENTLY ASKED — feeds FAQPage schema, targets question queries */}
+        {faq.length > 0 && (
+          <section
+            className="w-full"
+            style={{ maxWidth: 760, margin: "72px auto 0 auto", padding: "0 24px" }}
+          >
+            <h2 style={{
+              fontFamily: "'EB Garamond', serif",
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: "clamp(26px, 3.8vw, 34px)",
+              color: "#3a302a",
+              marginBottom: 8,
+              lineHeight: 1.2,
+            }}>
+              Frequently Asked
+            </h2>
+            <div style={{
+              width: 48,
+              height: 2,
+              background: "#c2652a",
+              opacity: 0.5,
+              marginBottom: 36,
+            }} />
+
+            <div style={{ borderTop: "1px solid rgba(216,208,200,0.6)" }}>
+              {faq.map((item, i) => (
+                <div
+                  key={i}
+                  style={{
+                    padding: "26px 0",
+                    borderBottom: "1px solid rgba(216,208,200,0.6)",
+                  }}
+                >
+                  <h3 style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: 16,
+                    fontWeight: 600,
+                    color: "#3a302a",
+                    marginBottom: 10,
+                    lineHeight: 1.45,
+                  }}>
+                    {item.q}
+                  </h3>
+                  <p style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: 15.5,
+                    lineHeight: 1.78,
+                    color: "#5c5048",
+                    margin: 0,
+                  }}>
+                    {item.a}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* RELATED DISPATCHES */}
         {(() => {
-          const allPosts = getAllPosts();
           const currentPost = post.meta;
-          const relatedPosts = allPosts
-            .filter((p) => {
-              if (p.slug === currentPost.slug) return false;
-              if (p.section !== currentPost.section) return false;
-              
-              const currentTags = (currentPost.tags || []).map((t) => t.toLowerCase());
-              const pTags = (p.tags || []).map((t) => t.toLowerCase());
-              return pTags.some((t) => currentTags.includes(t));
-            })
-            .slice(0, 3);
+          const relatedPosts = getRelatedPosts(currentPost.slug, 3);
 
           if (relatedPosts.length === 0) return null;
 
